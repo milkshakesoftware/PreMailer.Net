@@ -11,3 +11,9 @@ Usage
     PreMailer pm = new PreMailer();
     
     string premailedOutput = pm.MoveCssInline(htmlSource, false);
+
+Credits
+-------
+
+The Dynamic Programmer: http://blog.dynamicprogrammer.com/2008/01/20/CSSParserClassInNET.aspx
+Fizzler: http://code.google.com/p/fizzler/
