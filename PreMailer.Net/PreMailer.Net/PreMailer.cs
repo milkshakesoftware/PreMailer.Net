@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using HtmlAgilityPack;
 using Fizzler.Systems.HtmlAgilityPack;
+using HtmlAgilityPack;
 
 namespace PreMailer.Net
 {
 	public class PreMailer
 	{
+		/// <summary>
+		/// Moves the CSS embedded in the specified htmlInput to inline style attributes.
+		/// </summary>
+		/// <param name="htmlInput">The HTML input.</param>
+		/// <param name="removeStyleElements">if set to <c>true</c> the style elements are removed.</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public string MoveCssInline(string htmlInput, bool removeStyleElements)
 		{
 			HtmlDocument doc = new HtmlDocument();
@@ -18,6 +21,11 @@ namespace PreMailer.Net
 
 			foreach (var style in styleNodes)
 			{
+				if (style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase))
+				{
+					continue;
+				}
+
 				CssParser cssParser = new CssParser();
 				string cssBlock = style.InnerHtml;
 

@@ -33,23 +33,13 @@ namespace PreMailer.Net
 		/// <param name="styleClass">The style class.</param>
 		public void Merge(StyleClass styleClass)
 		{
-			this.Merge(styleClass, false);
-		}
-
-		/// <summary>
-		/// Merges the specified style class, with this instance.
-		/// </summary>
-		/// <param name="styleClass">The style class.</param>
-		/// <param name="overrideDuplicates">if set to <c>true</c> [override duplicates].</param>
-		public void Merge(StyleClass styleClass, bool overrideDuplicates)
-		{
 			foreach (var item in styleClass.Attributes)
 			{
 				if (!this.Attributes.ContainsKey(item.Key))
 				{
 					this.Attributes.Add(item.Key, item.Value);
 				}
-				else if (overrideDuplicates)
+				else
 				{
 					this.Attributes[item.Key] = item.Value;
 				}

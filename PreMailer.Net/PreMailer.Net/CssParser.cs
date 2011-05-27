@@ -55,6 +55,10 @@ namespace PreMailer.Net
 			}
 		}
 
+		/// <summary>
+		/// Fills the style class.
+		/// </summary>
+		/// <param name="s">The style block.</param>
 		private void FillStyleClass(string s)
 		{
 			StyleClass sc = null;
@@ -76,6 +80,12 @@ namespace PreMailer.Net
 			this._scc.Add(sc.Name, sc);
 		}
 
+		/// <summary>
+		/// Fills the style class.
+		/// </summary>
+		/// <param name="sc">The style class.</param>
+		/// <param name="styleName">Name of the style.</param>
+		/// <param name="style">The styles.</param>
 		private void FillStyleClass(StyleClass sc, string styleName, string style)
 		{
 			sc.Name = styleName;
@@ -102,6 +112,7 @@ namespace PreMailer.Net
 		{
 			string temp = s;
 			string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
+
 			Regex r = new Regex(reg);
 			temp = r.Replace(temp, "");
 			temp = temp.Replace("\r", "").Replace("\n", "");
