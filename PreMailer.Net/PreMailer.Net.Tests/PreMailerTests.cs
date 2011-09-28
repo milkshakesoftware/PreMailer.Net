@@ -10,8 +10,26 @@ namespace PreMailer.Net.Tests
 	[TestClass]
 	public class PreMailerTests
 	{
+		private PreMailer sut;
+
+		[TestInitialize]
+		public void TestInitialize()
+		{
+			this.sut = new PreMailer();
+		}
+
 		[TestMethod]
-		public void TestMethod1()
+		public void MoveCssInline_RespectExistingStyleElement()
+		{
+			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+
+			string premailedOutput = sut.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"height: 100px;width: 100px;"));
+		}
+
+		[TestMethod, Ignore]
+		public void ManualIntegrationTest()
 		{
 			string testProjectDirectoryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			var directory = new DirectoryInfo(testProjectDirectoryPath);
@@ -25,9 +43,7 @@ namespace PreMailer.Net.Tests
 
 			string htmlSource = File.ReadAllText(String.Join("\\", testProjectDirectoryPath, "testmail.html"));
 
-			PreMailer pm = new PreMailer();
-
-			string premailedOutput = pm.MoveCssInline(htmlSource, false);
+			string premailedOutput = sut.MoveCssInline(htmlSource, false);
 		}
 	}
 }
