@@ -28,6 +28,16 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"height: 100px;width: 100px;"));
 		}
 
+		[TestMethod]
+		public void MoveCssInline_InlineStyleElementTakesPrecedence()
+		{
+			string input = "<html><head><style type=\"text/css\">.test { width: 150px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+
+			string premailedOutput = sut.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px;"));
+		}
+
 		[TestMethod, Ignore]
 		public void ManualIntegrationTest()
 		{

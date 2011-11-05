@@ -31,7 +31,8 @@ namespace PreMailer.Net
 		/// Merges the specified style class, with this instance. Styles on this instance are not overriden by duplicates in the specified styleClass.
 		/// </summary>
 		/// <param name="styleClass">The style class.</param>
-		public void Merge(StyleClass styleClass)
+		/// <param name="canOverwrite">if set to <c>true</c> [can overwrite].</param>
+		public void Merge(StyleClass styleClass, bool canOverwrite)
 		{
 			foreach (var item in styleClass.Attributes)
 			{
@@ -39,7 +40,7 @@ namespace PreMailer.Net
 				{
 					this.Attributes.Add(item.Key, item.Value);
 				}
-				else
+				else if (canOverwrite)
 				{
 					this.Attributes[item.Key] = item.Value;
 				}
