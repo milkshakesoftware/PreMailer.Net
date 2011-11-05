@@ -12,6 +12,12 @@ Usage
     
     string premailedOutput = pm.MoveCssInline(htmlSource, false);
 
+Installation
+----------
+**NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
+
+
+
 Credits
 -------
 
