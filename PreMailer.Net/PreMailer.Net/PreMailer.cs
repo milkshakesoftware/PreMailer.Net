@@ -19,6 +19,8 @@ namespace PreMailer.Net
 
 			var styleNodes = doc.DocumentNode.SelectNodes("//style");
 
+			if (styleNodes == null) return htmlInput; // no styles to move
+
 			foreach (var style in styleNodes)
 			{
 				if (style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase))
