@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Premailer.net by milkshakesoftware</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Premailer.net</h1>
+        <p>C# .Net library, that moves your stylesheets to inline style attributes, for maximum compatibility with E-mail clients.</p>
+        <p class="view"><a href="https://github.com/milkshakesoftware/PreMailer.Net">View the Project on GitHub <small>milkshakesoftware/PreMailer.Net</small></a></p>
+        <ul>
+          <li><a href="https://github.com/milkshakesoftware/PreMailer.Net/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/milkshakesoftware/PreMailer.Net/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/milkshakesoftware/PreMailer.Net">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>Usage</h3>
+
+<pre><code>string htmlSource = File.ReadAllText(@"C:\Workspace\testmail.html");
+PreMailer pm = new PreMailer();
+string premailedOutput = pm.MoveCssInline(htmlSource, false);
+</code></pre>
+
+<h3>Installation</h3>
+
+<p><strong>NuGet</strong>: <a href="http://nuget.org/List/Packages/PreMailer.Net">PreMailer.Net</a></p>
+
+<h3>Credits</h3>
+
+<ul>
+<li>
+<a href="http://blog.dynamicprogrammer.com/2008/01/20/CSSParserClassInNET.aspx">The Dynamic Programmer</a> - For his CSS parser</li>
+<li><a href="http://code.google.com/p/fizzler/">Fizzler</a></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/milkshakesoftware">milkshakesoftware</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
