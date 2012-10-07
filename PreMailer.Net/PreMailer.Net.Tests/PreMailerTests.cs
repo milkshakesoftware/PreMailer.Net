@@ -4,18 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using PreMailerDotNet;
 
-namespace PreMailer.Net.Tests
+namespace PreMailerDotNet.Tests
 {
 	[TestClass]
 	public class PreMailerTests
 	{
-		private PreMailer sut;
 
 		[TestInitialize]
 		public void TestInitialize()
 		{
-			this.sut = new PreMailer();
 		}
 
 		[TestMethod]
@@ -23,7 +22,7 @@ namespace PreMailer.Net.Tests
 		{
 			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
 
-			string premailedOutput = sut.MoveCssInline(input, false);
+			string premailedOutput = PreMailer.MoveCssInline(input, false);
 
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"height: 100px;width: 100px;"));
 		}
@@ -33,7 +32,7 @@ namespace PreMailer.Net.Tests
 		{
 			string input = "<html><head><style type=\"text/css\">.test { width: 150px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
 
-			string premailedOutput = sut.MoveCssInline(input, false);
+            string premailedOutput = PreMailer.MoveCssInline(input, false);
 
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px;"));
 		}
@@ -53,7 +52,7 @@ namespace PreMailer.Net.Tests
 
 			string htmlSource = File.ReadAllText(String.Join("\\", testProjectDirectoryPath, "testmail.html"));
 
-			string premailedOutput = sut.MoveCssInline(htmlSource, false);
+            string premailedOutput = PreMailer.MoveCssInline(htmlSource, false);
 		}
 	}
 }

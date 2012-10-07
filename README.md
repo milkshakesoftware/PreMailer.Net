@@ -8,13 +8,11 @@ Usage
 
     string htmlSource = File.ReadAllText(@"C:\Workspace\testmail.html");
     
-    PreMailer pm = new PreMailer();
-    
-    string premailedOutput = pm.MoveCssInline(htmlSource, false);
+    string premailedOutput = PreMailer.MoveCssInline(htmlSource, false);
 
 Installation
 ----------
-**NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
+**NuGet**: [PreMailer.Net](http://www.myget.org/feed/advancedreipublic/package/PreMailer.Net)
 
 
 
