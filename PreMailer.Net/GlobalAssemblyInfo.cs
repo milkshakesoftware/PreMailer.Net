@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyProduct("PreMailer.Net")]
 [assembly: AssemblyCompany("Milkshake Software")]
-[assembly: AssemblyCopyright("Copyright © Milkshake Software 2011")]
+[assembly: AssemblyCopyright("Copyright © Milkshake Software 2012")]
 
 [assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
