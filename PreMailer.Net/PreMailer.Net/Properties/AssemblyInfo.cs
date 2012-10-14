@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PreMailer.Net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Pre-process HTML e-mails by moving CSS inline for maximum e-mail client compatibility.")]
 [assembly: AssemblyCulture("")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
