@@ -12,7 +12,7 @@ Usage
 
 Installation
 ----------
-**NuGet**: [PreMailer.Net](http://www.myget.org/feed/advancedreipublic/package/PreMailer.Net)
+**NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
 
 
 
