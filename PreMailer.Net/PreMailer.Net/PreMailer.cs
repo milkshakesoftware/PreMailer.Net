@@ -1,6 +1,7 @@
 ﻿using System;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
+using PreMailerDotNet.Parsing;
 
 namespace PreMailerDotNet
 {
@@ -17,13 +18,13 @@ namespace PreMailerDotNet
 			HtmlDocument doc = new HtmlDocument();
 			doc.LoadHtml(htmlInput);
 
-			var styleNodes = doc.DocumentNode.SelectNodes("//style");
+			/*var styleNodes = doc.DocumentNode.SelectNodes("//style");
 
 			if (styleNodes == null) return htmlInput; // no styles to move
 
 			foreach (var style in styleNodes)
 			{
-				if (style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase))
+				if (IsMobileStyleSheet(style))
 				{
 					continue;
 				}
@@ -39,7 +40,7 @@ namespace PreMailerDotNet
 					try
 					{
 						var styleClass = item.Value;
-						var elements = doc.DocumentNode.QuerySelectorAll(styleClass.Name);
+						var elements = doc.DocumentNode.QuerySelectorAll(styleClass.Selector);
 
 						foreach (var element in elements)
 						{
@@ -51,7 +52,7 @@ namespace PreMailerDotNet
 								styleAttribute = element.Attributes["style"];
 							}
 
-							StyleClass sc = cssParser.ParseStyleClass("dummy", styleAttribute.Value);
+							Selector sc = new Selector();// cssParser.ParseStyleClass("dummy", styleAttribute.Value);
 							sc.Merge(styleClass, false);
 
 							styleAttribute.Value = sc.ToString();
@@ -67,9 +68,14 @@ namespace PreMailerDotNet
 				{
 					style.Remove();
 				}
-			}
+			}*/
 
 			return doc.DocumentNode.OuterHtml;
+		}
+
+		private static bool IsMobileStyleSheet(HtmlNode style)
+		{
+			return style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase);
 		}
 	}
 }

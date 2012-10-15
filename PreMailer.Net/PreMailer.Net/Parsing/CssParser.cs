@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace PreMailerDotNet
+namespace PreMailerDotNet.Parsing
 {
-	public class CssParser
+	public class CssParser : ICssParser
 	{
-		private List<string> _styleSheets;
-		private SortedList<string, StyleClass> _scc;
+		private SortedList<string, Selector> _scc;
 
-		public SortedList<string, StyleClass> Styles
+		public SortedList<string, Selector> Styles
 		{
 			get { return this._scc; }
 			set { this._scc = value; }
@@ -16,29 +16,17 @@ namespace PreMailerDotNet
 
 		public CssParser()
 		{
-			this._styleSheets = new List<string>();
-			this._scc = new SortedList<string, StyleClass>();
+			this._scc = new SortedList<string, Selector>();
+		}
+
+		public void LoadStyleSheet(string filePath)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		public void AddStyleSheet(string styleSheetContent)
 		{
-			this._styleSheets.Add(styleSheetContent);
 			ProcessStyleSheet(styleSheetContent);
-		}
-
-		public string GetStyleSheet(int index)
-		{
-			return this._styleSheets[index];
-		}
-
-		public StyleClass ParseStyleClass(string className, string style)
-		{
-			StyleClass sc = new StyleClass();
-			sc.Name = className;
-
-			this.FillStyleClass(sc, className, style);
-
-			return sc;
 		}
 
 		private void ProcessStyleSheet(string styleSheetContent)
@@ -61,7 +49,7 @@ namespace PreMailerDotNet
 		/// <param name="s">The style block.</param>
 		private void FillStyleClass(string s)
 		{
-			StyleClass sc = null;
+			Selector sc = null;
 			string[] parts = s.Split('{');
 			string styleName = CleanUp(parts[0]).Trim();
 
@@ -72,12 +60,12 @@ namespace PreMailerDotNet
 			}
 			else
 			{
-				sc = new StyleClass();
+				sc = new Selector();
 			}
 
 			this.FillStyleClass(sc, styleName, parts[1]);
 
-			this._scc.Add(sc.Name, sc);
+			//this._scc.Add(sc.Selector, sc);
 		}
 
 		/// <summary>
@@ -86,9 +74,9 @@ namespace PreMailerDotNet
 		/// <param name="sc">The style class.</param>
 		/// <param name="styleName">Name of the style.</param>
 		/// <param name="style">The styles.</param>
-		private void FillStyleClass(StyleClass sc, string styleName, string style)
+		private void FillStyleClass(Selector sc, string styleName, string style)
 		{
-			sc.Name = styleName;
+			/*sc.Selector = styleName;
 
 			string[] atrs = CleanUp(style).Split(';');
 
@@ -105,7 +93,7 @@ namespace PreMailerDotNet
 
 					sc.Attributes.Add(_key, a.Split(':')[1].Trim().ToLower());
 				}
-			}
+			}*/
 		}
 
 		private string CleanUp(string s)

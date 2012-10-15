@@ -53,6 +53,9 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Parsing\CssParserTests.cs" />
+    <Compile Include="Parsing\RuleSetParserTests.cs" />
+    <Compile Include="Parsing\SelectorParserTests.cs" />
     <Compile Include="PreMailerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

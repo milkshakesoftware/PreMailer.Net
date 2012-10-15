@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace PreMailerDotNet
+namespace PreMailerDotNet.Parsing
 {
-	public class StyleClass
+	public class RuleSet
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StyleClass"/> class.
-		/// </summary>
-		public StyleClass()
+		public RuleSet()
 		{
-			this.Attributes = new SortedList<string, string>();
 		}
 
 		/// <summary>
-		/// Gets or sets the name.
+		/// Gets or sets the selectors.
 		/// </summary>
-		/// <value>The name.</value>
-		public string Name { get; set; }
+		/// <value>The selectors.</value>
+		public ICollection<Selector> Selectors { get; set; }
 
 		/// <summary>
 		/// Gets or sets the attributes.
@@ -30,11 +27,11 @@ namespace PreMailerDotNet
 		/// <summary>
 		/// Merges the specified style class, with this instance. Styles on this instance are not overriden by duplicates in the specified styleClass.
 		/// </summary>
-		/// <param name="styleClass">The style class.</param>
+		/// <param name="ruleSet">The style class.</param>
 		/// <param name="canOverwrite">if set to <c>true</c> [can overwrite].</param>
-		public void Merge(StyleClass styleClass, bool canOverwrite)
+		public void Merge(RuleSet ruleSet, bool canOverwrite)
 		{
-			foreach (var item in styleClass.Attributes)
+			foreach (var item in ruleSet.Attributes)
 			{
 				if (!this.Attributes.ContainsKey(item.Key))
 				{
