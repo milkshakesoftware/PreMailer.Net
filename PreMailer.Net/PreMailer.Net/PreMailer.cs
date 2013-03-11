@@ -65,7 +65,7 @@ namespace PreMailer.Net
 			return doc.DocumentNode.OuterHtml;
 		}
 
-        public string MoveCssInline2(string htmlInput, bool removeStyleElements)
+        public string MoveCssInlineWithInherit(string htmlInput, bool removeStyleElements)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(htmlInput);
