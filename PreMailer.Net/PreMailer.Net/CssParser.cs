@@ -5,7 +5,7 @@ namespace PreMailer.Net
 {
 	public class CssParser
 	{
-		private List<string> _styleSheets;
+        private readonly List<string> _styleSheets;
 		private SortedList<string, StyleClass> _scc;
 
 		public SortedList<string, StyleClass> Styles
@@ -33,8 +33,7 @@ namespace PreMailer.Net
 
 		public StyleClass ParseStyleClass(string className, string style)
 		{
-			StyleClass sc = new StyleClass();
-			sc.Name = className;
+            var sc = new StyleClass {Name = className};
 
 			this.FillStyleClass(sc, className, style);
 
@@ -61,7 +60,7 @@ namespace PreMailer.Net
 		/// <param name="s">The style block.</param>
 		private void FillStyleClass(string s)
 		{
-			StyleClass sc = null;
+            StyleClass sc;
 			string[] parts = s.Split('{');
 			string styleName = CleanUp(parts[0]).Trim();
 
@@ -111,9 +110,9 @@ namespace PreMailer.Net
 		private string CleanUp(string s)
 		{
 			string temp = s;
-			string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
+            const string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
 
-			Regex r = new Regex(reg);
+            var r = new Regex(reg);
 			temp = r.Replace(temp, "");
 			temp = temp.Replace("\r", "").Replace("\n", "");
 

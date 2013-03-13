@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace PreMailer.Net
 {
-	public class StyleClass
+    public class StyleClass : ICloneable 
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StyleClass"/> class.
@@ -55,7 +54,7 @@ namespace PreMailer.Net
 		/// </returns>
 		public override string ToString()
 		{
-			StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
 			foreach (var item in this.Attributes)
 			{
@@ -64,5 +63,17 @@ namespace PreMailer.Net
 
 			return sb.ToString();
 		}
+
+        object ICloneable.Clone()
+        {
+            var style = new StyleClass();
+
+            foreach (var attribute in this.Attributes)
+            {
+                style.Attributes.Add(attribute.Key, attribute.Value);
+            }
+
+            return style;
+        }
 	}
 }

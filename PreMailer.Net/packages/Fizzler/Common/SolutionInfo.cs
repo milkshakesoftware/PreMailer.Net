@@ -20,12 +20,43 @@
 #endregion
 
 using System.Reflection;
+using CLSCompliantAttribute = System.CLSCompliantAttribute;
+using ComVisible = System.Runtime.InteropServices.ComVisibleAttribute;
 
-[assembly: AssemblyTitle("Fizzler.System.HtmlAgilityPack")]
-[assembly: AssemblyDescription("Fizzler for HtmlAgilityPack")]
+//
+// General description
+//
+
+[assembly: AssemblyProduct("Fizzler")]
+[assembly: AssemblyCompany("http://fizzler.googlecode.com")]
+[assembly: AssemblyCopyright("Copyright (c) 2009 Atif Aziz, Colin Ramsay. All rights reserved.")]
+[assembly: AssemblyCulture("")]
 
 //
 // Version information
 //
 
-[assembly: AssemblyFileVersion("1.0.15619.2054")]
+[assembly: AssemblyVersion("0.1.15619.0")]
+[assembly: AssemblyInformationalVersion("1.015619.0")]
+
+//
+// Configuration (test, debug, release)
+//
+
+#if TEST
+    #if !DEBUG
+    #warning Test builds should be compiled using the DEBUG configuration.
+    #endif
+    [assembly: AssemblyConfiguration("Test")]
+#elif DEBUG
+    [assembly: AssemblyConfiguration("Debug")]
+#else
+    [assembly: AssemblyConfiguration("Release")]
+#endif
+
+//
+// COM visibility and CLS compliance
+//
+
+[assembly: ComVisible(false)]
+[assembly: CLSCompliant(true)]
