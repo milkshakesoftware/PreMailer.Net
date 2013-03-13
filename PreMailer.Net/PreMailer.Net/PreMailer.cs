@@ -117,8 +117,11 @@ namespace PreMailer.Net
 
                 if (@class != null)
                 {
-                    StyleClass style1 = cssParser.Styles["." + @class.Value];
-                    style.Merge(style1, true);
+                    if (cssParser.Styles.ContainsKey("." + @class.Value))
+                    {
+                        StyleClass style1 = cssParser.Styles["." + @class.Value];
+                        style.Merge(style1, true);
+                    }
                 }
 
                 if (style.Attributes.Any())
