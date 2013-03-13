@@ -75,7 +75,7 @@ namespace PreMailer
 
 		private static bool IsMobileStyleSheet(HtmlNode style)
 		{
-			return style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase);
+			return style.Attributes["id"] != null && !StringExtensions.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase);
 		}
 	}
 }

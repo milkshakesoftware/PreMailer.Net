@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace PreMailer.Parsing
 {
@@ -29,7 +28,7 @@ namespace PreMailer.Parsing
 
 		private static SelectorTypes GetCssSelectorType(string selector)
 		{
-			if (String.IsNullOrWhiteSpace(selector))
+			if (StringExtensions.IsNullOrWhiteSpace(selector))
 			{
 				return SelectorTypes.InlineStyle;
 			}

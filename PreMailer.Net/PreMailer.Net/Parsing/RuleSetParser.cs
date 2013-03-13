@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace PreMailer.Parsing
 {
@@ -16,7 +15,7 @@ namespace PreMailer.Parsing
 				throw new ArgumentNullException("style");
 			}
 
-			if (String.IsNullOrWhiteSpace(style))
+			if (StringExtensions.IsNullOrWhiteSpace(style))
 			{
 				throw new ArgumentException("The style parameter is empty!", "style");
 			}
