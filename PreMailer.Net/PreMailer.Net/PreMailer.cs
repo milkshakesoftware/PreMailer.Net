@@ -1,9 +1,9 @@
 ﻿using System;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
-using PreMailerDotNet.Parsing;
+using PreMailer.Parsing;
 
-namespace PreMailerDotNet
+namespace PreMailer
 {
 	public static class PreMailer
 	{

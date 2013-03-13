@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PreMailerDotNet.Parsing
+namespace PreMailer.Parsing
 {
 	public class RuleSet
 	{

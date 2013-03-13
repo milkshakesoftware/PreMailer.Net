@@ -9,8 +9,8 @@
     <ProjectGuid>{F5A0FED0-4A6C-49AA-B49E-C47A034D8098}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PreMailer.Net.Tests</RootNamespace>
-    <AssemblyName>PreMailer.Net.Tests</AssemblyName>
+    <RootNamespace>PreMailer.Tests</RootNamespace>
+    <AssemblyName>PreMailer.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -63,9 +63,9 @@
     <Content Include="testmail.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PreMailer.Net\PreMailer.Net.csproj">
+    <ProjectReference Include="..\PreMailer.Net\PreMailer.csproj">
       <Project>{7B4A85FA-FA98-40FD-83B7-5E84C8853736}</Project>
-      <Name>PreMailer.Net</Name>
+      <Name>PreMailer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PreMailerDotNet.Parsing;
+using PreMailer.Parsing;
 
 namespace PreMailer.Net.Tests.Parsing
 {

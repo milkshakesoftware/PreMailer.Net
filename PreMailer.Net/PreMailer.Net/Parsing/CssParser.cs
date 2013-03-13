@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace PreMailerDotNet.Parsing
+namespace PreMailer.Parsing
 {
 	public class CssParser : ICssParser
 	{

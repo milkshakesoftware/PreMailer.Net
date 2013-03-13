@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace PreMailerDotNet.Tests
+namespace PreMailer.Tests
 {
 	[TestClass]
 	public class PreMailerTests

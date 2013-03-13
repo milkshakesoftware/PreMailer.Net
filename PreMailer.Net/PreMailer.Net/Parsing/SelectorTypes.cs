@@ -1,6 +1,6 @@
 ﻿// No usings needed
 
-namespace PreMailerDotNet.Parsing
+namespace PreMailer.Parsing
 {
 	public enum SelectorTypes
 	{

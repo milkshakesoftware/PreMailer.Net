@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PreMailerDotNet.Parsing;
+using PreMailer.Parsing;
 
 namespace PreMailer.Net.Tests.Parsing
 {
