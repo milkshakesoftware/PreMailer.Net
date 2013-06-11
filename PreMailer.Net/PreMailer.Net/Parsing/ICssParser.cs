@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PreMailer.Parsing
 {
@@ -9,6 +6,6 @@ namespace PreMailer.Parsing
 	{
 		void AddStyleSheet(string styleSheetContent);
 
-		void LoadStyleSheet(string filePath);
+		void AddStyleSheet(Uri url);
 	}
 }

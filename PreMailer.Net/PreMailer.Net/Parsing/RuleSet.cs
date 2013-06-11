@@ -9,26 +9,29 @@ namespace PreMailer.Parsing
 	{
 		public RuleSet()
 		{
+			this.Selectors = new List<Selector>();
+			this.Attributes = new SortedList<string, string>();
 		}
 
 		/// <summary>
 		/// Gets or sets the selectors.
 		/// </summary>
 		/// <value>The selectors.</value>
-		public ICollection<Selector> Selectors { get; set; }
+		public ICollection<Selector> Selectors { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the attributes.
 		/// </summary>
 		/// <value>The attributes.</value>
-		public SortedList<string, string> Attributes { get; set; }
+		public SortedList<string, string> Attributes { get; private set; }
 
 		/// <summary>
-		/// Merges the specified style class, with this instance. Styles on this instance are not overriden by duplicates in the specified styleClass.
+		/// Merges the specified rule set, with this instance. Styles on this instance is overwritten, 
+		/// only if the specificity of the mathcingSelector is greater than any of the selectors on this instance.
 		/// </summary>
-		/// <param name="ruleSet">The style class.</param>
-		/// <param name="canOverwrite">if set to <c>true</c> [can overwrite].</param>
-		public void Merge(RuleSet ruleSet, bool canOverwrite)
+		/// <param name="ruleSet">The rule set.</param>
+		/// <param name="matchingSelector">The selector that matched the element.</param>
+		public virtual void Merge(RuleSet ruleSet, Selector matchingSelector)
 		{
 			foreach (var item in ruleSet.Attributes)
 			{
@@ -36,7 +39,7 @@ namespace PreMailer.Parsing
 				{
 					this.Attributes.Add(item.Key, item.Value);
 				}
-				else if (canOverwrite)
+				else if (matchingSelector.Specificity > this.Selectors.Max(s => s.Specificity))
 				{
 					this.Attributes[item.Key] = item.Value;
 				}

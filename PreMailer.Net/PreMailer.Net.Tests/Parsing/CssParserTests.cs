@@ -25,12 +25,6 @@ namespace PreMailer.Net.Tests.Parsing
 			Assert.IsInstanceOfType(sut, typeof(ICssParser));
 		}
 
-		[TestMethod]
-		public void Constructor_InstantiatesStylesList()
-		{
-			var sut = new CssParser();
 
-			Assert.IsInstanceOfType(sut.Styles, typeof(SortedList<string, Selector>));
-		}
 	}
 }

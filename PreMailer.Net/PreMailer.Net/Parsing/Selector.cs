@@ -7,6 +7,9 @@ namespace PreMailer.Parsing
 		/// <summary>
 		/// Gets or sets the selector.
 		/// </summary>
+		/// <remarks>
+		/// This is the entire selector string, e.g.: .menu ul > li
+		/// </remarks>
 		/// <value>The selector.</value>
 		public string SelectorName { get; set; }
 
@@ -20,7 +23,10 @@ namespace PreMailer.Parsing
 		/// Gets or sets the CSS specificity.
 		/// </summary>
 		/// <value>The CSS specificity.</value>
-		/// <remarks>What the heck is CSS Specificity? http://designshack.net/articles/css/what-the-heck-is-css-specificity/ </remarks>
+		/// <remarks>
+		/// What the heck is CSS Specificity? http://designshack.net/articles/css/what-the-heck-is-css-specificity/
+		/// Use this awesome calculator: http://specificity.keegan.st/
+		/// </remarks>
 		public int Specificity { get; set; }
 
 		/// <summary>
