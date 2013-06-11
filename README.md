@@ -15,10 +15,13 @@ Installation
 ----------
 **NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
 
-
-
 Credits
 -------
 
 * [The Dynamic Programmer](http://blog.dynamicprogrammer.com/2008/01/20/CSSParserClassInNET.aspx) - For his CSS parser
 * [Fizzler](http://code.google.com/p/fizzler/)
+
+License
+-------
+
+PreMailer.Net is available under the MIT license. See the [LICENSE](https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE) file for more info.
