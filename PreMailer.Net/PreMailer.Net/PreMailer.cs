@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using CsQuery;
+using CsQuery.Implementation;
 
 namespace PreMailer.Net {
     public class PreMailer {
@@ -25,15 +27,24 @@ namespace PreMailer.Net {
 
                 cssParser.AddStyleSheet(cssBlock);
 
-                foreach (var item in cssParser.Styles) {
-                    var styleClass = item.Value;
+                foreach (var rule in cssParser.Styles) {
+                    if (rule.Key.StartsWith("@media"))
+                        continue;
+
+                    var styleClass = rule.Value;
                     var elements = doc[styleClass.Name];
 
                     foreach (var element in elements) {
+                        if (_elementsWithoutStyle.Contains(element.NodeName.ToLower()))
+                            continue;
+
                         var elementStyle = element.Style;
-                        StyleClass sc = cssParser.ParseStyleClass("dummy", elementStyle.CssText);
-                        sc.Merge(styleClass, false);
-                        elementStyle.CssText = sc.ToString();
+                        if (elementStyle == null)
+                            continue;
+                        StyleClass sc = cssParser.ParseStyleClass("dummy", elementStyle.CssText ?? String.Empty);
+                        sc.Merge(styleClass, true);
+                        foreach (var attr in sc.Attributes)
+                            elementStyle.SetStyle(attr.Key, attr.Value, false);
                     }
                 }
 
@@ -44,5 +55,7 @@ namespace PreMailer.Net {
 
             return doc.Render();
         }
+
+        private static readonly string[] _elementsWithoutStyle = new string[] { "html", "head", "script", "noscript", "meta", "title", "style", "base" };
     }
 }
