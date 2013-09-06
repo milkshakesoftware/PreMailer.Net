@@ -1,0 +1,3 @@
+[submodule "PreMailer.NEt/CsQuery"]
+	path = PreMailer.Net/CsQuery
+	url = https://github.com/codesmithtools/CsQuery.git

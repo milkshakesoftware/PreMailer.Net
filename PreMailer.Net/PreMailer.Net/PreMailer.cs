@@ -1,67 +1,61 @@
 ﻿using System;
-using Fizzler.Systems.HtmlAgilityPack;
-using HtmlAgilityPack;
+using System.Linq;
+using CsQuery;
+using CsQuery.Implementation;
 
-namespace PreMailer.Net
-{
-	public class PreMailer
-	{
-		/// <summary>
-		/// Moves the CSS embedded in the specified htmlInput to inline style attributes.
-		/// </summary>
-		/// <param name="htmlInput">The HTML input.</param>
-		/// <param name="removeStyleElements">if set to <c>true</c> the style elements are removed.</param>
-		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public string MoveCssInline(string htmlInput, bool removeStyleElements)
-		{
-			HtmlDocument doc = new HtmlDocument();
-			doc.LoadHtml(htmlInput);
+namespace PreMailer.Net {
+    public class PreMailer {
+        /// <summary>
+        /// Moves the CSS embedded in the specified htmlInput to inline style attributes.
+        /// </summary>
+        /// <param name="htmlInput">The HTML input.</param>
+        /// <param name="removeStyleElements">if set to <c>true</c> the style elements are removed.</param>
+        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+        public string MoveCssInline(string htmlInput, bool removeStyleElements) {
+            var doc = CQ.CreateDocument(htmlInput);
+            var styleNodes = doc["style"];
 
-			var styleNodes = doc.DocumentNode.SelectNodes("//style");
+            if (styleNodes == null || styleNodes.Length == 0) return htmlInput; // no styles to move
 
-			if (styleNodes == null) return htmlInput; // no styles to move
+            foreach (var style in styleNodes) {
+                if (style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"]) && style.Attributes["id"].Equals("mobile", StringComparison.InvariantCultureIgnoreCase)) {
+                    continue;
+                }
 
-			foreach (var style in styleNodes)
-			{
-				if (style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"].Value) && style.Attributes["id"].Value.Equals("mobile", StringComparison.InvariantCultureIgnoreCase))
-				{
-					continue;
-				}
+                var cssParser = new CssParser();
+                string cssBlock = style.InnerHTML;
 
-				CssParser cssParser = new CssParser();
-				string cssBlock = style.InnerHtml;
+                cssParser.AddStyleSheet(cssBlock);
 
-				cssParser.AddStyleSheet(cssBlock);
+                foreach (var rule in cssParser.Styles) {
+                    if (rule.Key.StartsWith("@media"))
+                        continue;
 
-				foreach (var item in cssParser.Styles)
-				{
-					var styleClass = item.Value;
-					var elements = doc.DocumentNode.QuerySelectorAll(styleClass.Name);
+                    var styleClass = rule.Value;
+                    var elements = doc[styleClass.Name];
 
-					foreach (var element in elements)
-					{
-						HtmlAttribute styleAttribute = element.Attributes["style"];
+                    foreach (var element in elements) {
+                        if (_elementsWithoutStyle.Contains(element.NodeName.ToLower()))
+                            continue;
 
-						if (styleAttribute == null)
-						{
-							element.Attributes.Add("style", String.Empty);
-							styleAttribute = element.Attributes["style"];
-						}
+                        var elementStyle = element.Style;
+                        if (elementStyle == null)
+                            continue;
+                        StyleClass sc = cssParser.ParseStyleClass("dummy", elementStyle.CssText ?? String.Empty);
+                        sc.Merge(styleClass, true);
+                        foreach (var attr in sc.Attributes)
+                            elementStyle.SetStyle(attr.Key, attr.Value, false);
+                    }
+                }
 
-						StyleClass sc = cssParser.ParseStyleClass("dummy", styleAttribute.Value);
-						sc.Merge(styleClass, false);
+                if (removeStyleElements) {
+                    style.Remove();
+                }
+            }
 
-						styleAttribute.Value = sc.ToString();
-					}
-				}
+            return doc.Render();
+        }
 
-				if (removeStyleElements)
-				{
-					style.Remove();
-				}
-			}
-
-			return doc.DocumentNode.OuterHtml;
-		}
-	}
+        private static readonly string[] _elementsWithoutStyle = new string[] { "html", "head", "script", "noscript", "meta", "title", "style", "base" };
+    }
 }
