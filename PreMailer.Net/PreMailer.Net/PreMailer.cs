@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
 
@@ -33,26 +35,50 @@ namespace PreMailer.Net
 
 				cssParser.AddStyleSheet(cssBlock);
 
+			    var elemStyles = new Dictionary<HtmlNode, List<StyleClass>>();
+
+                // First up - remember each style definition that is to be applied to each element.
 				foreach (var item in cssParser.Styles)
 				{
-					var styleClass = item.Value;
+                    var styleClass = item.Value;
 					var elements = doc.DocumentNode.QuerySelectorAll(styleClass.Name);
 
 					foreach (var element in elements)
 					{
-						HtmlAttribute styleAttribute = element.Attributes["style"];
+					    var existingStyles = elemStyles.ContainsKey(element) ?
+                            elemStyles[element] : new List<StyleClass>();
 
-						if (styleAttribute == null)
-						{
-							element.Attributes.Add("style", String.Empty);
-							styleAttribute = element.Attributes["style"];
-						}
+                        existingStyles.Add(item.Value);
 
-						StyleClass sc = cssParser.ParseStyleClass("dummy", styleAttribute.Value);
-						sc.Merge(styleClass, false);
-
-						styleAttribute.Value = sc.ToString();
+					    elemStyles[element] = existingStyles;
 					}
+				}
+
+                // Now we know all the styles that should be applied to each element.
+                // Sort them by their specificity and then apply them in turn, merging and allowing overwrite
+				foreach (var elemStyle in elemStyles)
+				{
+				    var sortedStyleDefs = elemStyle.Value.OrderBy(x => CssSelectorParser.Parse(x.Name).Specificity).ToList();
+                    var styleAttribute = elemStyle.Key.Attributes["style"];
+
+				    if (styleAttribute == null)
+				    {
+				        elemStyle.Key.Attributes.Add("style", String.Empty);
+				        styleAttribute = elemStyle.Key.Attributes["style"];
+				    }
+				    else // Ensure that existing inline styles always win.
+				    {
+				        sortedStyleDefs.Add(
+                            cssParser.ParseStyleClass("inline", elemStyle.Key.Attributes["style"].Value));
+				    }
+
+				    foreach (var styleDef in sortedStyleDefs)
+				    {
+				        var sc = cssParser.ParseStyleClass("dummy", styleAttribute.Value);
+                        sc.Merge(styleDef, true);
+
+                        styleAttribute.Value = sc.ToString();
+				    }
 				}
 
 				if (removeStyleElements)
