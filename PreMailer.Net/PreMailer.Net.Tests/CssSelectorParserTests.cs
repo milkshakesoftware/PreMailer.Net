@@ -5,123 +5,90 @@ namespace PreMailer.Net.Tests
     [TestClass]
     public class CssSelectorParserTests
     {
-        [TestMethod]
-        public void Parse_Null_ReturnsZeroCounts()
+        private CssSelectorParser _parser;
+
+        [TestInitialize]
+        public void TestInitialize()
         {
-            var result = CssSelectorParser.Parse(null);
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(0, result.ElementNames);
-            Assert.AreEqual(0, result.Specificity);
+            _parser = new CssSelectorParser();
+        }
+
+        [TestMethod]
+        public void GetSelectorSpecificity_Null_Returns0()
+        {
+            var result = _parser.GetSelectorSpecificity(null);
+            Assert.AreEqual(0, result);
         }
         
         [TestMethod]
-        public void Parse_Empty_ReturnsZeroCounts()
+        public void GetSelectorSpecificity_Empty_Returns0()
         {
-            var result = CssSelectorParser.Parse(string.Empty);
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(0, result.ElementNames);
-            Assert.AreEqual(0, result.Specificity);
+            var result = _parser.GetSelectorSpecificity(string.Empty);
+            Assert.AreEqual(0, result);
         }
         
         [TestMethod]
-        public void Parse_Wildcard_ReturnsZeroCounts()
+        public void GetSelectorSpecificity_Wildcard_Returns0()
         {
-            var result = CssSelectorParser.Parse("*");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(0, result.ElementNames);
-            Assert.AreEqual(0, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("*");
+            Assert.AreEqual(0, result);
         }
 
         // Examples from http://www.w3.org/TR/2001/CR-css3-selectors-20011113/#specificity
         [TestMethod]
-        public void Parse_SingleElementName_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_SingleElementName_Returns1()
         {
-            var result = CssSelectorParser.Parse("LI");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(1, result.ElementNames);
-            Assert.AreEqual(1, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("LI");
+            Assert.AreEqual(1, result);
         }
         
         [TestMethod]
-        public void Parse_TwoElementNames_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_TwoElementNames_Returns2()
         {
-            var result = CssSelectorParser.Parse("UL LI");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(2, result.ElementNames);
-            Assert.AreEqual(2, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("UL LI");
+            Assert.AreEqual(2, result);
         }
         
         [TestMethod]
-        public void Parse_ThreeElementNames_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_ThreeElementNames_Returns3()
         {
-            var result = CssSelectorParser.Parse("UL OL+LI");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(3, result.ElementNames);
-            Assert.AreEqual(3, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("UL OL+LI");
+            Assert.AreEqual(3, result);
         }
         
         [TestMethod]
-        public void Parse_ElementNameAndAttribute_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_ElementNameAndAttribute_Returns11()
         {
-            var result = CssSelectorParser.Parse("H1 + *[REL=up]");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(0, result.Classes);
-            Assert.AreEqual(1, result.Attributes);
-            Assert.AreEqual(1, result.ElementNames);
-            Assert.AreEqual(11, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("H1 + *[REL=up]");
+            Assert.AreEqual(11, result);
         }
         
         [TestMethod]
-        public void Parse_ThreeElementNamesAndOneClass_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_ThreeElementNamesAndOneClass_Returns13()
         {
-            var result = CssSelectorParser.Parse("UL OL LI.red");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(1, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(3, result.ElementNames);
-            Assert.AreEqual(13, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("UL OL LI.red");
+            Assert.AreEqual(13, result);
         }
         
         [TestMethod]
-        public void Parse_OneElementNameAndTwoClasses_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_OneElementNameAndTwoClasses_Returns21()
         {
-            var result = CssSelectorParser.Parse("LI.red.level");
-            Assert.AreEqual(0, result.Ids);
-            Assert.AreEqual(2, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(1, result.ElementNames);
-            Assert.AreEqual(21, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("LI.red.level");
+            Assert.AreEqual(21, result);
         }
         
         [TestMethod]
-        public void Parse_OneId_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_OneId_Returns100()
         {
-            var result = CssSelectorParser.Parse("#x34y");
-            Assert.AreEqual(1, result.Ids);
-            Assert.AreEqual(0, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(0, result.ElementNames);
-            Assert.AreEqual(100, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("#x34y");
+            Assert.AreEqual(100, result);
         }
 
         [TestMethod]
-        public void Parse_OneIdAndElementInPsuedoElement_ReturnsExpectedResult()
+        public void GetSelectorSpecificity_OneIdAndElementInPsuedoElement_Returns101()
         {
-            var result = CssSelectorParser.Parse("#s12:not(FOO)");
-            Assert.AreEqual(1, result.Ids);
-            Assert.AreEqual(0, result.Classes);
-            Assert.AreEqual(0, result.Attributes);
-            Assert.AreEqual(1, result.ElementNames);
-            Assert.AreEqual(101, result.Specificity);
+            var result = _parser.GetSelectorSpecificity("#s12:not(FOO)");
+            Assert.AreEqual(101, result);
         }
     }
 }

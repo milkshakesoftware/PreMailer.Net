@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="CssParser.cs" />
     <Compile Include="CssSelectorParser.cs" />
+    <Compile Include="ICssSelectorParser.cs" />
     <Compile Include="PreMailer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StyleClass.cs" />

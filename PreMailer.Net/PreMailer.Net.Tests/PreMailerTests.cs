@@ -38,17 +38,17 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px;"));
 		}
 
-        [TestMethod]
-	    public void MoveCssInline_CssWithHigherSpecificity_AppliesMoreSpecificCss()
-	    {
-	        string input = @"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.01//EN"" ""http://www.w3.org/TR/html4/strict.dtd""><html><head><title>Y U NO WORK?</title></head><body><div id=""content""><style>.tblGenFixed td {background-color:#fff;}.tblGenFixed td.s0 {background-color:#ead1dc;}</style><table dir='ltr' border=0 cellpadding=0 cellspacing=0 class='tblGenFixed' id='tblMain'><tr dir='ltr'><td colspan=6 dir='ltr' class='s0'>Complete My AFF Course</tr></div></body></html>";
+	  [TestMethod]
+	  public void MoveCssInline_CssWithHigherSpecificity_AppliesMoreSpecificCss()
+	  {
+	      string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
-	        string premailedOutput = sut.MoveCssInline(input, false);
+	      string premailedOutput = sut.MoveCssInline(input, false);
 
-            Assert.IsTrue(premailedOutput.Contains("style=\"background-color: #ead1dc;\""));
-	    }
+	      Assert.IsTrue(premailedOutput.Contains("style=\"width: 42px;\""));
+	  }
 
-		[TestMethod, Ignore]
+	  [TestMethod, Ignore]
 		public void ManualIntegrationTest()
 		{
 			string testProjectDirectoryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
