@@ -22,7 +22,7 @@ namespace PreMailer.Net.Tests
 
 			string premailedOutput = sut.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px; height: 100px;"));
+			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"height: 100px;width: 100px;"));
 		}
 
 		[TestMethod]
@@ -34,5 +34,15 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px"));
 		}
+
+	  [TestMethod]
+	  public void MoveCssInline_CssWithHigherSpecificity_AppliesMoreSpecificCss()
+	  {
+	      string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
+
+	      string premailedOutput = sut.MoveCssInline(input, false);
+
+	      Assert.IsTrue(premailedOutput.Contains("style=\"width: 42px;\""));
+	  }
 	}
 }
