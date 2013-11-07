@@ -1,53 +1,38 @@
-﻿using System;
-using ApprovalTests.Reporters;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
-using NUnit.Framework;
 
 namespace PreMailer.Net.Tests
 {
-	[TestFixture]
-    [UseReporter(typeof(DiffReporter))]
-    public class PreMailerTests
+	[TestClass]
+	public class PreMailerTests
 	{
-		private PreMailer _sut;
+		private PreMailer sut;
 
-		[SetUp]
+		[TestInitialize]
 		public void TestInitialize()
 		{
-			_sut = new PreMailer();
+			this.sut = new PreMailer();
 		}
 
-		[Test]
+		[TestMethod]
 		public void MoveCssInline_RespectExistingStyleElement()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
 
-			string premailedOutput = _sut.MoveCssInline(input, false);
+			string premailedOutput = sut.MoveCssInline(input, false);
 
-            Console.WriteLine(premailedOutput);
-            Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px; height: 100px;"));
+			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px; height: 100px;"));
 		}
 
-		[Test]
+		[TestMethod]
 		public void MoveCssInline_InlineStyleElementTakesPrecedence()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { width: 150px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
 
-			string premailedOutput = _sut.MoveCssInline(input, false);
+			string premailedOutput = sut.MoveCssInline(input, false);
 
-            Console.WriteLine(premailedOutput);
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px"));
 		}
-
-		[Test]
-		public void ManualIntegrationTest()
-		{
-			string htmlSource = File.ReadAllText("testmail.html");
-
-			string premailedOutput = _sut.MoveCssInline(htmlSource, false);
-            Console.WriteLine(premailedOutput);
-
-            ApprovalTests.Approvals.Verify(premailedOutput);
-        }
 	}
 }
