@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>PreMailer.Net</id>
+    <version>1.1.3</version>
+    <authors>Martin H. Normark</authors>
+    <owners>milkshakesoftware</owners>
+    <licenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/milkshakesoftware/PreMailer.Net</projectUrl>
+    <iconUrl>https://github.com/milkshakesoftware/PreMailer.Net/raw/master/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+		PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
+	</description>
+    <releaseNotes>Fixes issue with CSS specificity: https://github.com/milkshakesoftware/PreMailer.Net/pull/21 and uses CsQuery instead of Fizzler and HTML AgilityPack: https://github.com/milkshakesoftware/PreMailer.Net/pull/19</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags>email css newsletter html</tags>
+    <dependencies>
+      <dependency id="CsQuery" version="1.3.4" />
+    </dependencies>
+  </metadata>
+</package>
