@@ -7,10 +7,12 @@ namespace PreMailer.Net
 {
     public class PreMailer
     {
+        private readonly CssParser _cssParser;
         private readonly CssSelectorParser _cssSelectorParser;
 
         public PreMailer()
         {
+            _cssParser = new CssParser();
             _cssSelectorParser = new CssSelectorParser();
         }
 
@@ -27,70 +29,113 @@ namespace PreMailer.Net
 
             if (styleNodes == null || styleNodes.Length == 0) return htmlInput; // no styles to move
 
-            foreach (var style in styleNodes)
-            {
-                if (style.Attributes["id"] != null && !String.IsNullOrWhiteSpace(style.Attributes["id"]) &&
-                    style.Attributes["id"].Equals("mobile", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    continue;
-                }
-
-                CssParser cssParser = new CssParser();
-                string cssBlock = style.InnerHTML;
-
-                cssParser.AddStyleSheet(cssBlock);
-
-                var elemStyles = new Dictionary<IDomObject, List<StyleClass>>();
-
-                // First up - remember each style definition that is to be applied to each element.
-                foreach (var item in cssParser.Styles)
-                {
-                    var styleClass = item.Value;
-                    var elements = doc[styleClass.Name];
-
-                    foreach (var element in elements)
-                    {
-                        var existingStyles = elemStyles.ContainsKey(element)
-                            ? elemStyles[element]
-                            : new List<StyleClass>();
-
-                        existingStyles.Add(item.Value);
-
-                        elemStyles[element] = existingStyles;
-                    }
-                }
-
-                // Now we know all the styles that should be applied to each element.
-                // Sort them by their specificity and then apply them in turn, merging and allowing overwrite
-                foreach (var elemStyle in elemStyles)
-                {
-                    var sortedStyleDefs = elemStyle.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
-
-                    if (String.IsNullOrWhiteSpace(elemStyle.Key.Attributes["style"]))
-                    {
-                        elemStyle.Key.SetAttribute("style", String.Empty);
-                    }
-                    else // Ensure that existing inline styles always win.
-                    {
-												sortedStyleDefs.Add(cssParser.ParseStyleClass("inline", elemStyle.Key.Attributes["style"]));
-                    }
-
-                    foreach (var styleDef in sortedStyleDefs)
-                    {
-												var sc = cssParser.ParseStyleClass("dummy", elemStyle.Key.Attributes["style"]);
-                        sc.Merge(styleDef, true);
-
-												elemStyle.Key.SetAttribute("style", sc.ToString());
-                    }
-                }
-
-                if (removeStyleElements)
-                {
-                    style.Remove();
-                }
-            }
+            styleNodes
+                .Join(removeElement: removeStyleElements)
+                .FindElementsWithStyles(doc)
+                .MergeStyleClasses(_cssParser, _cssSelectorParser)
+                .ApplyStyles();
 
             return doc.Render();
+        }
+    }
+
+    internal static class PreMailerExtensions
+    {
+        internal static SortedList<string, StyleClass> Join(this IEnumerable<IDomObject> styleNodes, bool removeElement)
+        {
+            var parser = new CssParser();
+
+            foreach (var style in styleNodes)
+            {
+                if (style.IsForMobile())
+                    continue;
+
+                var cssBlock = style.InnerHTML;
+
+                parser.AddStyleSheet(cssBlock);
+
+                if (removeElement)
+                    style.Remove();
+            }
+            
+            return parser.Styles;
+        }
+
+        internal static bool IsForMobile(this IDomObject styleNode)
+        {
+            return (styleNode.Attributes["id"] != null && !String.IsNullOrWhiteSpace(styleNode.Attributes["id"]) &&
+                    styleNode.Attributes["id"].Equals("mobile", StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        internal static Dictionary<IDomObject, List<StyleClass>> FindElementsWithStyles(this SortedList<string, StyleClass> stylesToApply, CQ document)
+        {
+            var result = new Dictionary<IDomObject, List<StyleClass>>();
+
+            foreach (var style in stylesToApply)
+            {
+                var elementsForSelector = document[style.Value.Name];
+
+                foreach (var el in elementsForSelector)
+                {
+                    var existing = result.ContainsKey(el) ? result[el] : new List<StyleClass>();
+                    existing.Add(style.Value);
+                    result[el] = existing;
+                }
+            }
+            
+            return result;
+        }
+
+        internal static Dictionary<IDomObject, List<StyleClass>> SortBySpecificity(this Dictionary<IDomObject, List<StyleClass>> styles, CssParser cssParser, ICssSelectorParser selectorParser)
+        {
+            var result = new Dictionary<IDomObject, List<StyleClass>>();
+
+            foreach (var style in styles)
+            {
+                var sortedStyles = style.Value.OrderBy(x => selectorParser.GetSelectorSpecificity(x.Name)).ToList();
+
+                if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
+                {
+                    style.Key.SetAttribute("style", String.Empty);
+                }
+                else // Ensure that existing inline styles always win.
+                {
+										sortedStyles.Add(cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
+                }
+
+                result[style.Key] = sortedStyles;
+            }
+
+            return result;
+        }
+        
+        internal static Dictionary<IDomObject, StyleClass> MergeStyleClasses(this Dictionary<IDomObject, List<StyleClass>> styles, CssParser cssParser, ICssSelectorParser selectorParser)
+        {
+            var result = new Dictionary<IDomObject, StyleClass>();
+            var stylesBySpecificity = styles.SortBySpecificity(cssParser, selectorParser);
+
+            foreach (var elemStyle in stylesBySpecificity)
+            {
+                // CSS Classes are assumed to be sorted by specifity now, so we can just merge these up.
+                var merged = new StyleClass();
+                foreach (var style in elemStyle.Value)
+                {
+                    merged.Merge(style, true);
+                }
+
+                result[elemStyle.Key] = merged;
+            }
+
+            return result;
+        }
+        
+        internal static void ApplyStyles(this Dictionary<IDomObject, StyleClass> elementStyles)
+        {
+            foreach (var elemStyle in elementStyles)
+            {
+                var el = elemStyle.Key;
+                el.SetAttribute("style", elemStyle.Value.ToString());
+            }
         }
     }
 }

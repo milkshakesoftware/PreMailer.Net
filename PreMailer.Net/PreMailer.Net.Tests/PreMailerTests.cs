@@ -44,5 +44,15 @@ namespace PreMailer.Net.Tests
 
 	      Assert.IsTrue(premailedOutput.Contains("style=\"width: 42px;\""));
 	  }
+      
+    [TestMethod]
+	  public void MoveCssInline_CssWithHigherSpecificityInSeparateStyleTag_AppliesMoreSpecificCss()
+	  {
+	      string input = "<html><head><style type=\"text/css\">.target { width: 42px; }</style><style type=\"text/css\">.outer .inner .target { width: 1337px; }</style></head><body><div class=\"outer\"><div class=\"inner\"><div class=\"target\">test</div></div></div></body></html>";
+
+	      string premailedOutput = sut.MoveCssInline(input, false);
+
+	      Assert.IsTrue(premailedOutput.Contains("style=\"width: 1337px;\""));
+	  }
 	}
 }
