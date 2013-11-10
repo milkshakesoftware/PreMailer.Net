@@ -1,6 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
 
 namespace PreMailer.Net.Tests
 {
@@ -35,24 +33,24 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(premailedOutput.Contains("<div class=\"test\" style=\"width: 100px"));
 		}
 
-	  [TestMethod]
-	  public void MoveCssInline_CssWithHigherSpecificity_AppliesMoreSpecificCss()
-	  {
-	      string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
+		[TestMethod]
+		public void MoveCssInline_CssWithHigherSpecificity_AppliesMoreSpecificCss()
+		{
+			string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
-	      string premailedOutput = sut.MoveCssInline(input, false);
+			string premailedOutput = sut.MoveCssInline(input, false);
 
-	      Assert.IsTrue(premailedOutput.Contains("style=\"width: 42px;\""));
-	  }
-      
-    [TestMethod]
-	  public void MoveCssInline_CssWithHigherSpecificityInSeparateStyleTag_AppliesMoreSpecificCss()
-	  {
-	      string input = "<html><head><style type=\"text/css\">.target { width: 42px; }</style><style type=\"text/css\">.outer .inner .target { width: 1337px; }</style></head><body><div class=\"outer\"><div class=\"inner\"><div class=\"target\">test</div></div></div></body></html>";
+			Assert.IsTrue(premailedOutput.Contains("style=\"width: 42px;\""));
+		}
 
-	      string premailedOutput = sut.MoveCssInline(input, false);
+		[TestMethod]
+		public void MoveCssInline_CssWithHigherSpecificityInSeparateStyleTag_AppliesMoreSpecificCss()
+		{
+			string input = "<html><head><style type=\"text/css\">.target { width: 42px; }</style><style type=\"text/css\">.outer .inner .target { width: 1337px; }</style></head><body><div class=\"outer\"><div class=\"inner\"><div class=\"target\">test</div></div></div></body></html>";
 
-	      Assert.IsTrue(premailedOutput.Contains("style=\"width: 1337px;\""));
-	  }
+			string premailedOutput = sut.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Contains("style=\"width: 1337px;\""));
+		}
 	}
 }
