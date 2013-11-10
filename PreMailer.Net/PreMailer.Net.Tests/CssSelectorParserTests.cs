@@ -87,6 +87,13 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void GetSelectorSpecificity_OneIdAndElementInPsuedoElement_Returns101()
 		{
+			var result = _parser.GetSelectorSpecificity("#s12:after");
+			Assert.AreEqual(101, result);
+		}
+
+		[TestMethod]
+		public void GetSelectorSpecificity_OneIdAndElementInNotPsuedoClass_Returns101()
+		{
 			var result = _parser.GetSelectorSpecificity("#s12:not(FOO)");
 			Assert.AreEqual(101, result);
 		}
@@ -103,6 +110,13 @@ namespace PreMailer.Net.Tests
 		{
 			var result = _parser.GetSelectorSpecificity("#id #id #id #id #id #id #id #id #id #id .class element");
 			Assert.AreEqual(1011, result);
+		}
+
+		[TestMethod]
+		public void GetSelectorSpecificity_ElementWithPsuedoClass_Returns11()
+		{
+			var result = _parser.GetSelectorSpecificity("li:first-child");
+			Assert.AreEqual(11, result);
 		}
 
 		[TestMethod]
