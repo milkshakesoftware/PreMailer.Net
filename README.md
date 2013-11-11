@@ -10,7 +10,20 @@ C# Library for moving CSS to inline style attributes, to gain maximum E-mail cli
     
     string premailedOutput = pm.MoveCssInline(htmlSource, false);
 
+### Media queries
+If you want to [apply mobile styles to your e-mail](http://help.campaignmonitor.com/topic.aspx?t=164), you should put your
+mobile specific styles in its own `style` block that targets the appropriate devices using media queries.
 
+But since you cannot know by the time of sending an e-mail wether or not it will be viewed on a mobile device, the `style` 
+block that targets mobile devices should not be inlined!
+
+To ignore a `style` block, you need to specify an ignore selector when calling the `MoveCssInline` method, like this:
+
+    string premailedOutput = pm.MoveCssInline(input, false, ignoreElements: "#ignore");
+    
+And your mobile specific `style` block should have an ID of `ignore`:
+    
+    <style type=\"text/css\" id=\"ignore\">.target { width: 1337px; }</style>
 
 ## Installation
 **NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
