@@ -21,15 +21,16 @@ namespace PreMailer.Net
 		/// Moves the CSS embedded in the specified htmlInput to inline style attributes.
 		/// </summary>
 		/// <param name="htmlInput">The HTML input.</param>
-		/// <param name="removeStyleElements">if set to <c>true</c> the style elements are removed.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public string MoveCssInline(string htmlInput, bool removeStyleElements)
+		public string MoveCssInline(string htmlInput, bool removeStyleElements = false, string ignoreElements = null)
 		{
 			var doc = CQ.CreateDocument(htmlInput);
 
 			var styleBlocks = new List<string>();
 
-			foreach (var styleSource in doc.StyleSources())
+			foreach (var styleSource in doc.StyleSources(ignoreElements))
 			{
 				styleBlocks.Add(styleSource.GetCss());
 			}
@@ -53,20 +54,38 @@ namespace PreMailer.Net
 		/// Returns a List of CSS Sources based on their order in the document given.<para/>
 		/// These will be returned in their order of definition.
 		/// </summary>
-		internal static List<ICssSource> StyleSources(this CQ document, bool ignoreMobile = true)
+		internal static List<ICssSource> StyleSources(this CQ document, string ignoreElements = null)
 		{
+			var result = new List<ICssSource>();
+			var nodes = document.NodesWithStyles(ignoreElements);
+			foreach (var node in nodes)
+			{
+				if (node.NodeName == "STYLE")
+					result.Add(new DocumentStyleTagCssSource(node));
+			}
+
+			return result;
+		}
+
+		internal static CQ NodesWithStyles(this CQ document, string ignoreElements = null)
+		{
+			if (!string.IsNullOrWhiteSpace(ignoreElements))
+			{
+				// For some reason, the following code was not working - no idea why not. Tried several variations.
+				// document.Remove(ignoreElements);
+				var stripElements = document.Find(ignoreElements);
+				foreach (var el in stripElements)
+				{
+					el.Remove();
+				}
+			}
+
 			// TODO: Add Source to Read CSS from LINK tags etc.
 			// All we need to do here is update the selector in 'document.Find(...)' and then add
 			// something that implements ICssSource to handle that type of link..
 			// e.g. new LinkTagCssSource(node, baseUrl: "...");
-			var result = new List<ICssSource>();
-			foreach (var node in document.Find("style"))
-			{
-				if (node.NodeName == "STYLE")
-					result.Add(new DocumentStyleTagCssSource(node, ignoreMobile));
-			}
-
-			return result;
+			var elements = document.Find("style");
+			return elements;
 		}
 
 		internal static void RemoveStyleElements(this CQ document)
