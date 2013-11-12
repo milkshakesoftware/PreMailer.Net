@@ -1,66 +1,89 @@
 ﻿using System;
-using System.Text;
 using CsQuery;
 using System.Collections.Generic;
 using System.Linq;
-using CsQuery.Implementation;
 using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
 {
 	public class PreMailer
 	{
+		private readonly CQ _document;
+		private readonly bool _removeStyleElements;
+		private readonly string _ignoreElements;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
+		private readonly List<string> _warnings;
 
-		public PreMailer()
+		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null)
 		{
+			_document = CQ.CreateDocument(html);
+			_removeStyleElements = removeStyleElements;
+			_ignoreElements = ignoreElements;
+			_warnings = new List<string>();
+
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
 		}
 
 		/// <summary>
-		/// Moves the CSS embedded in the specified htmlInput to inline style attributes.
+		/// In-lines the CSS within the HTML given.
 		/// </summary>
-		/// <param name="htmlInput">The HTML input.</param>
+		/// <param name="html">The HTML input.</param>
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public string MoveCssInline(string htmlInput, bool removeStyleElements = false, string ignoreElements = null)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null)
 		{
-			var doc = CQ.CreateDocument(htmlInput);
+			var pm = new PreMailer(html, removeStyleElements, ignoreElements);
+			return pm.Process();
+		}
 
+		private InlineResult Process()
+		{
+			// Gather all of the CSS that we can work with.
+			var cssSourceNodes = CssSourceNodes();
+			var cssSources = ConvertToStyleSources(cssSourceNodes);
+			var cssBlocks = GetCssBlocks(cssSources);
+
+
+			if (_removeStyleElements)
+				RemoveStyleElements(cssSourceNodes);
+
+			var joinedBlocks = Join(cssBlocks);
+			var validSelectors = CleanUnsupportedSelectors(joinedBlocks);
+			var elementsWithStyles = FindElementsWithStyles(validSelectors);
+			var mergedStyles = MergeStyleClasses(elementsWithStyles);
+			ApplyStyles(mergedStyles);
+
+			var html = _document.Render();
+			return new InlineResult(html, _warnings);
+		}
+
+		/// <summary>
+		/// Returns the blocks of CSS within the documents supported CSS sources.<para/>
+		/// Blocks are returned in the order they are declared within the document.
+		/// </summary>
+		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
+		{
 			var styleBlocks = new List<string>();
 
-			foreach (var styleSource in doc.StyleSources(ignoreElements))
+			foreach (var styleSource in cssSources)
 			{
 				styleBlocks.Add(styleSource.GetCss());
 			}
 
-			if (removeStyleElements)
-				doc.RemoveStyleElements();
-
-			styleBlocks
-				.Join(removeElement: removeStyleElements)
-				.CleanUnsupportedSelectors(_cssSelectorParser, doc)
-				.FindElementsWithStyles(doc)
-				.MergeStyleClasses(_cssParser, _cssSelectorParser)
-				.ApplyStyles();
-
-			return doc.Render();
+			return styleBlocks;
 		}
-	}
 
-	internal static class PreMailerExtensions
-	{
 		/// <summary>
-		/// Returns a List of CSS Sources based on their order in the document given.<para/>
+		/// Returns a list of CSS sources ('style', 'link' tags etc.) based on the elements given.<para/>
 		/// These will be returned in their order of definition.
 		/// </summary>
-		internal static List<ICssSource> StyleSources(this CQ document, string ignoreElements = null)
+		private IEnumerable<ICssSource> ConvertToStyleSources(CQ nodesWithStyles)
 		{
 			var result = new List<ICssSource>();
-			var nodes = document.NodesWithStyles(ignoreElements);
+			var nodes = nodesWithStyles;
 			foreach (var node in nodes)
 			{
 				if (node.NodeName == "STYLE")
@@ -70,25 +93,30 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		internal static CQ NodesWithStyles(this CQ document, string ignoreElements = null)
+		/// <summary>
+		/// Returns a collection of CQ nodes that can be used to source CSS content.<para/>
+		/// Currently, only 'style' tags are supported.
+		/// </summary>
+		private CQ CssSourceNodes()
 		{
 			// TODO: Add Source to Read CSS from LINK tags etc.
 			// All we need to do here is update the selector in 'document.Find(...)' and then add
 			// something that implements ICssSource to handle that type of link..
 			// e.g. new LinkTagCssSource(node, baseUrl: "...");
-			var elements = document.Find("style").Not(ignoreElements);
+			var elements = _document.Find("style").Not(_ignoreElements);
 			return elements;
 		}
 
-		internal static void RemoveStyleElements(this CQ document)
+
+		private void RemoveStyleElements(CQ cssSourceNodes)
 		{
-			foreach (var node in document["style"])
+			foreach (var node in cssSourceNodes)
 			{
 				node.Remove();
 			}
 		}
 
-		internal static SortedList<string, StyleClass> Join(this IEnumerable<string> cssBlocks, bool removeElement)
+		private static SortedList<string, StyleClass> Join(IEnumerable<string> cssBlocks)
 		{
 			var parser = new CssParser();
 
@@ -100,14 +128,40 @@ namespace PreMailer.Net
 			return parser.Styles;
 		}
 
-		internal static Dictionary<IDomObject, List<StyleClass>> FindElementsWithStyles(
-			this SortedList<string, StyleClass> stylesToApply, CQ document)
+		private SortedList<string, StyleClass> CleanUnsupportedSelectors(SortedList<string, StyleClass> selectors)
+		{
+			var result = new SortedList<string, StyleClass>();
+			var failedSelectors = new List<StyleClass>();
+
+			foreach (var selector in selectors)
+			{
+				if (_cssSelectorParser.IsPseudoClass(selector.Key) || _cssSelectorParser.IsPseudoElement(selector.Key))
+					failedSelectors.Add(selector.Value);
+				else
+					result.Add(selector.Key, selector.Value);
+			}
+
+			if (!failedSelectors.Any())
+				return selectors;
+
+			foreach (var failedSelector in failedSelectors)
+			{
+				_warnings.Add(String.Format(
+					"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
+					failedSelector.Name));
+			}
+
+			return result;
+		}
+
+		private Dictionary<IDomObject, List<StyleClass>> FindElementsWithStyles(
+			SortedList<string, StyleClass> stylesToApply)
 		{
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
 			foreach (var style in stylesToApply)
 			{
-				var elementsForSelector = document[style.Value.Name];
+				var elementsForSelector = _document[style.Value.Name];
 
 				foreach (var el in elementsForSelector)
 				{
@@ -120,44 +174,14 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		internal static SortedList<string, StyleClass> CleanUnsupportedSelectors(
-			this SortedList<string, StyleClass> selectors, ICssSelectorParser selectorParser, CQ document)
-		{
-			var result = new SortedList<string, StyleClass>();
-			var failedSelectors = new List<StyleClass>();
-
-			foreach (var selector in selectors)
-			{
-				if (selectorParser.IsPseudoClass(selector.Key) || selectorParser.IsPseudoElement(selector.Key))
-					failedSelectors.Add(selector.Value);
-				else
-					result.Add(selector.Key, selector.Value);
-			}
-
-			if (!failedSelectors.Any())
-				return selectors;
-
-			// Render the failed selectors to an HTML comment.
-			var c = new StringBuilder();
-			c.AppendLine("\r\nPreMailer.Net was unable to handle the following selector(s):");
-			foreach (var failedSelector in failedSelectors)
-			{
-				c.AppendFormat("* {0}\r\n", failedSelector.Name);
-			}
-
-			document.Append(new DomComment(c.ToString()));
-
-			return result;
-		}
-
-		internal static Dictionary<IDomObject, List<StyleClass>> SortBySpecificity(
-			this Dictionary<IDomObject, List<StyleClass>> styles, CssParser cssParser, ICssSelectorParser selectorParser)
+		private Dictionary<IDomObject, List<StyleClass>> SortBySpecificity(
+			Dictionary<IDomObject, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
 			foreach (var style in styles)
 			{
-				var sortedStyles = style.Value.OrderBy(x => selectorParser.GetSelectorSpecificity(x.Name)).ToList();
+				var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
 
 				if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
 				{
@@ -165,7 +189,7 @@ namespace PreMailer.Net
 				}
 				else // Ensure that existing inline styles always win.
 				{
-					sortedStyles.Add(cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
+					sortedStyles.Add(_cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
 				}
 
 				result[style.Key] = sortedStyles;
@@ -174,11 +198,11 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		internal static Dictionary<IDomObject, StyleClass> MergeStyleClasses(
-			this Dictionary<IDomObject, List<StyleClass>> styles, CssParser cssParser, ICssSelectorParser selectorParser)
+		private Dictionary<IDomObject, StyleClass> MergeStyleClasses(
+			Dictionary<IDomObject, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IDomObject, StyleClass>();
-			var stylesBySpecificity = styles.SortBySpecificity(cssParser, selectorParser);
+			var stylesBySpecificity = SortBySpecificity(styles);
 
 			foreach (var elemStyle in stylesBySpecificity)
 			{
@@ -195,7 +219,7 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		internal static void ApplyStyles(this Dictionary<IDomObject, StyleClass> elementStyles)
+		private void ApplyStyles(Dictionary<IDomObject, StyleClass> elementStyles)
 		{
 			foreach (var elemStyle in elementStyles)
 			{
