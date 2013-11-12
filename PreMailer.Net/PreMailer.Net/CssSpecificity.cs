@@ -5,12 +5,12 @@
 		public int Ids { get; protected set; }
 
 		/// <summary>
-		/// Classes, attributes and psuedo-classes.
+		/// Classes, attributes and pseudo-classes.
 		/// </summary>
 		public int Classes { get; protected set; }
 
 		/// <summary>
-		/// Elements and psuedo-elements.
+		/// Elements and pseudo-elements.
 		/// </summary>
 		public int Elements { get; protected set; }
 

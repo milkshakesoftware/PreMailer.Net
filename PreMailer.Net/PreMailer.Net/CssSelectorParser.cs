@@ -10,18 +10,18 @@ namespace PreMailer.Net
 		private readonly Regex _idMatcher;
 		private readonly Regex _attribMatcher;
 		private readonly Regex _classMatcher;
-		private readonly Regex _psuedoClassMatcher;
+		private readonly Regex _pseudoClassMatcher;
 		private readonly Regex _elemMatcher;
-		private readonly Regex _psuedoElemMatcher;
+		private readonly Regex _pseudoElemMatcher;
 
 		public CssSelectorParser()
 		{
 			_idMatcher = new Regex(@"#([\w]+)", RegexOptions.Compiled & RegexOptions.IgnoreCase);
 			_attribMatcher = new Regex(@"\[[\w=]+\]", RegexOptions.Compiled & RegexOptions.IgnoreCase);
 			_classMatcher = new Regex(@"\.([\w]+)", RegexOptions.Compiled & RegexOptions.IgnoreCase);
-			_psuedoClassMatcher = BuildPsuedoClassesRegex();
+			_pseudoClassMatcher = BuildPseudoClassesRegex();
 			_elemMatcher = new Regex(@"[a-zA-Z]+", RegexOptions.Compiled & RegexOptions.IgnoreCase);
-			_psuedoElemMatcher = BuildPsuedoElementsRegex();
+			_pseudoElemMatcher = BuildPseudoElementsRegex();
 		}
 
 		/// <summary>
@@ -55,22 +55,32 @@ namespace PreMailer.Net
 			var cssSelector = new CssSelector(selector);
 
 			var result = CssSpecificity.None;
-			if (cssSelector.HasNotPsuedoClass)
+			if (cssSelector.HasNotPseudoClass)
 			{
-				result += CalculateSpecificity(cssSelector.NotPsuedoClassContent);
+				result += CalculateSpecificity(cssSelector.NotPseudoClassContent);
 			}
 
-			var buffer = cssSelector.StripNotPsuedoClassContent().ToString();
+			var buffer = cssSelector.StripNotPseudoClassContent().ToString();
 
 			var ids = MatchCountAndStrip(_idMatcher, buffer, out buffer);
 			var attributes = MatchCountAndStrip(_attribMatcher, buffer, out buffer);
 			var classes = MatchCountAndStrip(_classMatcher, buffer, out buffer);
-			var psuedoClasses = MatchCountAndStrip(_psuedoClassMatcher, buffer, out buffer);
+			var pseudoClasses = MatchCountAndStrip(_pseudoClassMatcher, buffer, out buffer);
 			var elementNames = MatchCountAndStrip(_elemMatcher, buffer, out buffer);
-			var psuedoElems = MatchCountAndStrip(_psuedoElemMatcher, buffer, out buffer);
+			var pseudoElements = MatchCountAndStrip(_pseudoElemMatcher, buffer, out buffer);
 
-			var specificity = new CssSpecificity(ids, (classes + attributes + psuedoClasses), (elementNames + psuedoElems));
+			var specificity = new CssSpecificity(ids, (classes + attributes + pseudoClasses), (elementNames + pseudoElements));
 			return result + specificity;
+		}
+
+		public bool IsPseudoClass(string selector)
+		{
+			return _pseudoClassMatcher.IsMatch(selector);
+		}
+
+		public bool IsPseudoElement(string selector)
+		{
+			return _pseudoElemMatcher.IsMatch(selector);
 		}
 
 		private static int MatchCountAndStrip(Regex regex, string selector, out string result)
@@ -82,12 +92,12 @@ namespace PreMailer.Net
 			return matches.Count;
 		}
 
-		private static Regex BuildPsuedoClassesRegex()
+		private static Regex BuildPseudoClassesRegex()
 		{
-			return BuildOrRegex(PsuedoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
+			return BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
 		}
 
-		private static string[] PsuedoClasses
+		private static string[] PseudoClasses
 		{
 			get
 			{
@@ -138,12 +148,12 @@ namespace PreMailer.Net
 			}
 		}
 
-		private static Regex BuildPsuedoElementsRegex()
+		private static Regex BuildPseudoElementsRegex()
 		{
-			return BuildOrRegex(PsuedoElements, "::?");
+			return BuildOrRegex(PseudoElements, "::?");
 		}
 
-		private static string[] PsuedoElements
+		private static string[] PseudoElements
 		{
 			get
 			{

@@ -8,7 +8,7 @@ namespace PreMailer.Net
 
 		public string Selector { get; protected set; }
 
-		public bool HasNotPsuedoClass
+		public bool HasNotPseudoClass
 		{
 			get
 			{
@@ -16,7 +16,7 @@ namespace PreMailer.Net
 			}
 		}
 		
-		public string NotPsuedoClassContent
+		public string NotPseudoClassContent
 		{
 			get
 			{
@@ -30,7 +30,7 @@ namespace PreMailer.Net
 			Selector = selector;
 		}
 
-		public CssSelector StripNotPsuedoClassContent()
+		public CssSelector StripNotPseudoClassContent()
 		{
 			var stripped = NotMatcher.Replace(Selector, string.Empty);
 			return new CssSelector(stripped);

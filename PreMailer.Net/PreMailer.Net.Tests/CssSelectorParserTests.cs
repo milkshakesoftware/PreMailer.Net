@@ -5,7 +5,7 @@ namespace PreMailer.Net.Tests
 	[TestClass]
 	public class CssSelectorParserTests
 	{
-		private CssSelectorParser _parser;
+		private ICssSelectorParser _parser;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -85,14 +85,14 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void GetSelectorSpecificity_OneIdAndElementInPsuedoElement_Returns101()
+		public void GetSelectorSpecificity_OneIdAndElementInPseudoElement_Returns101()
 		{
 			var result = _parser.GetSelectorSpecificity("#s12:after");
 			Assert.AreEqual(101, result);
 		}
 
 		[TestMethod]
-		public void GetSelectorSpecificity_OneIdAndElementInNotPsuedoClass_Returns101()
+		public void GetSelectorSpecificity_OneIdAndElementInNotPseudoClass_Returns101()
 		{
 			var result = _parser.GetSelectorSpecificity("#s12:not(FOO)");
 			Assert.AreEqual(101, result);
@@ -113,7 +113,7 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void GetSelectorSpecificity_ElementWithPsuedoClass_Returns11()
+		public void GetSelectorSpecificity_ElementWithPseudoClass_Returns11()
 		{
 			var result = _parser.GetSelectorSpecificity("li:first-child");
 			Assert.AreEqual(11, result);
@@ -124,6 +124,34 @@ namespace PreMailer.Net.Tests
 		{
 			var result = _parser.GetSelectorSpecificity("#id .class element element element element element element element element element element");
 			Assert.AreEqual(1110, result);
+		}
+
+		[TestMethod]
+		public void IsPseudoClass_SelectorWithoutPseudoClass_ReturnsFalse()
+		{
+			var result = _parser.IsPseudoClass("a");
+			Assert.IsFalse(result);
+		}
+
+		[TestMethod]
+		public void IsPseudoClass_SelectorWithPseudoClass_ReturnsTrue()
+		{
+			var result = _parser.IsPseudoClass("a:active");
+			Assert.IsTrue(result);
+		}
+
+		[TestMethod]
+		public void IsPseudoElement_SelectorWithoutPseudoElement_ReturnsFalse()
+		{
+			var result = _parser.IsPseudoElement("p");
+			Assert.IsFalse(result);
+		}
+
+		[TestMethod]
+		public void IsPseudoElement_SelectorWithPseudoElement_ReturnsTrue()
+		{
+			var result = _parser.IsPseudoElement("p:first-line");
+			Assert.IsTrue(result);
 		}
 	}
 }
