@@ -72,22 +72,11 @@ namespace PreMailer.Net
 
 		internal static CQ NodesWithStyles(this CQ document, string ignoreElements = null)
 		{
-			if (!string.IsNullOrWhiteSpace(ignoreElements))
-			{
-				// For some reason, the following code was not working - no idea why not. Tried several variations.
-				// document.Remove(ignoreElements);
-				var stripElements = document.Find(ignoreElements);
-				foreach (var el in stripElements)
-				{
-					el.Remove();
-				}
-			}
-
 			// TODO: Add Source to Read CSS from LINK tags etc.
 			// All we need to do here is update the selector in 'document.Find(...)' and then add
 			// something that implements ICssSource to handle that type of link..
 			// e.g. new LinkTagCssSource(node, baseUrl: "...");
-			var elements = document.Find("style");
+			var elements = document.Find("style").Not(ignoreElements);
 			return elements;
 		}
 
