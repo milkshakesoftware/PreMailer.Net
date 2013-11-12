@@ -6,46 +6,46 @@ namespace PreMailer.Net.Tests
 	public class CssSelectorTests
 	{
 		[TestMethod]
-		public void ContainsNotPsuedoClass_ElementWithPsuedoClass_ReturnsFalse()
+		public void ContainsNotPseudoClass_ElementWithPseudoClass_ReturnsFalse()
 		{
 			var selector = new CssSelector("li:first-child");
-			Assert.IsFalse(selector.HasNotPsuedoClass);
+			Assert.IsFalse(selector.HasNotPseudoClass);
 		}
 		
 		[TestMethod]
-		public void ContainsNotPsuedoClass_ElementWithNotPsuedoClass_ReturnsTrue()
+		public void ContainsNotPseudoClass_ElementWithNotPseudoClass_ReturnsTrue()
 		{
 			var selector = new CssSelector("li:not(.ignored)");
-			Assert.IsTrue(selector.HasNotPsuedoClass);
+			Assert.IsTrue(selector.HasNotPseudoClass);
 		}
 		
 		[TestMethod]
-		public void NotPsuedoClassContent_ElementWithPsuedoClass_ReturnsNull()
+		public void NotPseudoClassContent_ElementWithPseudoClass_ReturnsNull()
 		{
 			var selector = new CssSelector("li:first-child");
-			Assert.IsNull(selector.NotPsuedoClassContent);
+			Assert.IsNull(selector.NotPseudoClassContent);
 		}
 		
 		[TestMethod]
-		public void NotPsuedoClassContent_ElementWithNotPsuedoClass_ReturnsContent()
+		public void NotPseudoClassContent_ElementWithNotPseudoClass_ReturnsContent()
 		{
 			var selector = new CssSelector("li:not(.ignored)");
-			Assert.AreEqual(".ignored", selector.NotPsuedoClassContent);
+			Assert.AreEqual(".ignored", selector.NotPseudoClassContent);
 		}
 		
 		[TestMethod]
-		public void StripNotPsuedoClassContent_ElementWithPsuedoClass_ReturnsOriginalSelector()
+		public void StripNotPseudoClassContent_ElementWithPseudoClass_ReturnsOriginalSelector()
 		{
 			var expected = "li:first-child";
 			var selector = new CssSelector(expected);
-			Assert.AreEqual(expected, selector.StripNotPsuedoClassContent().ToString());
+			Assert.AreEqual(expected, selector.StripNotPseudoClassContent().ToString());
 		}
 		
 		[TestMethod]
-		public void StripNotPsuedoClassContent_ElementWithNotPsuedoClass_ReturnsSelectorWithoutNot()
+		public void StripNotPseudoClassContent_ElementWithNotPseudoClass_ReturnsSelectorWithoutNot()
 		{
 			var selector = new CssSelector("li:not(.ignored)");
-			Assert.AreEqual("li", selector.StripNotPsuedoClassContent().ToString());
+			Assert.AreEqual("li", selector.StripNotPseudoClassContent().ToString());
 		}
 	}
 }

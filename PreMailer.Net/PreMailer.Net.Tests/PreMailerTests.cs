@@ -62,5 +62,18 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Contains("style=\"width: 42px;\""));
 		}
+
+		[TestMethod]
+		public void MoveCssInline_UnsupportedPseudoSelector_WritesFailedSelectorToComment()
+		{
+			string input = "<html><head><style type=\"text/css\">li:before { width: 42px; }</style></head><body><div><div class=\"target\">test</div></div></body></html>";
+
+			string premailedOutput = sut.MoveCssInline(input);
+
+			Assert.IsTrue(premailedOutput.Contains("<!--"));
+			Assert.IsTrue(premailedOutput.Contains("PreMailer.Net was unable to handle the following selector(s):"));
+			Assert.IsTrue(premailedOutput.Contains("* li:before"));
+			Assert.IsTrue(premailedOutput.Contains("-->"));
+		}
 	}
 }

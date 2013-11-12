@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Text;
 using CsQuery;
 using System.Collections.Generic;
 using System.Linq;
+using CsQuery.Implementation;
 using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
@@ -40,6 +42,7 @@ namespace PreMailer.Net
 
 			styleBlocks
 				.Join(removeElement: removeStyleElements)
+				.CleanUnsupportedSelectors(_cssSelectorParser, doc)
 				.FindElementsWithStyles(doc)
 				.MergeStyleClasses(_cssParser, _cssSelectorParser)
 				.ApplyStyles();
@@ -124,6 +127,36 @@ namespace PreMailer.Net
 					result[el] = existing;
 				}
 			}
+
+			return result;
+		}
+
+		internal static SortedList<string, StyleClass> CleanUnsupportedSelectors(
+			this SortedList<string, StyleClass> selectors, ICssSelectorParser selectorParser, CQ document)
+		{
+			var result = new SortedList<string, StyleClass>();
+			var failedSelectors = new List<StyleClass>();
+
+			foreach (var selector in selectors)
+			{
+				if (selectorParser.IsPseudoClass(selector.Key) || selectorParser.IsPseudoElement(selector.Key))
+					failedSelectors.Add(selector.Value);
+				else
+					result.Add(selector.Key, selector.Value);
+			}
+
+			if (!failedSelectors.Any())
+				return selectors;
+
+			// Render the failed selectors to an HTML comment.
+			var c = new StringBuilder();
+			c.AppendLine("\r\nPreMailer.Net was unable to handle the following selector(s):");
+			foreach (var failedSelector in failedSelectors)
+			{
+				c.AppendFormat("* {0}\r\n", failedSelector.Name);
+			}
+
+			document.Append(new DomComment(c.ToString()));
 
 			return result;
 		}
