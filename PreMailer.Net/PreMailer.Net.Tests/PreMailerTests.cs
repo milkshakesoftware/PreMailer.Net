@@ -75,5 +75,15 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(premailedOutput.Contains("* li:before"));
 			Assert.IsTrue(premailedOutput.Contains("-->"));
 		}
+
+		[TestMethod]
+		public void MoveCssInline_KeepStyleElementsIgnoreElementsMatchesStyleElement_DoesntRemoveScriptTag()
+		{
+			string input = "<html><head><style id=\"ignore\" type=\"text/css\">li:before { width: 42px; }</style></head><body><div class=\"target\">test</div></body></html>";
+
+			string premailedOutput = sut.MoveCssInline(input, removeStyleElements: false, ignoreElements: "#ignore");
+
+			Assert.IsTrue(premailedOutput.Contains("<style id=\"ignore\" type=\"text/css\">"));
+		}
 	}
 }
