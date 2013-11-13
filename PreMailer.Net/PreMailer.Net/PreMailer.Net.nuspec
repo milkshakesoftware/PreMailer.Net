@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>PreMailer.Net</id>
-		<version>1.2.1</version>
+		<version>1.2.2</version>
 		<authors>Martin H. Normark</authors>
 		<owners>milkshakesoftware</owners>
 		<licenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</licenseUrl>
@@ -13,7 +13,11 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Fixes issue with unknown pseudo class 'link': https://github.com/milkshakesoftware/PreMailer.Net/issues/17
+			** BREAKING CHANGES **
+
+			The result returned by PreMailer.Net is no longer a string, but a class that contains an Html property which contains the premailed HTML result.
+
+			The MoveCssInline method are now static, see updated usage in the README: https://github.com/milkshakesoftware/PreMailer.Net#usage
 		</releaseNotes>
 		<copyright>Copyright 2013</copyright>
 		<tags>email css newsletter html</tags>
