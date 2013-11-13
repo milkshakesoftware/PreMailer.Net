@@ -37,14 +37,25 @@
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<pre><code>string htmlSource = File.ReadAllText(@"C:\Workspace\testmail.html");
+<div class="highlight highlight-csharp"><pre><span class="kt">string</span> <span class="n">htmlSource</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">@"C:\Workspace\testmail.html"</span><span class="p">);</span>
 
-PreMailer pm = new PreMailer();
+<span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">PreMailer</span><span class="p">.</span><span class="n">MoveCssInline</span><span class="p">(</span><span class="n">htmlSource</span><span class="p">);</span>
 
-string premailedOutput = pm.MoveCssInline(htmlSource, false);
-</code></pre>
+<span class="n">result</span><span class="p">.</span><span class="n">Html</span>         <span class="c1">// Resultant HTML, with CSS in-lined.</span>
+<span class="n">result</span><span class="p">.</span><span class="n">Warnings</span>     <span class="c1">// string[] of any warnings that occurred during processing.</span>
+</pre></div>
 
 <h3>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
+
+<p>The following options can be passed to the <code>PreMailer.MoveCssInline</code> method to configure it's behaviour:</p>
+
+<ul>
+<li>
+<code>removeStyleElements(bool = false)</code> - Removes elements that were used to source CSS (currently, only <code>style</code> is supported).</li>
+<li>
+<code>ignoreElements(string = null)</code> - CSS selector of element(s) <em>not</em> to inline. Useful for mobile styles (see below).</li>
+</ul><h3>
 <a name="media-queries" class="anchor" href="#media-queries"><span class="octicon octicon-link"></span></a>Media queries</h3>
 
 <p>If you want to <a href="http://help.campaignmonitor.com/topic.aspx?t=164">apply mobile styles to your e-mail</a>, you should put your
@@ -55,15 +66,20 @@ block that targets mobile devices should not be inlined!</p>
 
 <p>To ignore a <code>style</code> block, you need to specify an ignore selector when calling the <code>MoveCssInline</code> method, like this:</p>
 
-<pre><code>string premailedOutput = pm.MoveCssInline(input, false, ignoreElements: "#ignore");
-</code></pre>
+<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">PreMailer</span><span class="p">.</span><span class="n">MoveCssInline</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="n">ignoreElements</span><span class="p">:</span> <span class="s">"#ignore"</span><span class="p">);</span>
+</pre></div>
 
 <p>And your mobile specific <code>style</code> block should have an ID of <code>ignore</code>:</p>
 
-<pre><code>&lt;style type=\"text/css\" id=\"ignore\"&gt;.target { width: 1337px; }&lt;/style&gt;
-</code></pre>
+<div class="highlight highlight-html"><pre><span class="nt">&lt;style </span><span class="na">type=</span><span class="s">"text/css"</span> <span class="na">id=</span><span class="s">"ignore"</span><span class="nt">&gt;</span><span class="nc">.target</span> <span class="p">{</span> <span class="k">width</span><span class="o">:</span> <span class="m">1337px</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
+</pre></div>
 
-<h2>
+<h3>
+<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h3>
+
+<ul>
+<li>Pseudo classes/elements are not supported by <a href="https://github.com/jamietre/CsQuery">CsQuery</a> (which PreMailer.Net uses internally).  Any that are encountered in your HTML will be ignored and logged to the <code>InlineResult.Warnings</code> collection.</li>
+</ul><h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p><strong>NuGet</strong>: <a href="http://nuget.org/List/Packages/PreMailer.Net">PreMailer.Net</a></p>
