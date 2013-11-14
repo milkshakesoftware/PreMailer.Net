@@ -180,20 +180,21 @@ namespace PreMailer.Net
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
 			foreach (var style in styles)
-			{
-				var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
+                if (style.Key.Attributes != null)
+                {
+                    var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
 
-				if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
-				{
-					style.Key.SetAttribute("style", String.Empty);
-				}
-				else // Ensure that existing inline styles always win.
-				{
-					sortedStyles.Add(_cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
-				}
+                    if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
+                    {
+                        style.Key.SetAttribute("style", String.Empty);
+                    }
+                    else // Ensure that existing inline styles always win.
+                    {
+                        sortedStyles.Add(_cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
+                    }
 
-				result[style.Key] = sortedStyles;
-			}
+                    result[style.Key] = sortedStyles;
+                }
 
 			return result;
 		}
