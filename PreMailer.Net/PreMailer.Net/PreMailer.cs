@@ -1,8 +1,8 @@
-﻿using System;
-using CsQuery;
+﻿using CsQuery;
+using PreMailer.Net.Sources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
 {
@@ -180,21 +180,23 @@ namespace PreMailer.Net
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
 			foreach (var style in styles)
-                if (style.Key.Attributes != null)
-                {
-                    var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
+			{
+				if (style.Key.Attributes != null)
+				{
+					var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
 
-                    if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
-                    {
-                        style.Key.SetAttribute("style", String.Empty);
-                    }
-                    else // Ensure that existing inline styles always win.
-                    {
-                        sortedStyles.Add(_cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
-                    }
+					if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
+					{
+						style.Key.SetAttribute("style", String.Empty);
+					}
+					else // Ensure that existing inline styles always win.
+					{
+						sortedStyles.Add(_cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
+					}
 
-                    result[style.Key] = sortedStyles;
-                }
+					result[style.Key] = sortedStyles;
+				}
+			}
 
 			return result;
 		}
