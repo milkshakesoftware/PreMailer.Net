@@ -45,9 +45,12 @@ And your mobile specific `style` block should have an ID of `ignore`:
 ## Installation
 **NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
 
-## Credits
+## Contributors
 
-* [The Dynamic Programmer](http://blog.dynamicprogrammer.com/2008/01/20/CSSParserClassInNET.aspx) - For his CSS parser
+* [martinnormark](https://github.com/martinnormark)
+* [robcthegeek](https://github.com/robcthegeek)
+
+[Among others](https://github.com/milkshakesoftware/PreMailer.Net/graphs/contributors)
 
 ## License
 
