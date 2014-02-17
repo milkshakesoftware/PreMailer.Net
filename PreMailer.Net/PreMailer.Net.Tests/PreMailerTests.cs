@@ -56,14 +56,33 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void MoveCssInline_UnsupportedPseudoSelector_AddsWarning()
+		public void MoveCssInline_SupportedPseudoSelector_AppliesCss()
 		{
-			string input = "<html><head><style type=\"text/css\">li:before { width: 42px; }</style></head><body><div><div class=\"target\">test</div></div></body></html>";
+			string input = "<html><head><style type=\"text/css\">li:first-child { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			var warnings = premailedOutput.Warnings;
-			Assert.IsTrue(warnings.Contains("PreMailer.Net is unable to process the pseudo class/element 'li:before' due to a limitation in CsQuery."));
+			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px;\">"));
+		}
+
+		[TestMethod]
+		public void MoveCssInline_SupportedjQuerySelector_AppliesCss()
+		{
+			string input = "<html><head><style type=\"text/css\">li:first { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px;\">target</li>"));
+		}
+
+		[TestMethod]
+		public void MoveCssInline_UnsupportedSelector_AppliesCss()
+		{
+			string input = "<html><head><style type=\"text/css\">p:first-letter { width: 42px; }</style></head><body><p>target</p></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<p>target</p>"));
 		}
 
 		[TestMethod]

@@ -2,107 +2,104 @@
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using CsQuery;
 
 namespace PreMailer.Net
 {
-	public class CssSelectorParser : ICssSelectorParser
-	{
-		private readonly Regex _idMatcher;
-		private readonly Regex _attribMatcher;
-		private readonly Regex _classMatcher;
-		private readonly Regex _pseudoClassMatcher;
-		private readonly Regex _elemMatcher;
-		private readonly Regex _pseudoElemMatcher;
+    public class CssSelectorParser : ICssSelectorParser
+    {
+        private static readonly Regex IdMatcher = BuildRegex(@"#([\w]+)");
+        private static readonly Regex AttribMatcher = BuildRegex(@"\[[\w=]+\]");
+        private static readonly Regex ClassMatcher = BuildRegex(@"\.([\w]+)");
+        private static readonly Regex ElemMatcher = BuildRegex(@"[a-zA-Z]+");
+        private static readonly Regex PseudoClassMatcher = BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
+        private static readonly Regex PseudoElemMatcher = BuildOrRegex(PseudoElements, "::?");
 
-		public CssSelectorParser()
-		{
-			_idMatcher = new Regex(@"#([\w]+)", RegexOptions.Compiled & RegexOptions.IgnoreCase);
-			_attribMatcher = new Regex(@"\[[\w=]+\]", RegexOptions.Compiled & RegexOptions.IgnoreCase);
-			_classMatcher = new Regex(@"\.([\w]+)", RegexOptions.Compiled & RegexOptions.IgnoreCase);
-			_pseudoClassMatcher = BuildPseudoClassesRegex();
-			_elemMatcher = new Regex(@"[a-zA-Z]+", RegexOptions.Compiled & RegexOptions.IgnoreCase);
-			_pseudoElemMatcher = BuildPseudoElementsRegex();
-		}
+        /// <summary>
+        /// Static method to quickly find the specificity of a single CSS selector.<para/>
+        /// Don't use this when parsing a lot of selectors, create an instance of <see cref="CssSelectorParser"/> and use that instead.
+        /// </summary>
+        /// <param name="selector">CSS Selector</param>
+        /// <returns>Specificity score of the given selector.</returns>
+        public static int SelectorSpecificity(string selector)
+        {
+            var instance = new CssSelectorParser();
+            return instance.GetSelectorSpecificity(selector);
+        }
 
-		/// <summary>
-		/// Static method to quickly find the specificity of a single CSS selector.<para/>
-		/// Don't use this when parsing a lot of selectors, create an instance of <see cref="CssSelectorParser"/> and use that instead.
-		/// </summary>
-		/// <param name="selector">CSS Selector</param>
-		/// <returns>Specificity score of the given selector.</returns>
-		public static int SelectorSpecificity(string selector)
-		{
-			var instance = new CssSelectorParser();
-			return instance.GetSelectorSpecificity(selector);
-		}
+        /// <summary>
+        /// Finds the specificity of a CSS selector.<para />
+        /// Using this instance method is more performant for checking many selectors since the Regex's are compiled.
+        /// </summary>
+        /// <param name="selector">CSS Selector</param>
+        /// <returns>Specificity score of the given selector.</returns>
+        public int GetSelectorSpecificity(string selector)
+        {
+            return CalculateSpecificity(selector).ToInt();
+        }
 
-		/// <summary>
-		/// Finds the specificity of a CSS selector.<para />
-		/// Using this instance method is more performant for checking many selectors since the Regex's are compiled.
-		/// </summary>
-		/// <param name="selector">CSS Selector</param>
-		/// <returns>Specificity score of the given selector.</returns>
-		public int GetSelectorSpecificity(string selector)
-		{
-			return CalculateSpecificity(selector).ToInt();
-		}
+        public CssSpecificity CalculateSpecificity(string selector)
+        {
+            if (string.IsNullOrWhiteSpace(selector) || selector == "*")
+                return CssSpecificity.None;
 
-		public CssSpecificity CalculateSpecificity(string selector)
-		{
-			if (string.IsNullOrWhiteSpace(selector) || selector == "*")
-				return CssSpecificity.None;
+            var cssSelector = new CssSelector(selector);
 
-			var cssSelector = new CssSelector(selector);
+            var result = CssSpecificity.None;
+            if (cssSelector.HasNotPseudoClass)
+            {
+                result += CalculateSpecificity(cssSelector.NotPseudoClassContent);
+            }
 
-			var result = CssSpecificity.None;
-			if (cssSelector.HasNotPseudoClass)
-			{
-				result += CalculateSpecificity(cssSelector.NotPseudoClassContent);
-			}
+            var buffer = cssSelector.StripNotPseudoClassContent().ToString();
 
-			var buffer = cssSelector.StripNotPseudoClassContent().ToString();
+            var ids = MatchCountAndStrip(IdMatcher, buffer, out buffer);
+            var attributes = MatchCountAndStrip(AttribMatcher, buffer, out buffer);
+            var classes = MatchCountAndStrip(ClassMatcher, buffer, out buffer);
+            var pseudoClasses = MatchCountAndStrip(PseudoClassMatcher, buffer, out buffer);
+            var elementNames = MatchCountAndStrip(ElemMatcher, buffer, out buffer);
+            var pseudoElements = MatchCountAndStrip(PseudoElemMatcher, buffer, out buffer);
 
-			var ids = MatchCountAndStrip(_idMatcher, buffer, out buffer);
-			var attributes = MatchCountAndStrip(_attribMatcher, buffer, out buffer);
-			var classes = MatchCountAndStrip(_classMatcher, buffer, out buffer);
-			var pseudoClasses = MatchCountAndStrip(_pseudoClassMatcher, buffer, out buffer);
-			var elementNames = MatchCountAndStrip(_elemMatcher, buffer, out buffer);
-			var pseudoElements = MatchCountAndStrip(_pseudoElemMatcher, buffer, out buffer);
+            var specificity = new CssSpecificity(ids, (classes + attributes + pseudoClasses), (elementNames + pseudoElements));
+            return result + specificity;
+        }
 
-			var specificity = new CssSpecificity(ids, (classes + attributes + pseudoClasses), (elementNames + pseudoElements));
-			return result + specificity;
-		}
+        public bool IsPseudoClass(string selector)
+        {
+            return PseudoClassMatcher.IsMatch(selector);
+        }
 
-		public bool IsPseudoClass(string selector)
-		{
-			return _pseudoClassMatcher.IsMatch(selector);
-		}
+        public bool IsPseudoElement(string selector)
+        {
+            return PseudoElemMatcher.IsMatch(selector);
+        }
 
-		public bool IsPseudoElement(string selector)
-		{
-			return _pseudoElemMatcher.IsMatch(selector);
-		}
+        /// <summary>
+        /// Determines if the given CSS selector is supported. This is basically determined by what <seealso cref="CQ"/> supports.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <remarks>See https://github.com/jamietre/CsQuery#features for more information.</remarks>
+        public bool IsSupportedSelector(string key)
+        {
+            var psuedo = BuildOrRegex(UnimplementedPseudoSelectors, "::?");
+            return !psuedo.IsMatch(key);
+        }
 
-		private static int MatchCountAndStrip(Regex regex, string selector, out string result)
-		{
-			var matches = regex.Matches(selector);
+        private static int MatchCountAndStrip(Regex regex, string selector, out string result)
+        {
+            var matches = regex.Matches(selector);
 
-			result = regex.Replace(selector, string.Empty);
+            result = regex.Replace(selector, string.Empty);
 
-			return matches.Count;
-		}
+            return matches.Count;
+        }
 
-		private static Regex BuildPseudoClassesRegex()
-		{
-			return BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
-		}
-
-		private static string[] PseudoClasses
-		{
-			get
-			{
-				// Taken from https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
-				return new[]
+        private static string[] PseudoClasses
+        {
+            get
+            {
+                // Taken from https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
+                return new[]
 				{
 					"active",
 					"checked",
@@ -144,21 +141,16 @@ namespace PreMailer.Net
 					"valid",
 					"visited"
 				}
-				.Reverse().ToArray(); // NOTE: Reversal is imporant to ensure 'first-line' is processed before 'first'.
-			}
-		}
+                .Reverse().ToArray(); // NOTE: Reversal is imporant to ensure 'first-line' is processed before 'first'.
+            }
+        }
 
-		private static Regex BuildPseudoElementsRegex()
-		{
-			return BuildOrRegex(PseudoElements, "::?");
-		}
-
-		private static string[] PseudoElements
-		{
-			get
-			{
-				// Taken from: https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
-				return new[]
+        private static string[] PseudoElements
+        {
+            get
+            {
+                // Taken from: https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
+                return new[]
 				{
 					"after",
 					"before",
@@ -166,31 +158,57 @@ namespace PreMailer.Net
 					"first-line",
 					"selection"
 				};
-			}
-		}
+            }
+        }
 
-		private static Regex BuildOrRegex(string[] items, string prefix, Func<string, string> mutator = null)
-		{
-			var sb = new StringBuilder();
-			sb.Append(prefix);
-			sb.Append("(");
-			for (var i = 0; i < items.Length; i++)
-			{
-				var @class = items[i];
+        private static string[] UnimplementedPseudoSelectors
+        {
+            get
+            {
+                // Based on: https://github.com/jamietre/CsQuery#missing-css-selectors
+                return new[]
+	            {
+                    "link",
+                    "hover",
+                    "active",
+                    "focus",
+                    "visited",
+                    "target",
+                    "first-letter",
+                    "first-line",
+                    "before",
+                    "after"
+	            };
+            }
+        }
 
-				if (mutator != null)
-				{
-					@class = mutator(@class);
-				}
+        private static Regex BuildRegex(string pattern)
+        {
+            return new Regex(pattern, RegexOptions.Compiled & RegexOptions.IgnoreCase);
+        }
 
-				sb.Append(@class);
+        private static Regex BuildOrRegex(string[] items, string prefix, Func<string, string> mutator = null)
+        {
+            var sb = new StringBuilder();
+            sb.Append(prefix);
+            sb.Append("(");
+            for (var i = 0; i < items.Length; i++)
+            {
+                var @class = items[i];
 
-				if (i < (items.Length - 1))
-					sb.Append("|");
-			}
+                if (mutator != null)
+                {
+                    @class = mutator(@class);
+                }
 
-			sb.Append(")");
-			return new Regex(sb.ToString(), RegexOptions.IgnoreCase);
-		}
-	}
+                sb.Append(@class);
+
+                if (i < (items.Length - 1))
+                    sb.Append("|");
+            }
+
+            sb.Append(")");
+            return new Regex(sb.ToString(), RegexOptions.IgnoreCase & RegexOptions.Compiled);
+        }
+    }
 }
