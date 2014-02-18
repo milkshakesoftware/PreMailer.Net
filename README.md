@@ -1,4 +1,4 @@
-# PreMailer.Net [![Build Status](http://ci.milkshakehq.com/app/rest/builds/buildType:\(id:bt4\)/statusIcon)](http://ci.milkshakehq.com/project.html?projectId=project3&tab=projectOverview&guest=1)
+# PreMailer.Net [![Build status](https://ci-beta.appveyor.com/api/projects/status/6ykvgmlv8m6cuypy)](https://ci-beta.appveyor.com/project/MilkshakeHQ/premailer-net)
 
 C# Library for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 
