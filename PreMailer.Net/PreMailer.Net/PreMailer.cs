@@ -135,10 +135,10 @@ namespace PreMailer.Net
 
 			foreach (var selector in selectors)
 			{
-				if (_cssSelectorParser.IsPseudoClass(selector.Key) || _cssSelectorParser.IsPseudoElement(selector.Key))
-					failedSelectors.Add(selector.Value);
-				else
+				if (_cssSelectorParser.IsSupportedSelector(selector.Key))
 					result.Add(selector.Key, selector.Value);
+				else
+					failedSelectors.Add(selector.Value);
 			}
 
 			if (!failedSelectors.Any())
@@ -147,15 +147,15 @@ namespace PreMailer.Net
 			foreach (var failedSelector in failedSelectors)
 			{
 				_warnings.Add(String.Format(
-					"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
-					failedSelector.Name));
+						"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
+						failedSelector.Name));
 			}
 
 			return result;
 		}
 
 		private Dictionary<IDomObject, List<StyleClass>> FindElementsWithStyles(
-			SortedList<string, StyleClass> stylesToApply)
+				SortedList<string, StyleClass> stylesToApply)
 		{
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
@@ -175,7 +175,7 @@ namespace PreMailer.Net
 		}
 
 		private Dictionary<IDomObject, List<StyleClass>> SortBySpecificity(
-			Dictionary<IDomObject, List<StyleClass>> styles)
+				Dictionary<IDomObject, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
@@ -202,7 +202,7 @@ namespace PreMailer.Net
 		}
 
 		private Dictionary<IDomObject, StyleClass> MergeStyleClasses(
-			Dictionary<IDomObject, List<StyleClass>> styles)
+				Dictionary<IDomObject, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IDomObject, StyleClass>();
 			var stylesBySpecificity = SortBySpecificity(styles);
