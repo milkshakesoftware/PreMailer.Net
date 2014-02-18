@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PreMailer.Net {
@@ -39,7 +40,7 @@ namespace PreMailer.Net {
 
             foreach (string s in parts) {
                 if (CleanUp(s).IndexOf('{') > -1) {
-                    FillStyleClass(s);
+                    FillStyleClassFromBlock(s);
                 }
             }
         }
@@ -48,22 +49,30 @@ namespace PreMailer.Net {
         /// Fills the style class.
         /// </summary>
         /// <param name="s">The style block.</param>
-        private void FillStyleClass(string s) {
-            StyleClass sc = null;
-            string[] parts = s.Split('{');
-            string styleName = CleanUp(parts[0]).Trim();
+				private void FillStyleClassFromBlock(string s)
+				{
+					string[] parts = s.Split('{');
+					var cleaned = CleanUp(parts[0]).Trim();
+					var styleNames = cleaned.Split(',').Select(x => x.Trim());
 
-            if (_scc.ContainsKey(styleName)) {
-                sc = _scc[styleName];
-                _scc.Remove(styleName);
-            } else {
-                sc = new StyleClass();
-            }
+					foreach (var styleName in styleNames)
+					{
+						StyleClass sc;
+						if (_scc.ContainsKey(styleName))
+						{
+							sc = _scc[styleName];
+							_scc.Remove(styleName);
+						}
+						else
+						{
+							sc = new StyleClass();
+						}
 
-            FillStyleClass(sc, styleName, parts[1]);
+						FillStyleClass(sc, styleName, parts[1]);
 
-            _scc.Add(sc.Name, sc);
-        }
+						_scc.Add(sc.Name, sc);
+					}
+				}
 
         /// <summary>
         /// Fills the style class.

@@ -75,5 +75,15 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<style id=\"ignore\" type=\"text/css\">"));
 		}
+
+		[TestMethod]
+		public void MoveCssInline_MultipleSelectors_HonorsIndividualSpecificity()
+		{
+			string input = "<html><head><style type=\"text/css\">p,li,tr.pub-heading td,tr.pub-footer td,tr.footer-heading td { font-size: 12px; line-height: 16px; } td.disclaimer p {font-size: 11px;} </style></head><body><table><tr class=\"pub-heading\"><td class=\"disclaimer\"><p></p></td></tr></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px;\"></p>"));
+		}
 	}
 }
