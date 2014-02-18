@@ -40,7 +40,7 @@ namespace PreMailer.Net {
 
             foreach (string s in parts) {
                 if (CleanUp(s).IndexOf('{') > -1) {
-                    FillStyleClass(s);
+                    FillStyleClassFromBlock(s);
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace PreMailer.Net {
         /// Fills the style class.
         /// </summary>
         /// <param name="s">The style block.</param>
-				private void FillStyleClass(string s)
+				private void FillStyleClassFromBlock(string s)
 				{
 					string[] parts = s.Split('{');
 					var cleaned = CleanUp(parts[0]).Trim();
