@@ -40,5 +40,13 @@ namespace PreMailer.Net.Tests
 
             Assert.IsNull(attribute);
         }
+
+        [TestMethod]
+        public void FromRule_OnlySplitsTheRuleAtTheFirstColonToSupportUrls()
+        {
+            var attribute = CssAttribute.FromRule("background: url('http://my.web.site.com/Content/email/content.png') repeat-y");
+
+            Assert.AreEqual("url('http://my.web.site.com/content/email/content.png') repeat-y", attribute.Value);
+        }
     }
 }

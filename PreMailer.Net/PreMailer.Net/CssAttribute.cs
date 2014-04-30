@@ -12,7 +12,7 @@ namespace PreMailer.Net {
         private CssAttribute() { }
 
         public static CssAttribute FromRule(string rule) {            
-            var parts = rule.Split(':');
+            var parts = rule.Split(new [] { ':' }, 2);
 
             if (parts.Length == 1) return null;
 
