@@ -53,6 +53,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CssAttributeTests.cs" />
     <Compile Include="CssSelectorParserTests.cs" />
     <Compile Include="CssSelectorTests.cs" />
     <Compile Include="CssSpecificityTests.cs" />

@@ -48,6 +48,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CssAttribute.cs" />
     <Compile Include="CssParser.cs" />
     <Compile Include="CssSelector.cs" />
     <Compile Include="CssSelectorParser.cs" />

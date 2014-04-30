@@ -12,7 +12,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"height: 100px;width: 100px;"));
+			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"height: 100px;width: 100px"));
 		}
 
 		[TestMethod]
@@ -32,7 +32,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 42px;\""));
+			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 42px\""));
 		}
 
 		[TestMethod]
@@ -42,7 +42,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 1337px;\""));
+			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 1337px\""));
 		}
 
 		[TestMethod]
@@ -52,7 +52,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, ignoreElements: "#ignore");
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 42px;\""));
+			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 42px\""));
 		}
 
 		[TestMethod]
@@ -62,7 +62,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px;\">"));
+			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px\">"));
 		}
 
 		[TestMethod]
@@ -72,7 +72,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px;\">target</li>"));
+			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px\">target</li>"));
 		}
 
 		[TestMethod]
@@ -102,7 +102,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px;\"></p>"));
+			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px\"></p>"));
 		}
 	}
 }

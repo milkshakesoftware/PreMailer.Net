@@ -86,15 +86,9 @@ namespace PreMailer.Net {
             string[] atrs = CleanUp(style).Split(';');
 
             foreach (string a in atrs) {
-                if (!a.Contains(":"))
-                    continue;
+                var attribute = CssAttribute.FromRule(a);
 
-                string key = a.Split(':')[0].Trim();
-
-                if (sc.Attributes.ContainsKey(key))
-                    sc.Attributes.Remove(key);
-
-                sc.Attributes.Add(key, a.Split(':')[1].Trim().ToLower());
+                if (attribute != null) sc.Attributes.Add(attribute);
             }
         }
 
