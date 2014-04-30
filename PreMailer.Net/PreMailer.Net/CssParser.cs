@@ -98,12 +98,12 @@ namespace PreMailer.Net {
             }
         }
 
-        private string CleanUp(string s) {
+        private string CleanUp(string s)
+        {
             string temp = s;
             const string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
 
-            var r = new Regex(reg);
-            temp = r.Replace(temp, "");
+            temp = Regex.Replace(temp, reg, "", RegexOptions.ExplicitCapture);
             temp = temp.Replace("\r", "").Replace("\n", "");
 
             return temp;
