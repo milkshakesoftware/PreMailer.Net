@@ -4,18 +4,6 @@ using System.Linq;
 using System.Text;
 
 namespace PreMailer.Net {
-    public class CssAttributeComparer : IEqualityComparer<CssAttribute> {
-        public bool Equals(CssAttribute x, CssAttribute y)
-        {
-            return x.Style == y.Style;
-        }
-
-        public int GetHashCode(CssAttribute obj)
-        {
-            return obj.Style.GetHashCode();
-        }
-    }
-
     public class CssAttribute {
         public string Style { get; set; }
         public string Value { get; set; }
@@ -37,7 +25,7 @@ namespace PreMailer.Net {
             }
 
             return new CssAttribute {
-                Style = parts[0].Trim(),
+                Style = parts[0].Trim().ToLower(),
                 Value = value,
                 Important = important
             };

@@ -88,7 +88,7 @@ namespace PreMailer.Net {
             foreach (string a in atrs) {
                 var attribute = CssAttribute.FromRule(a);
 
-                if (attribute != null) sc.Attributes.Add(attribute);
+                if (attribute != null) sc.Attributes[attribute.Style] = attribute;
             }
         }
 

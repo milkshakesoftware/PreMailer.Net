@@ -59,6 +59,7 @@
     <Compile Include="CssSpecificityTests.cs" />
     <Compile Include="PreMailerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StyleClassTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
