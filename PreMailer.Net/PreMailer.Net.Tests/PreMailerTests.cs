@@ -104,5 +104,25 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px\"></p>"));
 		}
+
+        [TestMethod]
+        public void MoveCssInline_ImportantFlag_HonorsImportantFlagInStylesheet()
+        {
+            string input = "<style>div { color: blue !important; }</style><div style=\"color: red\">Red</div>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: blue"));
+        }
+
+        [TestMethod]
+        public void MoveCssInline_ImportantFlag_HonorsImportantFlagInline()
+        {
+            string input = "<style>div { color: blue !important; }</style><div style=\"color: red !important\">Red</div>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: red"));
+        }
 	}
 }
