@@ -103,7 +103,12 @@ namespace PreMailer.Net
 			// All we need to do here is update the selector in 'document.Find(...)' and then add
 			// something that implements ICssSource to handle that type of link..
 			// e.g. new LinkTagCssSource(node, baseUrl: "...");
-			var elements = _document.Find("style").Not(_ignoreElements);
+            var elements = _document.Find("style").Not(_ignoreElements).Filter(elem =>
+            {
+                var mediaAttribute = elem.GetAttribute("media");
+
+                return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
+            });
 			return elements;
 		}
 
