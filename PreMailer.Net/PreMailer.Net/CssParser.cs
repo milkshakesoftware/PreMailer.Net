@@ -101,9 +101,11 @@ namespace PreMailer.Net {
         private string CleanUp(string s)
         {
             string temp = s;
-            const string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
+            const string cssCommentRegex = "(?:/\\*(?:.|[\r\n])*?\\*/)|(?://.*)";
+            const string unsupportedAtRuleRegex = "(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})";
 
-            temp = Regex.Replace(temp, reg, "", RegexOptions.ExplicitCapture);
+            temp = Regex.Replace(temp, cssCommentRegex, "");
+            temp = Regex.Replace(temp, unsupportedAtRuleRegex, "", RegexOptions.IgnoreCase);
             temp = temp.Replace("\r", "").Replace("\n", "");
 
             return temp;
