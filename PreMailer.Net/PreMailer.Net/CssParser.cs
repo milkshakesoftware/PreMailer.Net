@@ -39,7 +39,7 @@ namespace PreMailer.Net {
             string[] parts = content.Split('}');
 
             foreach (string s in parts) {
-                if (CleanUp(s).IndexOf('{') > -1) {
+                if (s.IndexOf('{') > -1) {
                     FillStyleClassFromBlock(s);
                 }
             }
@@ -49,30 +49,30 @@ namespace PreMailer.Net {
         /// Fills the style class.
         /// </summary>
         /// <param name="s">The style block.</param>
-				private void FillStyleClassFromBlock(string s)
+		private void FillStyleClassFromBlock(string s)
+		{
+			string[] parts = s.Split('{');
+			var cleaned = parts[0].Trim();
+			var styleNames = cleaned.Split(',').Select(x => x.Trim());
+
+			foreach (var styleName in styleNames)
+			{
+				StyleClass sc;
+				if (_scc.ContainsKey(styleName))
 				{
-					string[] parts = s.Split('{');
-					var cleaned = CleanUp(parts[0]).Trim();
-					var styleNames = cleaned.Split(',').Select(x => x.Trim());
-
-					foreach (var styleName in styleNames)
-					{
-						StyleClass sc;
-						if (_scc.ContainsKey(styleName))
-						{
-							sc = _scc[styleName];
-							_scc.Remove(styleName);
-						}
-						else
-						{
-							sc = new StyleClass();
-						}
-
-						FillStyleClass(sc, styleName, parts[1]);
-
-						_scc.Add(sc.Name, sc);
-					}
+					sc = _scc[styleName];
+					_scc.Remove(styleName);
 				}
+				else
+				{
+					sc = new StyleClass();
+				}
+
+				FillStyleClass(sc, styleName, parts[1]);
+
+				_scc.Add(sc.Name, sc);
+			}
+		}
 
         /// <summary>
         /// Fills the style class.
@@ -83,7 +83,7 @@ namespace PreMailer.Net {
         private void FillStyleClass(StyleClass sc, string styleName, string style) {
             sc.Name = styleName;
 
-            string[] atrs = CleanUp(style).Split(';');
+            string[] atrs = style.Split(';');
 
             foreach (string a in atrs) {
                 if (!a.Contains(":"))
