@@ -104,5 +104,25 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px;\"></p>"));
 		}
+
+        [TestMethod]
+        public void MoveCssInline_SupportedMediaAttribute_InlinesAsNormal()
+        {
+            string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%;\">Target</div>"));
+        }
+
+        [TestMethod]
+        public void MoveCssInline_UnsupportedMediaAttribute_IgnoresStyles()
+        {
+            string input = "<html><head><style type=\"text/css\" media=\"print\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<div>Target</div>"));
+        }
 	}
 }
