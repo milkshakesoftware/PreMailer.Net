@@ -106,7 +106,24 @@ namespace PreMailer.Net {
 
             temp = Regex.Replace(temp, cssCommentRegex, "");
             temp = Regex.Replace(temp, unsupportedAtRuleRegex, "", RegexOptions.IgnoreCase);
+            temp = CleanupMediaQueries(temp);
             temp = temp.Replace("\r", "").Replace("\n", "");
+
+            return temp;
+        }
+
+        public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase);
+
+        private string CleanupMediaQueries(string s)
+        {
+            string temp = s;
+            const string mediaQueryRegex = @"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}";
+
+            temp = Regex.Replace(temp, mediaQueryRegex, m =>
+            {
+                return SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ?
+                    m.Groups["styles"].Value.Trim() : string.Empty;
+            });
 
             return temp;
         }
