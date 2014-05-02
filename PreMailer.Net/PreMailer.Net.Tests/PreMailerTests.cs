@@ -124,5 +124,15 @@ namespace PreMailer.Net.Tests
 
             Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: red"));
         }
+
+        [TestMethod]
+        public void MoveCssInline_AbsoluteBackgroundUrl_ShouldNotBeCleanedAsComment()
+        {
+            string input = "<style>div { background: url('http://my.web.site.com/Content/email/content.png') repeat-y }</style><div></div>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/content/email/content.png') repeat-y\"></div>"));
+        }
 	}
 }
