@@ -7,7 +7,7 @@ namespace PreMailer.Net {
         /// Initializes a new instance of the <see cref="StyleClass"/> class.
         /// </summary>
         public StyleClass() {
-            Attributes = new SortedList<string, string>();
+            Attributes = new Dictionary<string, CssAttribute>();
         }
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace PreMailer.Net {
         /// Gets or sets the attributes.
         /// </summary>
         /// <value>The attributes.</value>
-        public SortedList<string, string> Attributes { get; set; }
+        public Dictionary<string, CssAttribute> Attributes { get; set; }
 
         /// <summary>
         /// Merges the specified style class, with this instance. Styles on this instance are not overriden by duplicates in the specified styleClass.
@@ -29,10 +29,13 @@ namespace PreMailer.Net {
         /// <param name="canOverwrite">if set to <c>true</c> [can overwrite].</param>
         public void Merge(StyleClass styleClass, bool canOverwrite) {
             foreach (var item in styleClass.Attributes) {
-                if (!Attributes.ContainsKey(item.Key))
-                    Attributes.Add(item.Key, item.Value);
-                else if (canOverwrite)
+                CssAttribute existing;
+                
+                if (!Attributes.TryGetValue(item.Key, out existing) ||
+                    canOverwrite && (!existing.Important || item.Value.Important))
+                {
                     Attributes[item.Key] = item.Value;
+                }
             }
         }
 
@@ -43,12 +46,7 @@ namespace PreMailer.Net {
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
         public override string ToString() {
-            var sb = new StringBuilder();
-
-            foreach (var item in this.Attributes)
-                sb.AppendFormat("{0}: {1};", item.Key, item.Value);
-
-            return sb.ToString();
+            return string.Join(";", Attributes.Values);
         }
     }
 }
