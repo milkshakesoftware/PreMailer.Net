@@ -94,7 +94,7 @@ namespace PreMailer.Net {
 
         private string CleanUp(string s) {
             string temp = s;
-            const string reg = "(/\\*(.|[\r\n])*?\\*/)|(//.*)";
+            const string reg = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
 
             var r = new Regex(reg);
             temp = r.Replace(temp, "");
