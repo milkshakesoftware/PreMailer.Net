@@ -105,34 +105,53 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px\"></p>"));
 		}
 
-        [TestMethod]
-        public void MoveCssInline_ImportantFlag_HonorsImportantFlagInStylesheet()
-        {
-            string input = "<style>div { color: blue !important; }</style><div style=\"color: red\">Red</div>";
+		[TestMethod]
+		public void MoveCssInline_ImportantFlag_HonorsImportantFlagInStylesheet()
+		{
+			string input = "<style>div { color: blue !important; }</style><div style=\"color: red\">Red</div>";
 
-            var premailedOutput = PreMailer.MoveCssInline(input);
+			var premailedOutput = PreMailer.MoveCssInline(input);
 
-            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: blue"));
-        }
+			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: blue"));
+		}
 
-        [TestMethod]
-        public void MoveCssInline_ImportantFlag_HonorsImportantFlagInline()
-        {
-            string input = "<style>div { color: blue !important; }</style><div style=\"color: red !important\">Red</div>";
+		[TestMethod]
+		public void MoveCssInline_ImportantFlag_HonorsImportantFlagInline()
+		{
+			string input = "<style>div { color: blue !important; }</style><div style=\"color: red !important\">Red</div>";
 
-            var premailedOutput = PreMailer.MoveCssInline(input);
+			var premailedOutput = PreMailer.MoveCssInline(input);
 
-            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: red"));
-        }
+			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: red"));
+		}
 
-        [TestMethod]
-        public void MoveCssInline_AbsoluteBackgroundUrl_ShouldNotBeCleanedAsComment()
-        {
-            string input = "<style>div { background: url('http://my.web.site.com/Content/email/content.png') repeat-y }</style><div></div>";
+		[TestMethod]
+		public void MoveCssInline_AbsoluteBackgroundUrl_ShouldNotBeCleanedAsComment()
+		{
+			string input = "<style>div { background: url('http://my.web.site.com/Content/email/content.png') repeat-y }</style><div></div>";
 
-            var premailedOutput = PreMailer.MoveCssInline(input);
+			var premailedOutput = PreMailer.MoveCssInline(input);
 
-            Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/content/email/content.png') repeat-y\"></div>"));
-        }
+			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/content/email/content.png') repeat-y\"></div>"));
+		}
+
+		public void MoveCssInline_SupportedMediaAttribute_InlinesAsNormal()
+		{
+			string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%;\">Target</div>"));
+		}
+
+		[TestMethod]
+		public void MoveCssInline_UnsupportedMediaAttribute_IgnoresStyles()
+		{
+			string input = "<html><head><style type=\"text/css\" media=\"print\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<div>Target</div>"));
+		}
 	}
 }
