@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace PreMailer.Net {
@@ -6,8 +7,9 @@ namespace PreMailer.Net {
         /// <summary>
         /// Initializes a new instance of the <see cref="StyleClass"/> class.
         /// </summary>
-        public StyleClass() {
-            Attributes = new Dictionary<string, CssAttribute>();
+        public StyleClass() 
+        {
+            Attributes = new Dictionary<string, CssAttribute>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
