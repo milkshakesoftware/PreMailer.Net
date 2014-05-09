@@ -84,12 +84,12 @@ namespace PreMailer.Net {
             sc.Name = styleName;
 
             //string[] atrs = style.Split(';');
-						string[] atrs = CleanUp(style).Split(';');
+			string[] atrs = CleanUp(style).Split(';');
 
             foreach (string a in atrs) {
-								var attribute = CssAttribute.FromRule(a);
+				var attribute = CssAttribute.FromRule(a);
 
-								if (attribute != null) sc.Attributes[attribute.Style] = attribute;
+				if (attribute != null) sc.Attributes[attribute.Style] = attribute;
             }
         }
 
@@ -98,7 +98,7 @@ namespace PreMailer.Net {
         private string CleanUp(string s)
         {
             string temp = s;
-						const string cssCommentRegex = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
+			const string cssCommentRegex = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
             const string unsupportedAtRuleRegex = "(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})";
 
             temp = Regex.Replace(temp, cssCommentRegex, "");

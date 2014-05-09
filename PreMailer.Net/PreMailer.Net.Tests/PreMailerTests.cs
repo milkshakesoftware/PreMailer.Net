@@ -132,7 +132,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/content/email/content.png') repeat-y\"></div>"));
+			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/Content/email/content.png') repeat-y\"></div>"));
 		}
 
 		public void MoveCssInline_SupportedMediaAttribute_InlinesAsNormal()

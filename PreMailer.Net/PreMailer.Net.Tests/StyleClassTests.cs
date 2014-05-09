@@ -102,5 +102,21 @@ namespace PreMailer.Net.Tests
             Assert.IsTrue(target.Attributes.ContainsKey("height"));
             Assert.AreEqual("100%", target.Attributes["height"].Value);
         }
+
+        [TestMethod]
+        public void Merge_ShouldOverrideExistingEntriesIfSpecifiedIgnoringCasing()
+        {
+            var target = new StyleClass();
+            var donator = new StyleClass();
+
+            target.Attributes["color"] = CssAttribute.FromRule("color: red");
+            target.Attributes["HEight"] = CssAttribute.FromRule("height: 50%");
+            donator.Attributes["height"] = CssAttribute.FromRule("height: 100%");
+
+            target.Merge(donator, true);
+
+            Assert.IsTrue(target.Attributes.ContainsKey("height"));
+            Assert.AreEqual("100%", target.Attributes["height"].Value);
+        }
     }
 }

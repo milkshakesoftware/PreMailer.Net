@@ -16,16 +16,16 @@ namespace PreMailer.Net {
 
             if (parts.Length == 1) return null;
 
-            var value = parts[1].Trim().ToLower();
+            var value = parts[1].Trim();
             var important = false;
 
-            if(value.Contains("!important")) {
+            if(value.IndexOf("!important", StringComparison.CurrentCultureIgnoreCase) != -1) {
                 important = true;
                 value = value.Replace(" !important", "");
             }
 
             return new CssAttribute {
-                Style = parts[0].Trim().ToLower(),
+                Style = parts[0].Trim(),
                 Value = value,
                 Important = important
             };
