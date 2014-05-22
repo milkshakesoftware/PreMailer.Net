@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>PreMailer.Net</id>
-		<version>1.2.5</version>
+		<version>1.2.6</version>
 		<authors>Martin H. Normark</authors>
 		<owners>milkshakesoftware</owners>
 		<licenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</licenseUrl>
@@ -13,9 +13,7 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Adds support for media queries: https://github.com/milkshakesoftware/PreMailer.Net/pull/41
-			Fix issue with URLs within style decarations https://github.com/milkshakesoftware/PreMailer.Net/pull/40
-			Honour the important flag: https://github.com/milkshakesoftware/PreMailer.Net/pull/39
+			Don't force lowercase on rules and values: https://github.com/milkshakesoftware/PreMailer.Net/pull/42
 		</releaseNotes>
 		<copyright>Copyright 2014</copyright>
 		<tags>email css newsletter html</tags>
