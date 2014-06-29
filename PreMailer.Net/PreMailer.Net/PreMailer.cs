@@ -227,13 +227,20 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		private void ApplyStyles(Dictionary<IDomObject, StyleClass> elementStyles)
-		{
-			foreach (var elemStyle in elementStyles)
-			{
-				var el = elemStyle.Key;
-				el.SetAttribute("style", elemStyle.Value.ToString());
-			}
-		}
+	    private void ApplyStyles(Dictionary<IDomObject, StyleClass> elementStyles)
+	    {
+	        foreach (var elemStyle in elementStyles)
+	        {
+	            var el = elemStyle.Key;
+                el.SetAttribute("style", elemStyle.Value.ToString());
+
+	            var styleClass = elemStyle.Value;
+                if (el.HasAttribute("bgcolor") && styleClass.Attributes.ContainsKey("background-color"))
+	            {
+	                var cssAttribute = styleClass.Attributes["background-color"];
+                    el.SetAttribute("bgcolor",cssAttribute.Value);
+	            }
+	        }
+	    }
 	}
 }
