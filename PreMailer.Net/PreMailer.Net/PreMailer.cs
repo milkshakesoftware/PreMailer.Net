@@ -54,7 +54,8 @@ namespace PreMailer.Net
 			var validSelectors = CleanUnsupportedSelectors(joinedBlocks);
 			var elementsWithStyles = FindElementsWithStyles(validSelectors);
 			var mergedStyles = MergeStyleClasses(elementsWithStyles);
-			ApplyStyles(mergedStyles);
+
+            StyleClassApplier.ApplyAllStyles(mergedStyles);
 
 			var html = _document.Render();
 			return new InlineResult(html, _warnings);
@@ -226,21 +227,5 @@ namespace PreMailer.Net
 
 			return result;
 		}
-
-	    private void ApplyStyles(Dictionary<IDomObject, StyleClass> elementStyles)
-	    {
-	        foreach (var elemStyle in elementStyles)
-	        {
-	            var el = elemStyle.Key;
-                el.SetAttribute("style", elemStyle.Value.ToString());
-
-	            var styleClass = elemStyle.Value;
-                if (el.HasAttribute("bgcolor") && styleClass.Attributes.ContainsKey("background-color"))
-	            {
-	                var cssAttribute = styleClass.Attributes["background-color"];
-                    el.SetAttribute("bgcolor",cssAttribute.Value);
-	            }
-	        }
-	    }
 	}
 }

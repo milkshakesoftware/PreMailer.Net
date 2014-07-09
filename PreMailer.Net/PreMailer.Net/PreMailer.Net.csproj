@@ -49,10 +49,13 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CssAttribute.cs" />
+    <Compile Include="CssElementStyleResolver.cs" />
     <Compile Include="CssParser.cs" />
     <Compile Include="CssSelector.cs" />
     <Compile Include="CssSelectorParser.cs" />
     <Compile Include="CssSpecificity.cs" />
+    <Compile Include="CssStyleEquivalence.cs" />
+    <Compile Include="AttributeToCss.cs" />
     <Compile Include="ICssSelectorParser.cs" />
     <Compile Include="InlineResult.cs" />
     <Compile Include="PreMailer.cs" />
@@ -60,6 +63,7 @@
     <Compile Include="Sources\DocumentStyleTagCssSource.cs" />
     <Compile Include="Sources\ICssSource.cs" />
     <Compile Include="StyleClass.cs" />
+    <Compile Include="StyleClassApplier.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
