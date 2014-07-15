@@ -6,9 +6,11 @@ namespace PreMailer.Net
 {
     public class CssStyleEquivalence
     {
-        private static Dictionary<string, string> _linkedAttributes = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> _linkedAttributes = new Dictionary<string, string>
             {
-                {"bgcolor", "background-color"}
+                {"bgcolor", "background-color"},
+                {"width", "width"},
+                {"height", "height"}
             };
 
 

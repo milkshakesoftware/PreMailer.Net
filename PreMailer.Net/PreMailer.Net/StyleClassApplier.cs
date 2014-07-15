@@ -5,6 +5,16 @@ namespace PreMailer.Net
 {
     public class StyleClassApplier
     {
+        public static Dictionary<IDomObject, StyleClass> ApplyAllStyles(Dictionary<IDomObject, StyleClass> elementDictionary)
+        {
+            foreach (var styleClass in elementDictionary)
+            {
+                ApplyStyles(styleClass.Key, styleClass.Value);
+            }
+
+            return elementDictionary;
+        }
+
         private static IDomObject ApplyStyles(IDomObject domElement, StyleClass clazz)
         {
             var styles = CssElementStyleResolver.GetAllStyles(domElement, clazz);
@@ -15,16 +25,6 @@ namespace PreMailer.Net
             }
 
             return domElement;
-        }
-
-        public static Dictionary<IDomObject, StyleClass> ApplyAllStyles(Dictionary<IDomObject, StyleClass> elementDictionary)
-        {
-            foreach (var styleClass in elementDictionary)
-            {
-                ApplyStyles(styleClass.Key, styleClass.Value);
-            }
-
-            return elementDictionary;
         }
     }
 }

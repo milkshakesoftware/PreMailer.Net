@@ -5,14 +5,14 @@ namespace PreMailer.Net
 {
    public class CssElementStyleResolver
    {
-        public static IEnumerable<AttributeToCss> GetAllStyles(IDomObject domElement, StyleClass clazz)
+        public static IEnumerable<AttributeToCss> GetAllStyles(IDomObject domElement, StyleClass styleClass)
         {
             var attributeCssList = new List<AttributeToCss>
                 {
-                    new AttributeToCss {AttributeName = "style", CssValue = clazz.ToString()}
+                    new AttributeToCss {AttributeName = "style", CssValue = styleClass.ToString()}
                 };
 
-            attributeCssList.AddRange(CssStyleEquivalence.FindEquivalent(domElement, clazz));
+            attributeCssList.AddRange(CssStyleEquivalence.FindEquivalent(domElement, styleClass));
 
             return attributeCssList;
         }
