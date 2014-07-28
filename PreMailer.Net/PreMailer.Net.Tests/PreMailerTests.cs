@@ -153,5 +153,26 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<div>Target</div>"));
 		}
+
+        [TestMethod]
+        public void MoveCssInline_AddBgColorStyle()
+        {
+            string input = "<html><head><style type=\"text/css\">.test { background-color:#f1f1f1; }</style></head><body><table><tr><td class=\"test\" bgcolor=\"\"></td></tr></table></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\" bgcolor=\"#f1f1f1\">"));
+        }
+
+        [TestMethod]
+        public void MoveCssInline_AddBgColorStyle_IgnoreElementWithBackgroundColorAndNoBgColor()
+        {
+            string input = "<html><head><style type=\"text/css\">.test { background-color:#f1f1f1; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
+        }
+
 	}
 }
