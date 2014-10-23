@@ -69,5 +69,17 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(parser.Styles.ContainsKey("div"));
 			Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
 		}
+
+	    [TestMethod]
+        public void AddStylesheet_ContainsUnsupportedImportStatement_ShouldStripOutImportStatement()
+	    {
+	        var stylesheet = "@import url(http://google.com/stylesheet); div { width : 600px; }";
+	        var parser = new CssParser();
+            parser.AddStyleSheet(stylesheet);
+	        Assert.AreEqual(1, parser.Styles.Count);
+
+	        Assert.IsTrue(parser.Styles.ContainsKey("div"));
+            Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
+	    }
 	}
 }
