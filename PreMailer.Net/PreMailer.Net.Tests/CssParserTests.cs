@@ -71,7 +71,7 @@ namespace PreMailer.Net.Tests
 		}
 
 	    [TestMethod]
-        public void AddStylesheet_ContainsUnsupportedImportStatement_ShouldStripOutImportStatement()
+        public void AddStylesheet_ContainsImportStatement_ShouldStripOutImportStatement()
 	    {
 	        var stylesheet = "@import url(http://google.com/stylesheet); div { width : 600px; }";
 	        var parser = new CssParser();
@@ -81,5 +81,53 @@ namespace PreMailer.Net.Tests
 	        Assert.IsTrue(parser.Styles.ContainsKey("div"));
             Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
 	    }
+
+        [TestMethod]
+        public void AddStylesheet_ContainsImportStatementWithoutSpace_ShouldStripOutImportStatement()
+        {
+            var stylesheet = "@import url(http://google.com/stylesheet);div { width : 600px; }";
+            var parser = new CssParser();
+            parser.AddStyleSheet(stylesheet);
+            Assert.AreEqual(1, parser.Styles.Count);
+
+            Assert.IsTrue(parser.Styles.ContainsKey("div"));
+            Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
+        }
+
+        [TestMethod]
+        public void AddStylesheet_ContainsMultipleImportStatement_ShouldStripOutImportStatements()
+        {
+            var stylesheet = "@import url(http://google.com/stylesheet); @import url(http://jquery.com/stylesheet1); @import url(http://amazon.com/stylesheet2); div { width : 600px; }";
+            var parser = new CssParser();
+            parser.AddStyleSheet(stylesheet);
+            Assert.AreEqual(1, parser.Styles.Count);
+
+            Assert.IsTrue(parser.Styles.ContainsKey("div"));
+            Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
+        }
+
+        [TestMethod]
+        public void AddStylesheet_ContainsImportStatementWithMediaQuery_ShouldStripOutImportStatements()
+        {
+            var stylesheet = "@import url(http://google.com/stylesheet) mobile; div { width : 600px; }";
+            var parser = new CssParser();
+            parser.AddStyleSheet(stylesheet);
+            Assert.AreEqual(1, parser.Styles.Count);
+
+            Assert.IsTrue(parser.Styles.ContainsKey("div"));
+            Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
+        }
+
+        [TestMethod]
+        public void AddStylesheet_ContainsMuiltpleImportStatementWithMediaQuerys_ShouldStripOutImportStatements()
+        {
+            var stylesheet = "@import url(http://google.com/stylesheet) mobile; @import url(http://google.com/stylesheet) mobile; @import url(http://google.com/stylesheet) mobile; div { width : 600px; }";
+            var parser = new CssParser();
+            parser.AddStyleSheet(stylesheet);
+            Assert.AreEqual(1, parser.Styles.Count);
+
+            Assert.IsTrue(parser.Styles.ContainsKey("div"));
+            Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
+        }
 	}
 }
