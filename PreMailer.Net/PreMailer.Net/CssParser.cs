@@ -99,7 +99,7 @@ namespace PreMailer.Net {
         {
             string temp = s;
 			const string cssCommentRegex = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
-            const string unsupportedAtRuleRegex = @"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import url\((.+?)\).*?;";
+            const string unsupportedAtRuleRegex = @"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;";
 
             temp = Regex.Replace(temp, cssCommentRegex, "");
             temp = Regex.Replace(temp, unsupportedAtRuleRegex, "", RegexOptions.IgnoreCase);
