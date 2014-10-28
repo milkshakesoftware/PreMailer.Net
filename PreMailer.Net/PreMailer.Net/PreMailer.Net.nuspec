@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>PreMailer.Net</id>
-		<version>1.2.7</version>
+		<version>1.2.8</version>
 		<authors>Martin H. Normark</authors>
 		<owners>milkshakesoftware</owners>
 		<licenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</licenseUrl>
@@ -13,7 +13,7 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Add support for setting bgcolor HTML attribute: https://github.com/milkshakesoftware/PreMailer.Net/pull/47
+			Handle import statements in input css: https://github.com/milkshakesoftware/PreMailer.Net/pull/50
 		</releaseNotes>
 		<copyright>Copyright 2014</copyright>
 		<tags>email css newsletter html</tags>
