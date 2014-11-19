@@ -5,6 +5,30 @@ namespace PreMailer.Net.Tests
 	[TestClass]
 	public class PreMailerTests
 	{
+        [TestMethod]
+        public void MoveCssInline_HasStyle_DoesNotBreakImageWidthAttribute()
+        {
+            string input = "<html><head><style type=\"text/css\">img { }</style></head>" +
+                            "<body><img style=\"width: 206px; height: 64px;\" src=\"http://localhost/left.gif\" height=\"64\" WIDTH=\"206\" border=\"0\"></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsFalse(premailedOutput.Html.Contains("width=\"206px\""));
+            Assert.IsTrue(premailedOutput.Html.Contains("width=\"206\""));
+        }
+
+        [TestMethod]
+        public void MoveCssInline_NoStyle_DoesNotBreakImageWidthAttribute()
+        {
+            string input = "<html><head><style type=\"text/css\"></style></head>" +
+                            "<body><img style=\"width: 206px; height: 64px;\" src=\"http://localhost/left.gif\" height=\"64\" WIDTH=\"206\" border=\"0\"></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input);
+
+            Assert.IsFalse(premailedOutput.Html.Contains("width=\"206px\""));
+            Assert.IsTrue(premailedOutput.Html.Contains("width=\"206\""));
+        }
+
 		[TestMethod]
 		public void MoveCssInline_RespectExistingStyleElement()
 		{
