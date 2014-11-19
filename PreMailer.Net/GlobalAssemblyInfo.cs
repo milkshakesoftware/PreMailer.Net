@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Milkshake Software")]
 [assembly: AssemblyCopyright("Copyright © Milkshake Software 2013")]
 
-[assembly: AssemblyVersion("1.2.8.0")]
-[assembly: AssemblyFileVersion("1.2.8.0")]
+[assembly: AssemblyVersion("1.2.9.0")]
+[assembly: AssemblyFileVersion("1.2.9.0")]
 
 #if DEBUG 
 [assembly: AssemblyConfiguration("Debug")] 
