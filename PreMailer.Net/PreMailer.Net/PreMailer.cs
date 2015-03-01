@@ -11,15 +11,17 @@ namespace PreMailer.Net
 		private readonly CQ _document;
 		private readonly bool _removeStyleElements;
 		private readonly string _ignoreElements;
+		private readonly string _css;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
-		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null)
+		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null)
 		{
 			_document = CQ.CreateDocument(html);
 			_removeStyleElements = removeStyleElements;
 			_ignoreElements = ignoreElements;
+			_css = css;
 			_warnings = new List<string>();
 
 			_cssParser = new CssParser();
@@ -32,10 +34,11 @@ namespace PreMailer.Net
 		/// <param name="html">The HTML input.</param>
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null)
 		{
-			var pm = new PreMailer(html, removeStyleElements, ignoreElements);
+			var pm = new PreMailer(html, removeStyleElements, ignoreElements, css);
 			return pm.Process();
 		}
 
@@ -89,6 +92,11 @@ namespace PreMailer.Net
 			{
 				if (node.NodeName == "STYLE")
 					result.Add(new DocumentStyleTagCssSource(node));
+			}
+
+			if (!String.IsNullOrWhiteSpace(_css))
+			{
+				result.Add(new StringCssSource(_css));
 			}
 
 			return result;
