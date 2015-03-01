@@ -207,5 +207,25 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
 		}
+
+		[TestMethod]
+		public void MoveCssInline_StripsClassAttributes()
+		{
+			string input = "<html><head></head><body><table id=\"testTable\"><tr><td class=\"test\"></td></tr></table></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false, css: ".test { background-color:#f1f1f1; }", stripIdAndClassAttributes: true);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<td style=\"background-color: #f1f1f1\""));
+		}
+
+		[TestMethod]
+		public void MoveCssInline_StripsIdAttributes()
+		{
+			string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false, stripIdAndClassAttributes: true);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 42px\">"));
+		}
 	}
 }

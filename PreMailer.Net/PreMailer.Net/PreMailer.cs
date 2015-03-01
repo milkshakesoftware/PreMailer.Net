@@ -2,6 +2,7 @@
 using PreMailer.Net.Sources;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace PreMailer.Net
@@ -10,16 +11,18 @@ namespace PreMailer.Net
 	{
 		private readonly CQ _document;
 		private readonly bool _removeStyleElements;
+		private readonly bool _stripIdAndClassAttributes;
 		private readonly string _ignoreElements;
 		private readonly string _css;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
-		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null)
+		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
 			_document = CQ.CreateDocument(html);
 			_removeStyleElements = removeStyleElements;
+			_stripIdAndClassAttributes = stripIdAndClassAttributes;
 			_ignoreElements = ignoreElements;
 			_css = css;
 			_warnings = new List<string>();
@@ -36,9 +39,9 @@ namespace PreMailer.Net
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
-			var pm = new PreMailer(html, removeStyleElements, ignoreElements, css);
+			var pm = new PreMailer(html, removeStyleElements, ignoreElements, css, stripIdAndClassAttributes);
 			return pm.Process();
 		}
 
@@ -59,6 +62,9 @@ namespace PreMailer.Net
 			var mergedStyles = MergeStyleClasses(elementsWithStyles);
 
             StyleClassApplier.ApplyAllStyles(mergedStyles);
+
+			if (_stripIdAndClassAttributes)
+				StripElementAttributes("id", "class");
 
 			var html = _document.Render();
 			return new InlineResult(html, _warnings);
@@ -234,6 +240,25 @@ namespace PreMailer.Net
 			}
 
 			return result;
+		}
+
+		private void StripElementAttributes(params string[] attributeNames)
+		{
+			StringCollection selectors = new StringCollection();
+
+			foreach (string attribute in attributeNames)
+			{
+				selectors.Add(String.Format("*[{0}]", attribute));
+			}
+
+			CQ elementsWithAttributes = _document.Find(String.Join(",", selectors.Cast<string>().ToList()));
+			foreach (var item in elementsWithAttributes)
+			{
+				foreach (string attribute in attributeNames)
+				{
+					item.RemoveAttribute(attribute);
+				}
+			}
 		}
 	}
 }
