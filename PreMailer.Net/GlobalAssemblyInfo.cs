@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyProduct("PreMailer.Net")]
 [assembly: AssemblyCompany("Milkshake Software")]
-[assembly: AssemblyCopyright("Copyright © Milkshake Software 2013")]
+[assembly: AssemblyCopyright("Copyright © Milkshake Software 2015")]
 
-[assembly: AssemblyVersion("1.2.9.0")]
-[assembly: AssemblyFileVersion("1.2.9.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 
 #if DEBUG 
 [assembly: AssemblyConfiguration("Debug")] 
