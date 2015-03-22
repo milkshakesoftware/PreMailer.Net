@@ -1,32 +1,39 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PreMailer.Net {
-    public class CssParser {
+namespace PreMailer.Net
+{
+    public class CssParser
+    {
         private readonly List<string> _styleSheets;
         private SortedList<string, StyleClass> _scc;
 
-        public SortedList<string, StyleClass> Styles {
+        public SortedList<string, StyleClass> Styles
+        {
             get { return _scc; }
             set { _scc = value; }
         }
 
-        public CssParser() {
+        public CssParser()
+        {
             _styleSheets = new List<string>();
             _scc = new SortedList<string, StyleClass>();
         }
 
-        public void AddStyleSheet(string styleSheetContent) {
+        public void AddStyleSheet(string styleSheetContent)
+        {
             _styleSheets.Add(styleSheetContent);
             ProcessStyleSheet(styleSheetContent);
         }
 
-        public string GetStyleSheet(int index) {
+        public string GetStyleSheet(int index)
+        {
             return _styleSheets[index];
         }
 
-        public StyleClass ParseStyleClass(string className, string style) {
+        public StyleClass ParseStyleClass(string className, string style)
+        {
             var sc = new StyleClass { Name = className };
 
             FillStyleClass(sc, className, style);
@@ -34,12 +41,15 @@ namespace PreMailer.Net {
             return sc;
         }
 
-        private void ProcessStyleSheet(string styleSheetContent) {
+        private void ProcessStyleSheet(string styleSheetContent)
+        {
             string content = CleanUp(styleSheetContent);
             string[] parts = content.Split('}');
 
-            foreach (string s in parts) {
-                if (s.IndexOf('{') > -1) {
+            foreach (string s in parts)
+            {
+                if (s.IndexOf('{') > -1)
+                {
                     FillStyleClassFromBlock(s);
                 }
             }
@@ -49,30 +59,30 @@ namespace PreMailer.Net {
         /// Fills the style class.
         /// </summary>
         /// <param name="s">The style block.</param>
-		private void FillStyleClassFromBlock(string s)
-		{
-			string[] parts = s.Split('{');
-			var cleaned = parts[0].Trim();
-			var styleNames = cleaned.Split(',').Select(x => x.Trim());
+        private void FillStyleClassFromBlock(string s)
+        {
+            string[] parts = s.Split('{');
+            var cleaned = parts[0].Trim();
+            var styleNames = cleaned.Split(',').Select(x => x.Trim());
 
-			foreach (var styleName in styleNames)
-			{
-				StyleClass sc;
-				if (_scc.ContainsKey(styleName))
-				{
-					sc = _scc[styleName];
-					_scc.Remove(styleName);
-				}
-				else
-				{
-					sc = new StyleClass();
-				}
+            foreach (var styleName in styleNames)
+            {
+                StyleClass sc;
+                if (_scc.ContainsKey(styleName))
+                {
+                    sc = _scc[styleName];
+                    _scc.Remove(styleName);
+                }
+                else
+                {
+                    sc = new StyleClass();
+                }
 
-				FillStyleClass(sc, styleName, parts[1]);
+                FillStyleClass(sc, styleName, parts[1]);
 
-				_scc.Add(sc.Name, sc);
-			}
-		}
+                _scc.Add(sc.Name, sc);
+            }
+        }
 
         /// <summary>
         /// Fills the style class.
@@ -80,16 +90,19 @@ namespace PreMailer.Net {
         /// <param name="sc">The style class.</param>
         /// <param name="styleName">Name of the style.</param>
         /// <param name="style">The styles.</param>
-        private void FillStyleClass(StyleClass sc, string styleName, string style) {
+        private void FillStyleClass(StyleClass sc, string styleName, string style)
+        {
             sc.Name = styleName;
 
             //string[] atrs = style.Split(';');
-			string[] atrs = CleanUp(style).Split(';');
+            //string[] atrs = CleanUp(style).Split(';');
+            string[] atrs = Regex.Split(CleanUp(style), @"(;)(?=(?:[^""']|[""|'][^""']*"")*$)", RegexOptions.Multiline | RegexOptions.Compiled);
 
-            foreach (string a in atrs) {
-				var attribute = CssAttribute.FromRule(a);
+            foreach (string a in atrs)
+            {
+                var attribute = CssAttribute.FromRule(a);
 
-				if (attribute != null) sc.Attributes[attribute.Style] = attribute;
+                if (attribute != null) sc.Attributes[attribute.Style] = attribute;
             }
         }
 
@@ -98,7 +111,7 @@ namespace PreMailer.Net {
         private string CleanUp(string s)
         {
             string temp = s;
-			const string cssCommentRegex = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
+            const string cssCommentRegex = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
             const string unsupportedAtRuleRegex = @"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;";
 
             temp = Regex.Replace(temp, cssCommentRegex, "");
