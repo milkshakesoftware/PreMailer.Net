@@ -96,7 +96,7 @@ namespace PreMailer.Net
 
             //string[] atrs = style.Split(';');
             //string[] atrs = CleanUp(style).Split(';');
-            string[] atrs = Regex.Split(CleanUp(style), @"(;)(?=(?:[^""']|[""|'][^""']*"")*$)", RegexOptions.Multiline | RegexOptions.Compiled);
+            string[] atrs = FillStyleClassRegex.Split(CleanUp(style));
 
             foreach (string a in atrs)
             {
@@ -106,34 +106,28 @@ namespace PreMailer.Net
             }
         }
 
-
+		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|[""|'][^""']*"")*$)", RegexOptions.Multiline);
+	    private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)");
+		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase);
 
         private string CleanUp(string s)
         {
-            string temp = s;
-            const string cssCommentRegex = @"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)";
-            const string unsupportedAtRuleRegex = @"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;";
-
-            temp = Regex.Replace(temp, cssCommentRegex, "");
-            temp = Regex.Replace(temp, unsupportedAtRuleRegex, "", RegexOptions.IgnoreCase);
+            string temp = CssCommentRegex.Replace(s, "");
+            temp = UnsupportedAtRuleRegex.Replace(temp, "");
             temp = CleanupMediaQueries(temp);
             temp = temp.Replace("\r", "").Replace("\n", "");
 
             return temp;
         }
 
-        public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase);
+		private static Regex MediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}");
 
         private string CleanupMediaQueries(string s)
         {
             string temp = s;
-            const string mediaQueryRegex = @"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}";
 
-            temp = Regex.Replace(temp, mediaQueryRegex, m =>
-            {
-                return SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ?
-                    m.Groups["styles"].Value.Trim() : string.Empty;
-            });
+            temp = MediaQueryRegex.Replace(temp, m => SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
 
             return temp;
         }
