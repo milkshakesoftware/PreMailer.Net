@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
 {
@@ -227,5 +228,16 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 42px\">"));
 		}
-	}
+
+        [TestMethod]
+        public void AddAnalyticsTags_AddsTags()
+        {
+            const string input = @"<div><a href=""blah.com/someurl"">Some URL</a><a>No href</a></div><div><a href=""blah.com/someurl?extra=1"">Extra Stuff</a></div>";
+            const string expected = @"<html><head></head><body><div><a href=""blah.com/someurl?utm_source=source&utm_medium=medium&utm_campaign=campaign&utm_content=content"">Some URL</a><a>No href</a></div><div><a href=""blah.com/someurl?extra=1&utm_source=source&utm_medium=medium&utm_campaign=campaign&utm_content=content"">Extra Stuff</a></div></body></html>";
+            var premailedOutput = new PreMailer(input)
+                .AddAnalyticsTags("source", "medium", "campaign", "content")
+                .Render();
+            Assert.IsTrue(expected == premailedOutput.Html);
+        }
+    }
 }

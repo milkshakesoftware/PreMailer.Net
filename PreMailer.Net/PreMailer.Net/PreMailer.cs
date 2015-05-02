@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 
 namespace PreMailer.Net
 {
@@ -18,7 +19,15 @@ namespace PreMailer.Net
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
-		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
+        /// <summary>
+        /// Constructor for the PreMailer class
+        /// </summary>
+        /// <param name="html">The HTML input.</param>
+        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+        /// <param name="css">A string containing a style-sheet for inlining.</param>
+        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		public PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
 			_document = CQ.CreateDocument(html);
 			_removeStyleElements = removeStyleElements;
@@ -38,14 +47,42 @@ namespace PreMailer.Net
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
-		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
-			var pm = new PreMailer(html, removeStyleElements, ignoreElements, css, stripIdAndClassAttributes);
-			return pm.Process();
+		    return new PreMailer(html, removeStyleElements, ignoreElements, css, stripIdAndClassAttributes)
+		        .MoveCssInline()
+		        .Render();
 		}
 
-		private InlineResult Process()
+        /// <summary>
+        /// Renders the result and returns it
+        /// </summary>
+        /// <returns>Returns the html and warnings for the resulting html.</returns>
+        public InlineResult Render()
+	    {
+            var html = _document.Render();
+            return new InlineResult(html, _warnings);
+        }
+
+	    /// <summary>
+	    /// Renders the result and returns it
+	    /// </summary>
+	    /// <param name="options">DOM rendering options</param>
+	    /// <returns>Returns the html and warnings for the resulting html.</returns>
+	    public InlineResult Render(
+            DomRenderingOptions options)
+        {
+            var html = _document.Render(options);
+            return new InlineResult(html, _warnings);
+        }
+
+        /// <summary>
+        /// Move all the CSS inline for this email
+        /// </summary>
+        /// <returns>Reference to the instance so you can chain calls.</returns>
+        public PreMailer MoveCssInline()
 		{
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
@@ -66,9 +103,30 @@ namespace PreMailer.Net
 			if (_stripIdAndClassAttributes)
 				StripElementAttributes("id", "class");
 
-			var html = _document.Render();
-			return new InlineResult(html, _warnings);
+            return this;
 		}
+
+	    /// <summary>
+	    /// Function to add Google analytics tracking tags to the HTML document
+	    /// </summary>
+	    /// <param name="source">Source tracking tag</param>
+	    /// <param name="medium">Medium tracking tag</param>
+	    /// <param name="campaign">Campaign tracking tag</param>
+	    /// <param name="content">Content tracking tag</param>
+        /// <returns>Reference to the instance so you can chain calls.</returns>
+        public PreMailer AddAnalyticsTags(
+            string source,
+            string medium,
+            string campaign,
+            string content)
+        {
+            var tracking = "utm_source=" + source + "&utm_medium=" + medium + "&utm_campaign=" + campaign + "&utm_content=" + content;
+            foreach (var tag in _document["a[href]"]) {
+                var href = tag.Attributes["href"];
+                tag.SetAttribute("href", href + (href.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
+            }
+	        return this;
+        }
 
 		/// <summary>
 		/// Returns the blocks of CSS within the documents supported CSS sources.<para/>
