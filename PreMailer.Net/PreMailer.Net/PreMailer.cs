@@ -46,27 +46,26 @@ namespace PreMailer.Net
 		        .Render();
 		}
 
-        /// <summary>
-        /// Renders the result and returns it
-        /// </summary>
-        /// <returns>Returns the html and warnings for the resulting html.</returns>
-        public InlineResult Render()
-	    {
-            var html = _document.Render();
-            return new InlineResult(html, _warnings);
-        }
+		/// <summary>
+		/// Renders the result and returns it
+		/// </summary>
+		/// <returns>Returns the html and warnings for the resulting html.</returns>
+		public InlineResult Render()
+		{
+			var html = _document.Render();
+			return new InlineResult(html, _warnings);
+		}
 
-	    /// <summary>
-	    /// Renders the result and returns it
-	    /// </summary>
-	    /// <param name="options">DOM rendering options</param>
-	    /// <returns>Returns the html and warnings for the resulting html.</returns>
-	    public InlineResult Render(
-            DomRenderingOptions options)
-        {
-            var html = _document.Render(options);
-            return new InlineResult(html, _warnings);
-        }
+		/// <summary>
+		/// Renders the result and returns it
+		/// </summary>
+		/// <param name="options">DOM rendering options</param>
+		/// <returns>Returns the html and warnings for the resulting html.</returns>
+		public InlineResult Render(DomRenderingOptions options)
+		{
+			var html = _document.Render(options);
+			return new InlineResult(html, _warnings);
+		}
 
 		/// <summary>
 		/// In-lines the CSS for the current HTML
@@ -74,15 +73,15 @@ namespace PreMailer.Net
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <returns>Reference to the instance so you can chain calls.</returns>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <returns>Reference to the instance so you can chain calls.</returns>
 		public PreMailer MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
-            // Store the variables used for inlining the CSS
-            _removeStyleElements = removeStyleElements;
-            _stripIdAndClassAttributes = stripIdAndClassAttributes;
-            _ignoreElements = ignoreElements;
-            _css = css;
+			// Store the variables used for inlining the CSS
+			_removeStyleElements = removeStyleElements;
+			_stripIdAndClassAttributes = stripIdAndClassAttributes;
+			_ignoreElements = ignoreElements;
+			_css = css;
 
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
@@ -98,35 +97,51 @@ namespace PreMailer.Net
 			var elementsWithStyles = FindElementsWithStyles(validSelectors);
 			var mergedStyles = MergeStyleClasses(elementsWithStyles);
 
-            StyleClassApplier.ApplyAllStyles(mergedStyles);
+			StyleClassApplier.ApplyAllStyles(mergedStyles);
 
 			if (_stripIdAndClassAttributes)
 				StripElementAttributes("id", "class");
 
-            return this;
+			return this;
 		}
 
-	    /// <summary>
-	    /// Function to add Google analytics tracking tags to the HTML document
-	    /// </summary>
-	    /// <param name="source">Source tracking tag</param>
-	    /// <param name="medium">Medium tracking tag</param>
-	    /// <param name="campaign">Campaign tracking tag</param>
-	    /// <param name="content">Content tracking tag</param>
-        /// <returns>Reference to the instance so you can chain calls.</returns>
-        public PreMailer AddAnalyticsTags(
-            string source,
-            string medium,
-            string campaign,
-            string content)
-        {
-            var tracking = "utm_source=" + source + "&utm_medium=" + medium + "&utm_campaign=" + campaign + "&utm_content=" + content;
-            foreach (var tag in _document["a[href]"]) {
-                var href = tag.Attributes["href"];
-                tag.SetAttribute("href", href + (href.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
-            }
-	        return this;
-        }
+		/// <summary>
+		/// Function to add Google analytics tracking tags to the HTML document
+		/// </summary>
+		/// <param name="source">Source tracking tag</param>
+		/// <param name="medium">Medium tracking tag</param>
+		/// <param name="campaign">Campaign tracking tag</param>
+		/// <param name="content">Content tracking tag</param>
+		/// <param name="domain">Optional domain check; if it does not match the URL will be skipped</param>
+		/// <returns>Reference to the instance so you can chain calls.</returns>
+		public PreMailer AddAnalyticsTags(string source, string medium, string campaign, string content, string domain = null)
+		{
+			var tracking = "utm_source=" + source + "&utm_medium=" + medium + "&utm_campaign=" + campaign + "&utm_content=" + content;
+			foreach (var tag in _document["a[href]"])
+			{
+				var href = tag.Attributes["href"];
+				if (domain == null || DomainMatch(domain, href))
+				{
+					tag.SetAttribute("href", href + (href.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
+				}
+			}
+			return this;
+		}
+
+		/// <summary>
+		/// Function to check if the domain in a URL matches
+		/// </summary>
+		/// <param name="domain">Domain to check</param>
+		/// <param name="url">URL to parse</param>
+		/// <returns>True if the domain matches, false if not</returns>
+		private bool DomainMatch(string domain, string url)
+		{
+			if (url.Contains(@"://")) {
+				url = url.Split(new[] { @"://" }, 2, StringSplitOptions.None)[1];
+			}
+			url = url.Split('/')[0];
+			return string.Compare(domain, url, StringComparison.OrdinalIgnoreCase) == 0;
+		}
 
 		/// <summary>
 		/// Returns the blocks of CSS within the documents supported CSS sources.<para/>
