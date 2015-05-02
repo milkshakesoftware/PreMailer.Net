@@ -4,17 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 
 namespace PreMailer.Net
 {
 	public class PreMailer
 	{
 		private readonly CQ _document;
-		private readonly bool _removeStyleElements;
-		private readonly bool _stripIdAndClassAttributes;
-		private readonly string _ignoreElements;
-		private readonly string _css;
+		private bool _removeStyleElements;
+		private bool _stripIdAndClassAttributes;
+		private string _ignoreElements;
+		private string _css;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
@@ -23,19 +22,10 @@ namespace PreMailer.Net
         /// Constructor for the PreMailer class
         /// </summary>
         /// <param name="html">The HTML input.</param>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-		public PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
+		public PreMailer(string html)
 		{
 			_document = CQ.CreateDocument(html);
-			_removeStyleElements = removeStyleElements;
-			_stripIdAndClassAttributes = stripIdAndClassAttributes;
-			_ignoreElements = ignoreElements;
-			_css = css;
 			_warnings = new List<string>();
-
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
 		}
@@ -51,8 +41,8 @@ namespace PreMailer.Net
         /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
-		    return new PreMailer(html, removeStyleElements, ignoreElements, css, stripIdAndClassAttributes)
-		        .MoveCssInline()
+		    return new PreMailer(html)
+		        .MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes)
 		        .Render();
 		}
 
@@ -78,12 +68,22 @@ namespace PreMailer.Net
             return new InlineResult(html, _warnings);
         }
 
-        /// <summary>
-        /// Move all the CSS inline for this email
-        /// </summary>
+		/// <summary>
+		/// In-lines the CSS for the current HTML
+		/// </summary>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
         /// <returns>Reference to the instance so you can chain calls.</returns>
-        public PreMailer MoveCssInline()
+		public PreMailer MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
 		{
+            // Store the variables used for inlining the CSS
+            _removeStyleElements = removeStyleElements;
+            _stripIdAndClassAttributes = stripIdAndClassAttributes;
+            _ignoreElements = ignoreElements;
+            _css = css;
+
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
 			var cssSources = ConvertToStyleSources(cssSourceNodes);
