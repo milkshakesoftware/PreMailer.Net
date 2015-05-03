@@ -1,52 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
+    <meta charset="UTF-8">
     <title>Premailer.net by milkshakesoftware</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Premailer.net</h1>
-        <h2>C# .Net library, that moves your stylesheets to inline style attributes, for maximum compatibility with E-mail clients.</h2>
-        <a href="https://github.com/milkshakesoftware/PreMailer.Net" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+    <section class="page-header">
+      <h1 class="project-name">Premailer.net</h1>
+      <h2 class="project-tagline">C# .Net library, that moves your stylesheets to inline style attributes, for maximum compatibility with E-mail clients.</h2>
+      <a href="https://github.com/milkshakesoftware/PreMailer.Net" class="btn">View on GitHub</a>
+      <a href="https://github.com/milkshakesoftware/PreMailer.Net/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/milkshakesoftware/PreMailer.Net/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a name="premailernet-" class="anchor" href="#premailernet-"><span class="octicon octicon-link"></span></a>PreMailer.Net <a href="http://ci.milkshakehq.com/project.html?projectId=project3&amp;tab=projectOverview&amp;guest=1"><img src="http://ci.milkshakehq.com/app/rest/builds/buildType:(id:bt4)/statusIcon" alt="Build Status"></a>
+    <section class="main-content">
+      <h1>
+<a id="premailernet-" class="anchor" href="#premailernet-" aria-hidden="true"><span class="octicon octicon-link"></span></a>PreMailer.Net <a href="https://ci.appveyor.com/project/milkshakesoftware/premailer-net"><img src="https://ci.appveyor.com/api/projects/status/30dh8owf89pxg9bt" alt="Build status"></a>
 </h1>
 
 <p>C# Library for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.</p>
 
 <h2>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="kt">string</span> <span class="n">htmlSource</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">ReadAllText</span><span class="p">(</span><span class="s">@"C:\Workspace\testmail.html"</span><span class="p">);</span>
-
-<span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">PreMailer</span><span class="p">.</span><span class="n">MoveCssInline</span><span class="p">(</span><span class="n">htmlSource</span><span class="p">);</span>
-
-<span class="n">result</span><span class="p">.</span><span class="n">Html</span>         <span class="c1">// Resultant HTML, with CSS in-lined.</span>
-<span class="n">result</span><span class="p">.</span><span class="n">Warnings</span>     <span class="c1">// string[] of any warnings that occurred during processing.</span>
-</pre></div>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <h3>
-<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
+<a id="static-method-on-premailer-class" class="anchor" href="#static-method-on-premailer-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>Static method on <code>PreMailer</code> class</h3>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-k">string</span> htmlSource = File.ReadAllText(<span class="pl-s"><span class="pl-pds">@"C:\Workspace\testmail.html"</span></span>);
+
+<span class="pl-k">var</span> result = PreMailer.MoveCssInline(htmlSource);
+
+result.Html         <span class="pl-c">// Resultant HTML, with CSS in-lined.</span>
+result.Warnings     <span class="pl-c">// string[] of any warnings that occurred during processing.</span></pre></div>
+
+<h3>
+<a id="set-up-premailer-instance" class="anchor" href="#set-up-premailer-instance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Set up <code>PreMailer</code> instance</h3>
+
+<div class="highlight highlight-csharp"><pre><span class="pl-k">string</span> htmlSource = File.ReadAllText(<span class="pl-s"><span class="pl-pds">@"C:\Workspace\testmail.html"</span></span>);
+
+<span class="pl-k">var</span> pm = <span class="pl-k">new</span> PreMailer(htmlSource);
+pm.AddAnalyticsTags(source, medium, campaign, content, domain = <span class="pl-c1">null</span>); <span class="pl-c">// Optional to add analytics tags</span>
+
+<span class="pl-k">var</span> result = pm.MoveCssInline(...);
+
+result.Html         <span class="pl-c">// Resultant HTML, with CSS in-lined.</span>
+result.Warnings     <span class="pl-c">// string[] of any warnings that occurred during processing.</span></pre></div>
+
+<h3>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h3>
 
 <p>The following options can be passed to the <code>PreMailer.MoveCssInline</code> method to configure it's behaviour:</p>
 
@@ -55,8 +61,16 @@
 <code>removeStyleElements(bool = false)</code> - Removes elements that were used to source CSS (currently, only <code>style</code> is supported).</li>
 <li>
 <code>ignoreElements(string = null)</code> - CSS selector of element(s) <em>not</em> to inline. Useful for mobile styles (see below).</li>
-</ul><h3>
-<a name="media-queries" class="anchor" href="#media-queries"><span class="octicon octicon-link"></span></a>Media queries</h3>
+<li>
+<code>css(string = null)</code> - A string containing a style-sheet for inlining.</li>
+<li>
+<code>stripIdAndClassAttributes(bool = false)</code> - True to strip ID and class attributes.</li>
+<li>
+<code>removeComments(bool = false)</code> - True to remove comments, false to leave them intact.</li>
+</ul>
+
+<h3>
+<a id="media-queries" class="anchor" href="#media-queries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Media queries</h3>
 
 <p>If you want to <a href="http://help.campaignmonitor.com/topic.aspx?t=164">apply mobile styles to your e-mail</a>, you should put your
 mobile specific styles in its own <code>style</code> block that targets the appropriate devices using media queries.</p>
@@ -66,53 +80,48 @@ block that targets mobile devices should not be inlined!</p>
 
 <p>To ignore a <code>style</code> block, you need to specify an ignore selector when calling the <code>MoveCssInline</code> method, like this:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">PreMailer</span><span class="p">.</span><span class="n">MoveCssInline</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="n">ignoreElements</span><span class="p">:</span> <span class="s">"#ignore"</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> result = PreMailer.MoveCssInline(input, <span class="pl-c1">false</span>, ignoreElements: <span class="pl-s"><span class="pl-pds">"</span>#ignore<span class="pl-pds">"</span></span>);</pre></div>
 
 <p>And your mobile specific <code>style</code> block should have an ID of <code>ignore</code>:</p>
 
-<div class="highlight highlight-html"><pre><span class="nt">&lt;style </span><span class="na">type=</span><span class="s">"text/css"</span> <span class="na">id=</span><span class="s">"ignore"</span><span class="nt">&gt;</span><span class="nc">.target</span> <span class="p">{</span> <span class="k">width</span><span class="o">:</span> <span class="m">1337px</span><span class="p">;</span> <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
-</pre></div>
+<div class="highlight highlight-html"><pre><span class="pl-s1">&lt;<span class="pl-ent">style</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/css<span class="pl-pds">"</span></span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>ignore<span class="pl-pds">"</span></span>&gt;<span class="pl-e">.target</span> { <span class="pl-c1"><span class="pl-c1">width</span></span>: <span class="pl-c1">1337<span class="pl-k">px</span></span>; }&lt;/<span class="pl-ent">style</span>&gt;</span></pre></div>
 
 <h3>
-<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h3>
+<a id="notes" class="anchor" href="#notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Notes</h3>
 
 <ul>
 <li>Pseudo classes/elements are not supported by <a href="https://github.com/jamietre/CsQuery">CsQuery</a> (which PreMailer.Net uses internally).  Any that are encountered in your HTML will be ignored and logged to the <code>InlineResult.Warnings</code> collection.</li>
-</ul><h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p><strong>NuGet</strong>: <a href="http://nuget.org/List/Packages/PreMailer.Net">PreMailer.Net</a></p>
 
 <h2>
-<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h2>
+<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributors</h2>
 
 <ul>
-<li>
-<a href="http://blog.dynamicprogrammer.com/2008/01/20/CSSParserClassInNET.aspx">The Dynamic Programmer</a> - For his CSS parser</li>
-</ul><h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+<li><a href="https://github.com/martinnormark">martinnormark</a></li>
+<li><a href="https://github.com/robcthegeek">robcthegeek</a></li>
+</ul>
+
+<p><a href="https://github.com/milkshakesoftware/PreMailer.Net/graphs/contributors">Among others</a></p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>PreMailer.Net is available under the MIT license. See the <a href="https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE">LICENSE</a> file for more info.</p>
-        </section>
 
-        <aside id="sidebar">
-          <a href="https://github.com/milkshakesoftware/PreMailer.Net/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/milkshakesoftware/PreMailer.Net/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/milkshakesoftware/PreMailer.Net">Premailer.net</a> is maintained by <a href="https://github.com/milkshakesoftware">milkshakesoftware</a>.</span>
 
-          <p class="repo-owner"><a href="https://github.com/milkshakesoftware/PreMailer.Net"></a> is maintained by <a href="https://github.com/milkshakesoftware">milkshakesoftware</a>.</p>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
 
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
+    </section>
 
   
   </body>
 </html>
+
