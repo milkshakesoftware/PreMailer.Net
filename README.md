@@ -4,10 +4,24 @@ C# Library for moving CSS to inline style attributes, to gain maximum E-mail cli
 
 ## Usage
 
+### Static method on `PreMailer` class
 ```csharp
 string htmlSource = File.ReadAllText(@"C:\Workspace\testmail.html");
 
 var result = PreMailer.MoveCssInline(htmlSource);
+
+result.Html 		// Resultant HTML, with CSS in-lined.
+result.Warnings 	// string[] of any warnings that occurred during processing.
+```
+
+### Set up `PreMailer` instance
+```csharp
+string htmlSource = File.ReadAllText(@"C:\Workspace\testmail.html");
+
+var pm = new PreMailer(htmlSource);
+pm.AddAnalyticsTags(source, medium, campaign, content, domain = null); // Optional to add analytics tags
+
+var result = pm.MoveCssInline(...);
 
 result.Html 		// Resultant HTML, with CSS in-lined.
 result.Warnings 	// string[] of any warnings that occurred during processing.
@@ -18,6 +32,9 @@ The following options can be passed to the `PreMailer.MoveCssInline` method to c
 
 - `removeStyleElements(bool = false)` - Removes elements that were used to source CSS (currently, only `style` is supported).
 - `ignoreElements(string = null)` - CSS selector of element(s) _not_ to inline. Useful for mobile styles (see below).
+- `css(string = null)` - A string containing a style-sheet for inlining.
+- `stripIdAndClassAttributes(bool = false)` - True to strip ID and class attributes.
+- `removeComments(bool = false)` - True to remove comments, false to leave them intact.
 
 ### Media queries
 If you want to [apply mobile styles to your e-mail](http://help.campaignmonitor.com/topic.aspx?t=164), you should put your
