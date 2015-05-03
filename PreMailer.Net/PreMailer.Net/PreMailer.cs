@@ -37,34 +37,12 @@ namespace PreMailer.Net
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
-		    return new PreMailer(html)
-		        .MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes)
-		        .Render();
-		}
-
-		/// <summary>
-		/// Renders the result and returns it
-		/// </summary>
-		/// <returns>Returns the html and warnings for the resulting html.</returns>
-		public InlineResult Render()
-		{
-			var html = _document.Render();
-			return new InlineResult(html, _warnings);
-		}
-
-		/// <summary>
-		/// Renders the result and returns it
-		/// </summary>
-		/// <param name="options">DOM rendering options</param>
-		/// <returns>Returns the html and warnings for the resulting html.</returns>
-		public InlineResult Render(DomRenderingOptions options)
-		{
-			var html = _document.Render(options);
-			return new InlineResult(html, _warnings);
+		    return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
 		/// <summary>
@@ -74,8 +52,9 @@ namespace PreMailer.Net
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-		/// <returns>Reference to the instance so you can chain calls.</returns>
-		public PreMailer MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
@@ -102,7 +81,8 @@ namespace PreMailer.Net
 			if (_stripIdAndClassAttributes)
 				StripElementAttributes("id", "class");
 
-			return this;
+			var html = _document.Render(removeComments ? DomRenderingOptions.RemoveComments : DomRenderingOptions.Default);
+			return new InlineResult(html, _warnings);
 		}
 
 		/// <summary>

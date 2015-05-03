@@ -230,13 +230,24 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
+		public void MoveCssInline_StripsComments()
+		{
+			string input = "<html><head></head><body><!--This should be removed--></body></html>";
+			string expected = "<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, removeComments: true);
+
+			Assert.IsTrue(expected == premailedOutput.Html);
+		}
+
+		[TestMethod]
 		public void AddAnalyticsTags_AddsTags()
 		{
 			const string input = @"<div><a href=""blah.com/someurl"">Some URL</a><a>No href</a></div><div><a href=""blah.com/someurl?extra=1"">Extra Stuff</a></div>";
 			const string expected = @"<html><head></head><body><div><a href=""blah.com/someurl?utm_source=source&utm_medium=medium&utm_campaign=campaign&utm_content=content"">Some URL</a><a>No href</a></div><div><a href=""blah.com/someurl?extra=1&utm_source=source&utm_medium=medium&utm_campaign=campaign&utm_content=content"">Extra Stuff</a></div></body></html>";
 			var premailedOutput = new PreMailer(input)
 				.AddAnalyticsTags("source", "medium", "campaign", "content")
-				.Render();
+				.MoveCssInline();
 			Assert.IsTrue(expected == premailedOutput.Html);
 		}
 
@@ -247,7 +258,7 @@ namespace PreMailer.Net.Tests
 			const string expected = @"<html><head></head><body><div><a href=""http://www.blah.com/someurl?utm_source=source&utm_medium=medium&utm_campaign=campaign&utm_content=content"">Some URL</a><a>No href</a></div><div><a href=""https://www.nomatch.com/someurl?extra=1"">Extra Stuff</a></div></body></html>";
 			var premailedOutput = new PreMailer(input)
 				.AddAnalyticsTags("source", "medium", "campaign", "content", "www.Blah.com")
-				.Render();
+				.MoveCssInline();
 			Assert.IsTrue(expected == premailedOutput.Html);
 		}
 	}
