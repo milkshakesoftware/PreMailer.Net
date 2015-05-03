@@ -13,7 +13,7 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Add analytics tags (utm_source, utm_medium, utm_campaign & utm_content) to links using PreMailer https://github.com/milkshakesoftware/PreMailer.Net/pull/61
+			Add analytics tags (utm_source, utm_medium, utm_campaign and utm_content) to links using PreMailer https://github.com/milkshakesoftware/PreMailer.Net/pull/61
 		</releaseNotes>
 		<copyright>Copyright 2015</copyright>
 		<tags>email css newsletter html</tags>
