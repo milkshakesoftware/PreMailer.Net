@@ -10,23 +10,22 @@ namespace PreMailer.Net
 	public class PreMailer
 	{
 		private readonly CQ _document;
-		private readonly bool _removeStyleElements;
-		private readonly bool _stripIdAndClassAttributes;
-		private readonly string _ignoreElements;
-		private readonly string _css;
+		private bool _removeStyleElements;
+		private bool _stripIdAndClassAttributes;
+		private string _ignoreElements;
+		private string _css;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
-		private PreMailer(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
+        /// <summary>
+        /// Constructor for the PreMailer class
+        /// </summary>
+        /// <param name="html">The HTML input.</param>
+		public PreMailer(string html)
 		{
 			_document = CQ.CreateDocument(html);
-			_removeStyleElements = removeStyleElements;
-			_stripIdAndClassAttributes = stripIdAndClassAttributes;
-			_ignoreElements = ignoreElements;
-			_css = css;
 			_warnings = new List<string>();
-
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
 		}
@@ -38,15 +37,31 @@ namespace PreMailer.Net
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
-			var pm = new PreMailer(html, removeStyleElements, ignoreElements, css, stripIdAndClassAttributes);
-			return pm.Process();
+		    return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
-		private InlineResult Process()
+		/// <summary>
+		/// In-lines the CSS for the current HTML
+		/// </summary>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
+			// Store the variables used for inlining the CSS
+			_removeStyleElements = removeStyleElements;
+			_stripIdAndClassAttributes = stripIdAndClassAttributes;
+			_ignoreElements = ignoreElements;
+			_css = css;
+
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
 			var cssSources = ConvertToStyleSources(cssSourceNodes);
@@ -61,13 +76,51 @@ namespace PreMailer.Net
 			var elementsWithStyles = FindElementsWithStyles(validSelectors);
 			var mergedStyles = MergeStyleClasses(elementsWithStyles);
 
-            StyleClassApplier.ApplyAllStyles(mergedStyles);
+			StyleClassApplier.ApplyAllStyles(mergedStyles);
 
 			if (_stripIdAndClassAttributes)
 				StripElementAttributes("id", "class");
 
-			var html = _document.Render();
+			var html = _document.Render(removeComments ? DomRenderingOptions.RemoveComments : DomRenderingOptions.Default);
 			return new InlineResult(html, _warnings);
+		}
+
+		/// <summary>
+		/// Function to add Google analytics tracking tags to the HTML document
+		/// </summary>
+		/// <param name="source">Source tracking tag</param>
+		/// <param name="medium">Medium tracking tag</param>
+		/// <param name="campaign">Campaign tracking tag</param>
+		/// <param name="content">Content tracking tag</param>
+		/// <param name="domain">Optional domain check; if it does not match the URL will be skipped</param>
+		/// <returns>Reference to the instance so you can chain calls.</returns>
+		public PreMailer AddAnalyticsTags(string source, string medium, string campaign, string content, string domain = null)
+		{
+			var tracking = "utm_source=" + source + "&utm_medium=" + medium + "&utm_campaign=" + campaign + "&utm_content=" + content;
+			foreach (var tag in _document["a[href]"])
+			{
+				var href = tag.Attributes["href"];
+				if (domain == null || DomainMatch(domain, href))
+				{
+					tag.SetAttribute("href", href + (href.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
+				}
+			}
+			return this;
+		}
+
+		/// <summary>
+		/// Function to check if the domain in a URL matches
+		/// </summary>
+		/// <param name="domain">Domain to check</param>
+		/// <param name="url">URL to parse</param>
+		/// <returns>True if the domain matches, false if not</returns>
+		private bool DomainMatch(string domain, string url)
+		{
+			if (url.Contains(@"://")) {
+				url = url.Split(new[] { @"://" }, 2, StringSplitOptions.None)[1];
+			}
+			url = url.Split('/')[0];
+			return string.Compare(domain, url, StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
 		/// <summary>

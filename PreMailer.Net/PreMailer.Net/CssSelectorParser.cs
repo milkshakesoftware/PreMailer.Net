@@ -184,7 +184,7 @@ namespace PreMailer.Net
 
         private static Regex BuildRegex(string pattern)
         {
-            return new Regex(pattern, RegexOptions.Compiled & RegexOptions.IgnoreCase);
+            return new Regex(pattern, RegexOptions.IgnoreCase);
         }
 
         private static Regex BuildOrRegex(string[] items, string prefix, Func<string, string> mutator = null)
@@ -208,7 +208,7 @@ namespace PreMailer.Net
             }
 
             sb.Append(")");
-            return new Regex(sb.ToString(), RegexOptions.IgnoreCase & RegexOptions.Compiled);
+            return new Regex(sb.ToString(), RegexOptions.IgnoreCase);
         }
     }
 }
