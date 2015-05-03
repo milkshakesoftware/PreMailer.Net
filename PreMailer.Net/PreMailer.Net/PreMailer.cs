@@ -18,10 +18,10 @@ namespace PreMailer.Net
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
-        /// <summary>
-        /// Constructor for the PreMailer class
-        /// </summary>
-        /// <param name="html">The HTML input.</param>
+		/// <summary>
+		/// Constructor for the PreMailer class
+		/// </summary>
+		/// <param name="html">The HTML input.</param>
 		public PreMailer(string html)
 		{
 			_document = CQ.CreateDocument(html);
@@ -42,7 +42,7 @@ namespace PreMailer.Net
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
-		    return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
 		/// <summary>
@@ -116,7 +116,8 @@ namespace PreMailer.Net
 		/// <returns>True if the domain matches, false if not</returns>
 		private bool DomainMatch(string domain, string url)
 		{
-			if (url.Contains(@"://")) {
+			if (url.Contains(@"://"))
+			{
 				url = url.Split(new[] { @"://" }, 2, StringSplitOptions.None)[1];
 			}
 			url = url.Split('/')[0];
@@ -171,12 +172,12 @@ namespace PreMailer.Net
 			// All we need to do here is update the selector in 'document.Find(...)' and then add
 			// something that implements ICssSource to handle that type of link..
 			// e.g. new LinkTagCssSource(node, baseUrl: "...");
-            var elements = _document.Find("style").Not(_ignoreElements).Filter(elem =>
-            {
-                var mediaAttribute = elem.GetAttribute("media");
+			var elements = _document.Find("style").Not(_ignoreElements).Filter(elem =>
+			{
+				var mediaAttribute = elem.GetAttribute("media");
 
-                return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
-            });
+				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
+			});
 			return elements;
 		}
 
