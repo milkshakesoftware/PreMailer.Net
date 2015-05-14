@@ -8,12 +8,13 @@ namespace PreMailer.Net
 {
     public class CssSelectorParser : ICssSelectorParser
     {
-        private static readonly Regex IdMatcher = BuildRegex(@"#([\w]+)");
-        private static readonly Regex AttribMatcher = BuildRegex(@"\[[\w=]+\]");
-        private static readonly Regex ClassMatcher = BuildRegex(@"\.([\w]+)");
-        private static readonly Regex ElemMatcher = BuildRegex(@"[a-zA-Z]+");
-        private static readonly Regex PseudoClassMatcher = BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
-        private static readonly Regex PseudoElemMatcher = BuildOrRegex(PseudoElements, "::?");
+		private static readonly Regex IdMatcher = new Regex(@"#([\w]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex AttribMatcher = new Regex(@"\[[\w=]+\]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex ClassMatcher = new Regex(@"\.([\w]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex ElemMatcher = new Regex(@"[a-zA-Z]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex PseudoClassMatcher = BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
+		private static readonly Regex PseudoElemMatcher = BuildOrRegex(PseudoElements, "::?");
+		private static readonly Regex PseudoUnimplemented = BuildOrRegex(UnimplementedPseudoSelectors, "::?");
 
         /// <summary>
         /// Static method to quickly find the specificity of a single CSS selector.<para/>
@@ -81,8 +82,7 @@ namespace PreMailer.Net
         /// <remarks>See https://github.com/jamietre/CsQuery#features for more information.</remarks>
         public bool IsSupportedSelector(string key)
         {
-            var psuedo = BuildOrRegex(UnimplementedPseudoSelectors, "::?");
-            return !psuedo.IsMatch(key);
+			return !PseudoUnimplemented.IsMatch(key);
         }
 
         private static int MatchCountAndStrip(Regex regex, string selector, out string result)
@@ -182,11 +182,6 @@ namespace PreMailer.Net
             }
         }
 
-        private static Regex BuildRegex(string pattern)
-        {
-            return new Regex(pattern, RegexOptions.IgnoreCase);
-        }
-
         private static Regex BuildOrRegex(string[] items, string prefix, Func<string, string> mutator = null)
         {
             var sb = new StringBuilder();
@@ -208,7 +203,7 @@ namespace PreMailer.Net
             }
 
             sb.Append(")");
-            return new Regex(sb.ToString(), RegexOptions.IgnoreCase);
+            return new Regex(sb.ToString(), RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
     }
 }
