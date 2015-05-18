@@ -25,6 +25,9 @@ namespace PreMailer.Net
                 //domElement.SetAttribute(attributeToCss.AttributeName, attributeToCss.CssValue);
             }
 
+	        if (string.IsNullOrEmpty(domElement.Attributes["style"]))
+		        domElement.RemoveAttribute("style");
+
             return domElement;
         }
 

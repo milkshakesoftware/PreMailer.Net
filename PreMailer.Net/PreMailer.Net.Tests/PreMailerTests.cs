@@ -190,6 +190,26 @@ namespace PreMailer.Net.Tests
         }
 
         [TestMethod]
+		public void MoveCssInline_AddSpecial()
+        {
+			string input = "<html><head><style type=\"text/css\">.test { padding: 7px; -premailer-cellspacing: 5; -premailer-width: 14%; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"padding: 7px\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
+        }
+
+        [TestMethod]
+        public void MoveCssInline_AddSpecial_RemoveEmptyStyle()
+        {
+			string input = "<html><head><style type=\"text/css\">.test { -premailer-cellspacing: 5; -premailer-width: 14%; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
+        }
+
+        [TestMethod]
         public void MoveCssInline_AddBgColorStyle_IgnoreElementWithBackgroundColorAndNoBgColor()
         {
             string input = "<html><head><style type=\"text/css\">.test { background-color:#f1f1f1; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
