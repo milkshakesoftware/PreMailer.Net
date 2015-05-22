@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>PreMailer.Net</id>
-		<version>1.4.0</version>
+		<version>1.4.1</version>
 		<authors>Martin H. Normark</authors>
 		<owners>milkshakesoftware</owners>
 		<licenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</licenseUrl>
@@ -13,7 +13,8 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Add analytics tags (utm_source, utm_medium, utm_campaign and utm_content) to links using PreMailer https://github.com/milkshakesoftware/PreMailer.Net/pull/61
+			Compiled Regexes for speed https://github.com/milkshakesoftware/PreMailer.Net/pull/62
+			Added support for premailer-specific CSS https://github.com/milkshakesoftware/PreMailer.Net/pull/64
 		</releaseNotes>
 		<copyright>Copyright 2015</copyright>
 		<tags>email css newsletter html</tags>
