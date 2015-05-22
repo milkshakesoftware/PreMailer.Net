@@ -55,6 +55,24 @@ And your mobile specific `style` block should have an ID of `ignore`:
 <style type="text/css" id="ignore">.target { width: 1337px; }</style>
 ```
 
+### Premailer specific CSS becomes HTML attributes
+Premailer looks for the use of CSS attributes prefixed with `-premailer` and will proxy the value through to the DOM element as an attribute.
+
+For example
+
+```css
+table {
+    -premailer-cellspacing: 5; 
+    -premailer-width: 500;
+}
+```
+
+will make a `table` element render as
+
+```html
+<table cellspacing="5" width="500">
+```
+
 ### Notes
 
 - Pseudo classes/elements are not supported by [CsQuery](https://github.com/jamietre/CsQuery) (which PreMailer.Net uses internally).  Any that are encountered in your HTML will be ignored and logged to the `InlineResult.Warnings` collection.
