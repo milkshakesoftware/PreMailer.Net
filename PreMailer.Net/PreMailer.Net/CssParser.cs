@@ -106,9 +106,9 @@ namespace PreMailer.Net
             }
         }
 
-		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|[""|'][^""']*"")*$)", RegexOptions.Multiline);
-	    private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)");
-		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase);
+		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|[""|'][^""']*"")*$)", RegexOptions.Multiline | RegexOptions.Compiled);
+		private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)", RegexOptions.Compiled);
+		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private string CleanUp(string s)
         {
@@ -120,8 +120,8 @@ namespace PreMailer.Net
             return temp;
         }
 
-        public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase);
-		private static Regex MediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}");
+		public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static Regex MediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}", RegexOptions.Compiled);
 
         private string CleanupMediaQueries(string s)
         {

@@ -4,7 +4,7 @@ namespace PreMailer.Net
 {
 	public class CssSelector
 	{
-		protected static Regex NotMatcher = new Regex(@":not\((.+)\)", RegexOptions.IgnoreCase);
+		protected static Regex NotMatcher = new Regex(@":not\((.+)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		public string Selector { get; protected set; }
 
