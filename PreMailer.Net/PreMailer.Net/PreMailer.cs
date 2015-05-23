@@ -100,7 +100,7 @@ namespace PreMailer.Net
 			foreach (var tag in _document["a[href]"])
 			{
 				var href = tag.Attributes["href"];
-				if (domain == null || DomainMatch(domain, href))
+				if (!href.StartsWith("{{") && (domain == null || DomainMatch(domain, href)))
 				{
 					tag.SetAttribute("href", href + (href.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
 				}
