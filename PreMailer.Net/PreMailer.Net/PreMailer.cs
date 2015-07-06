@@ -18,31 +18,33 @@ namespace PreMailer.Net
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
-		/// <summary>
-		/// Constructor for the PreMailer class
-		/// </summary>
-		/// <param name="html">The HTML input.</param>
-		public PreMailer(string html)
+	    /// <summary>
+	    /// Constructor for the PreMailer class
+	    /// </summary>
+	    /// <param name="html">The HTML input.</param>
+        /// <param name="parsingMode">(optional) the mode.</param>
+	    public PreMailer(string html,HtmlParsingMode parsingMode)
 		{
-			_document = CQ.CreateDocument(html);
+            _document = CQ.Create(html, parsingMode);
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
 		}
 
-		/// <summary>
-		/// In-lines the CSS within the HTML given.
-		/// </summary>
-		/// <param name="html">The HTML input.</param>
-		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-		/// <param name="css">A string containing a style-sheet for inlining.</param>
-		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
-		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+	    /// <summary>
+	    /// In-lines the CSS within the HTML given.
+	    /// </summary>
+	    /// <param name="html">The HTML input.</param>
+	    /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+	    /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+	    /// <param name="css">A string containing a style-sheet for inlining.</param>
+	    /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+	    /// <param name="removeComments">True to remove comments, false to leave them intact</param>
+        /// <param name="parsingMode">(optional) the mode.</param>
+	    /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+	    public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, HtmlParsingMode parsingMode = HtmlParsingMode.Auto)
 		{
-			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+            return new PreMailer(html, parsingMode).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
 		/// <summary>
