@@ -13,8 +13,7 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Compiled Regexes for speed https://github.com/milkshakesoftware/PreMailer.Net/pull/62
-			Added support for premailer-specific CSS https://github.com/milkshakesoftware/PreMailer.Net/pull/64
+			Do not add Analytics tracking tags when using Handlebars syntax https://github.com/milkshakesoftware/PreMailer.Net/pull/65
 		</releaseNotes>
 		<copyright>Copyright 2015</copyright>
 		<tags>email css newsletter html</tags>
