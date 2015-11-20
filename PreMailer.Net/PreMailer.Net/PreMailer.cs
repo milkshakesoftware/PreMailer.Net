@@ -14,6 +14,7 @@ namespace PreMailer.Net
 		private bool _stripIdAndClassAttributes;
 		private string _ignoreElements;
 		private string _css;
+		private readonly Uri _baseUri;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
@@ -22,8 +23,10 @@ namespace PreMailer.Net
 		/// Constructor for the PreMailer class
 		/// </summary>
 		/// <param name="html">The HTML input.</param>
-		public PreMailer(string html)
+		/// <param name="baseUri">Url that all relative urls will be off of</param>
+		public PreMailer(string html, Uri baseUri = null)
 		{
+			_baseUri = baseUri;
 			_document = CQ.CreateDocument(html);
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
@@ -46,6 +49,22 @@ namespace PreMailer.Net
 		}
 
 		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
+		/// <param name="html">The HTML input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		{
+			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+		}
+
+		/// <summary>
 		/// In-lines the CSS for the current HTML
 		/// </summary>
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
@@ -64,12 +83,17 @@ namespace PreMailer.Net
 
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
-			var cssSources = ConvertToStyleSources(cssSourceNodes);
+			var cssLinkNodes = CssLinkNodes();
+			var cssSources = new List<ICssSource>(ConvertToStyleSources(cssSourceNodes));
+			cssSources.AddRange(ConvertToStyleSources(cssLinkNodes));
+
 			var cssBlocks = GetCssBlocks(cssSources);
 
-
 			if (_removeStyleElements)
+			{
 				RemoveStyleElements(cssSourceNodes);
+				RemoveStyleElements(cssLinkNodes);
+			}
 
 			var joinedBlocks = Join(cssBlocks);
 			var validSelectors = CleanUnsupportedSelectors(joinedBlocks);
@@ -150,8 +174,16 @@ namespace PreMailer.Net
 			var nodes = nodesWithStyles;
 			foreach (var node in nodes)
 			{
-				if (node.NodeName == "STYLE")
-					result.Add(new DocumentStyleTagCssSource(node));
+				switch (node.NodeName)
+				{
+					case "STYLE":
+						result.Add(new DocumentStyleTagCssSource(node));
+						break;
+
+					case "LINK":
+						result.Add(new LinkTagCssSource(node, _baseUri));
+						break;
+				}
 			}
 
 			if (!String.IsNullOrWhiteSpace(_css))
@@ -163,15 +195,10 @@ namespace PreMailer.Net
 		}
 
 		/// <summary>
-		/// Returns a collection of CQ nodes that can be used to source CSS content.<para/>
-		/// Currently, only 'style' tags are supported.
+		/// Returns a collection of CQ 'sytle' nodes that can be used to source CSS content.<para/>
 		/// </summary>
 		private CQ CssSourceNodes()
 		{
-			// TODO: Add Source to Read CSS from LINK tags etc.
-			// All we need to do here is update the selector in 'document.Find(...)' and then add
-			// something that implements ICssSource to handle that type of link..
-			// e.g. new LinkTagCssSource(node, baseUrl: "...");
 			var elements = _document.Find("style").Not(_ignoreElements).Filter(elem =>
 			{
 				var mediaAttribute = elem.GetAttribute("media");
@@ -179,6 +206,17 @@ namespace PreMailer.Net
 				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
 			});
 			return elements;
+		}
+
+		/// <summary>
+		/// Returns a collection of CQ 'link' nodes that can be used to source CSS content.<para/>
+		/// </summary>
+		private CQ CssLinkNodes()
+		{
+			return _document.Find("link").Not(_ignoreElements)
+					.Filter(e => e.Attributes
+							.Any(a => a.Key.Equals("href", StringComparison.OrdinalIgnoreCase) &&
+							a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase)));
 		}
 
 
@@ -221,15 +259,15 @@ namespace PreMailer.Net
 			foreach (var failedSelector in failedSelectors)
 			{
 				_warnings.Add(String.Format(
-						"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
-						failedSelector.Name));
+								"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
+								failedSelector.Name));
 			}
 
 			return result;
 		}
 
 		private Dictionary<IDomObject, List<StyleClass>> FindElementsWithStyles(
-				SortedList<string, StyleClass> stylesToApply)
+						SortedList<string, StyleClass> stylesToApply)
 		{
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
@@ -249,7 +287,7 @@ namespace PreMailer.Net
 		}
 
 		private Dictionary<IDomObject, List<StyleClass>> SortBySpecificity(
-				Dictionary<IDomObject, List<StyleClass>> styles)
+						Dictionary<IDomObject, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IDomObject, List<StyleClass>>();
 
@@ -276,7 +314,7 @@ namespace PreMailer.Net
 		}
 
 		private Dictionary<IDomObject, StyleClass> MergeStyleClasses(
-				Dictionary<IDomObject, List<StyleClass>> styles)
+						Dictionary<IDomObject, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IDomObject, StyleClass>();
 			var stylesBySpecificity = SortBySpecificity(styles);
