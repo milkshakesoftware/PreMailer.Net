@@ -56,6 +56,8 @@
     <Compile Include="CssSpecificity.cs" />
     <Compile Include="CssStyleEquivalence.cs" />
     <Compile Include="AttributeToCss.cs" />
+    <Compile Include="Downloaders\IWebDownloader.cs" />
+    <Compile Include="Downloaders\WebDownloader.cs" />
     <Compile Include="ICssSelectorParser.cs" />
     <Compile Include="InlineResult.cs" />
     <Compile Include="PreMailer.cs" />
@@ -71,6 +73,7 @@
     <None Include="packages.config" />
     <None Include="PreMailer.Net.nuspec" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

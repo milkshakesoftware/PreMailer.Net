@@ -1,37 +1,36 @@
 ﻿using CsQuery;
+using PreMailer.Net.Downloaders;
 using System;
-using System.IO;
 using System.Linq;
-using System.Net;
 
 namespace PreMailer.Net.Sources
 {
-	internal class LinkTagCssSource : ICssSource
+	public class LinkTagCssSource : ICssSource
 	{
+		private readonly IWebDownloader _webDownloader;
+		private Uri _downloadUri;
 		private string _cssContents;
 
-		public LinkTagCssSource(IDomObject node, Uri baseUri)
+		public LinkTagCssSource(IDomObject node, Uri baseUri, IWebDownloader webDownloader = null)
 		{
+			_webDownloader = webDownloader ?? new WebDownloader();
+
 			// There must be an href
 			var href = node.Attributes.First(a => a.Key.Equals("href", StringComparison.OrdinalIgnoreCase)).Value;
-			Uri uri;
 
 			if (Uri.IsWellFormedUriString(href, UriKind.Relative) && baseUri != null)
-				uri = new Uri(baseUri, href);
+				_downloadUri = new Uri(baseUri, href);
 			else // Assume absolute
-				uri = new Uri(href);
-
-			var request = WebRequest.Create(uri);
-			using (var response = request.GetResponse())
-			using (var stream = response.GetResponseStream())
-			using (var reader = new StreamReader(stream))
-			{
-				_cssContents = reader.ReadToEnd();
-			}
+				_downloadUri = new Uri(href);
 		}
 
 		public string GetCss()
 		{
+			if (_cssContents == null)
+			{
+				_cssContents = _webDownloader.DownloadString(_downloadUri);
+			}
+
 			return _cssContents;
 		}
 	}
