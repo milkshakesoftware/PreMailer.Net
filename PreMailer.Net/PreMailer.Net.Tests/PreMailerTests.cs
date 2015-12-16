@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PreMailer.Net.Downloaders;
+using Moq;
 
 namespace PreMailer.Net.Tests
 {
@@ -280,6 +282,55 @@ namespace PreMailer.Net.Tests
 				.AddAnalyticsTags("source", "medium", "campaign", "content", "www.Blah.com")
 				.MoveCssInline();
 			Assert.IsTrue(expected == premailedOutput.Html);
+		}
+
+		[TestMethod]
+		public void ContainsLinkCssElement_DownloadsCss()
+		{
+			var mockDownloader = new Mock<IWebDownloader>();
+			mockDownloader.Setup(d => d.DownloadString(It.IsAny<Uri>())).Returns(".a { display: block; }");
+			WebDownloader.SharedDownloader = mockDownloader.Object;
+
+			Uri baseUri = new Uri("http://a.com");
+			Uri fullUrl = new Uri(baseUri, "b.css");
+			string input = String.Format("<html><head><link href=\"{0}\"></link></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>", fullUrl);
+
+			PreMailer sut = new PreMailer(input, baseUri);
+			sut.MoveCssInline();
+
+			mockDownloader.Verify(d => d.DownloadString(fullUrl));
+		}
+
+		[TestMethod]
+		public void ContainsLinkCssElement_NotCssFile_DoNotDownload()
+		{
+			var mockDownloader = new Mock<IWebDownloader>();
+			mockDownloader.Setup(d => d.DownloadString(It.IsAny<Uri>())).Returns(".a { display: block; }");
+			WebDownloader.SharedDownloader = mockDownloader.Object;
+
+			Uri baseUri = new Uri("http://a.com");
+			Uri fullUrl = new Uri(baseUri, "b.bs");
+			string input = String.Format("<html><head><link href=\"{0}\"></link></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>", fullUrl);
+
+			PreMailer sut = new PreMailer(input, baseUri);
+			sut.MoveCssInline();
+
+			mockDownloader.Verify(d => d.DownloadString(It.IsAny<Uri>()), Times.Never());
+		}
+
+		[TestMethod]
+		public void ContainsLinkCssElement_DownloadsCss_InlinesContent()
+		{
+			var mockDownloader = new Mock<IWebDownloader>();
+			mockDownloader.Setup(d => d.DownloadString(It.IsAny<Uri>())).Returns(".test { width: 150px; }");
+			WebDownloader.SharedDownloader = mockDownloader.Object;
+			
+			string input = "<html><head><link href=\"http://a.com/b.css\"></link></head><body><div class=\"test\">test</div></body></html>";
+
+			PreMailer sut = new PreMailer(input, new Uri("http://a.com"));
+			var premailedOutput = sut.MoveCssInline();
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 150px\">"));
 		}
 	}
 }

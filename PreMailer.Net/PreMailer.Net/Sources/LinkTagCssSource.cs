@@ -7,14 +7,11 @@ namespace PreMailer.Net.Sources
 {
 	public class LinkTagCssSource : ICssSource
 	{
-		private readonly IWebDownloader _webDownloader;
 		private Uri _downloadUri;
 		private string _cssContents;
 
-		public LinkTagCssSource(IDomObject node, Uri baseUri, IWebDownloader webDownloader = null)
+		public LinkTagCssSource(IDomObject node, Uri baseUri)
 		{
-			_webDownloader = webDownloader ?? new WebDownloader();
-
 			// There must be an href
 			var href = node.Attributes.First(a => a.Key.Equals("href", StringComparison.OrdinalIgnoreCase)).Value;
 
@@ -28,7 +25,7 @@ namespace PreMailer.Net.Sources
 		{
 			if (_cssContents == null)
 			{
-				_cssContents = _webDownloader.DownloadString(_downloadUri);
+				_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
 			}
 
 			return _cssContents;

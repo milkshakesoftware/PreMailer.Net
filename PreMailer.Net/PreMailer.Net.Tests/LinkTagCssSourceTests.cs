@@ -12,6 +12,11 @@ namespace PreMailer.Net.Tests
 	{
 		private readonly Mock<IWebDownloader> _webDownloader = new Mock<IWebDownloader>();
 
+		public LinkTagCssSourceTests()
+		{
+			WebDownloader.SharedDownloader = _webDownloader.Object;
+		}
+
 		[TestMethod]
 		public void ImplementsInterface()
 		{
@@ -56,7 +61,7 @@ namespace PreMailer.Net.Tests
 		private LinkTagCssSource CreateSUT(string baseUrl = "http://a.com", string path = "a.css")
 		{
 			var node = CQ.CreateFragment(String.Format("<link href=\"{0}\" />", path));
-			var sut = new LinkTagCssSource(node.FirstElement(), new Uri(baseUrl), webDownloader: _webDownloader.Object);
+			var sut = new LinkTagCssSource(node.FirstElement(), new Uri(baseUrl));
 
 			return sut;
 		}
