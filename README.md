@@ -30,11 +30,19 @@ result.Warnings 	// string[] of any warnings that occurred during processing.
 ### Options
 The following options can be passed to the `PreMailer.MoveCssInline` method to configure it's behaviour:
 
+- `baseUri(Uri = null)` - Base URL to apply to `link` elements with `href` values ending with `.css`.
 - `removeStyleElements(bool = false)` - Removes elements that were used to source CSS (currently, only `style` is supported).
 - `ignoreElements(string = null)` - CSS selector of element(s) _not_ to inline. Useful for mobile styles (see below).
 - `css(string = null)` - A string containing a style-sheet for inlining.
 - `stripIdAndClassAttributes(bool = false)` - True to strip ID and class attributes.
 - `removeComments(bool = false)` - True to remove comments, false to leave them intact.
+
+### External style sheets
+Sometimes it's handy to reference external style sheets with a `<link href="..." />` element. PreMailer will download and use external style sheets as long as the value of `href` ends with `.css`.
+
+Both absolute and relative URLs are suppored. If the URL is relative, you must specify the `baseUri` parameter in either the constructor, or when calling the static `MoveCssInline` method.
+
+`<link />` elements that match the `ignoreElements` selector won't be downloaded.
 
 ### Media queries
 If you want to [apply mobile styles to your e-mail](http://help.campaignmonitor.com/topic.aspx?t=164), you should put your
