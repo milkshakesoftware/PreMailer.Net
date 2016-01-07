@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using CsQuery;
+using AngleSharp.Dom;
 
 namespace PreMailer.Net
 {
-    public class CssStyleEquivalence
+    public static class CssStyleEquivalence
     {
         private static readonly Dictionary<string, string> _linkedAttributes = new Dictionary<string, string>
             {
@@ -14,7 +14,7 @@ namespace PreMailer.Net
             };
 
 
-        public static IList<AttributeToCss> FindEquivalent(IDomObject domobject, StyleClass styles)
+        public static IList<AttributeToCss> FindEquivalent(IElement domobject, StyleClass styles)
         {
 
             return (from attributeRuleMatch in _linkedAttributes

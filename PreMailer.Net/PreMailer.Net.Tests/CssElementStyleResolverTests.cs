@@ -1,5 +1,6 @@
 ﻿using System.Linq;
-using CsQuery;
+using AngleSharp.Dom;
+using AngleSharp.Parser.Html;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
@@ -10,8 +11,8 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void GetAllStylesForElement()
         {
-            var tableDomObject = CQ.CreateFragment("<td id=\"tabletest\" class=\"test\" bgcolor=\"\"></td>");
-            var nodewithoutselector = tableDomObject.FirstElement();
+            var tableDomObject = new HtmlParser().Parse("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
+            var nodewithoutselector = (IElement)tableDomObject.Body.FirstChild;
 
             var clazz = new StyleClass();
             clazz.Attributes["background-color"] = CssAttribute.FromRule("background-color: red");

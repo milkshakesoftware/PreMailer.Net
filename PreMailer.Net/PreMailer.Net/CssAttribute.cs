@@ -1,38 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace PreMailer.Net {
-    public class CssAttribute {
-        public string Style { get; set; }
-        public string Value { get; set; }
-        public bool Important { get; set; }
+namespace PreMailer.Net
+{
+	public class CssAttribute
+	{
+		public string Style { get; set; }
+		public string Value { get; set; }
+		public bool Important { get; set; }
 
-        private CssAttribute() { }
+		private CssAttribute() { }
 
-        public static CssAttribute FromRule(string rule) {            
-            var parts = rule.Split(new [] { ':' }, 2);
+		public static CssAttribute FromRule(string rule)
+		{
+			var parts = rule.Split(new[] { ':' }, 2);
 
-            if (parts.Length == 1) return null;
+			if (parts.Length == 1)
+			{
+				return null;
+			}
 
-            var value = parts[1].Trim();
-            var important = false;
+			var value = parts[1].Trim();
+			var important = false;
 
-            if(value.IndexOf("!important", StringComparison.CurrentCultureIgnoreCase) != -1) {
-                important = true;
-                value = value.Replace(" !important", "");
-            }
+			if (value.IndexOf("!important", StringComparison.CurrentCultureIgnoreCase) != -1)
+			{
+				important = true;
+				value = value.Replace(" !important", "");
+			}
 
-            return new CssAttribute {
-                Style = parts[0].Trim(),
-                Value = value,
-                Important = important
-            };
-        }
+			return new CssAttribute
+			{
+				Style = parts[0].Trim(),
+				Value = value,
+				Important = important
+			};
+		}
 
-        public override string ToString() {
-            return string.Format("{0}: {1}{2}", Style, Value, Important ? " !important" : string.Empty);
-        }
-    }
+		public override string ToString()
+		{
+			return string.Format("{0}: {1}{2}", Style, Value, Important ? " !important" : string.Empty);
+		}
+	}
 }
