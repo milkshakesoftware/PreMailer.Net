@@ -1,19 +1,19 @@
-﻿using CsQuery;
+﻿using AngleSharp.Dom;
 
 namespace PreMailer.Net.Sources
 {
 	public class DocumentStyleTagCssSource : ICssSource
 	{
-		private readonly IDomObject _node;
+		private readonly IElement _node;
 
-		public DocumentStyleTagCssSource(IDomObject node)
+        public DocumentStyleTagCssSource(IElement node)
 		{
 			_node = node;
 		}
 
 		public string GetCss()
 		{
-			return _node.InnerHTML;
+			return _node.InnerHtml;
 		}
 	}
 }

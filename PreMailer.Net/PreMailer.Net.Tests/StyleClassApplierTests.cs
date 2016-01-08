@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CsQuery;
+using AngleSharp.Dom;
+using AngleSharp.Dom.Html;
+using AngleSharp.Parser.Html;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
@@ -11,12 +13,12 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void ApplyStylesToAllElements()
         {
-            var elementDictionary = new Dictionary<IDomObject, StyleClass>();
+            var elementDictionary = new Dictionary<IElement, StyleClass>();
 
-            var tableDomObject1 = CQ.CreateFragment("<td id=\"tabletest1\" class=\"test1\" bgcolor=\"\"></td>");
-            var tableDomObject2 = CQ.CreateFragment("<td id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"\"></td>");
-            var tableDomObject3 = CQ.CreateFragment("<td id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"\"></td>");
-            var tableDomObject4 = CQ.CreateFragment("<td id=\"tabletest4\" class=\"test4\" bgcolor=\"\" width=\"\"></td>");
+            var tableDomObject1 = new HtmlParser().Parse("<table id=\"tabletest1\" class=\"test1\" bgcolor=\"\"></table>");
+            var tableDomObject2 = new HtmlParser().Parse("<table id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"\"></table>");
+            var tableDomObject3 = new HtmlParser().Parse("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"\"></table>");
+            var tableDomObject4 = new HtmlParser().Parse("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"\" width=\"\"></table>");
 
             var styleClassBgColor = new StyleClass();
             styleClassBgColor.Attributes["background-color"] = CssAttribute.FromRule("background-color: #008001");
@@ -31,17 +33,17 @@ namespace PreMailer.Net.Tests
             styleClassBgAndWidth.Attributes["background-color"] = CssAttribute.FromRule("background-color: #008003");
             styleClassBgAndWidth.Attributes["width"] = CssAttribute.FromRule("width: 10px");
             
-            elementDictionary.Add(tableDomObject1.FirstElement(), styleClassBgColor);
-            elementDictionary.Add(tableDomObject2.FirstElement(), styleClassWidth);
-            elementDictionary.Add(tableDomObject3.FirstElement(), styleClassHeight);
-            elementDictionary.Add(tableDomObject4.FirstElement(), styleClassBgAndWidth);
+            elementDictionary.Add(tableDomObject1.Body.FirstElementChild, styleClassBgColor);
+            elementDictionary.Add(tableDomObject2.Body.FirstElementChild, styleClassWidth);
+            elementDictionary.Add(tableDomObject3.Body.FirstElementChild, styleClassHeight);
+            elementDictionary.Add(tableDomObject4.Body.FirstElementChild, styleClassBgAndWidth);
 
             var result = StyleClassApplier.ApplyAllStyles(elementDictionary);
 
-            Assert.AreEqual("<td class=\"test1\" style=\"background-color: #008001\" id=\"tabletest1\" bgcolor=\"#008001\"></td>", result.ElementAt(0).Key.ToString());
-            Assert.AreEqual("<td class=\"test2\" style=\"width: 10px\" id=\"tabletest2\" bgcolor width=\"10px\"></td>", result.ElementAt(1).Key.ToString());
-            Assert.AreEqual("<td class=\"test3\" style=\"height: 10px\" id=\"tabletest3\" bgcolor height=\"10px\"></td>", result.ElementAt(2).Key.ToString());
-            Assert.AreEqual("<td class=\"test4\" style=\"background-color: #008003;width: 10px\" id=\"tabletest4\" bgcolor=\"#008003\" width=\"10px\"></td>", result.ElementAt(3).Key.ToString());
+            Assert.AreEqual("<table id=\"tabletest1\" class=\"test1\" bgcolor=\"#008001\" style=\"background-color: #008001\"></table>", result.ElementAt(0).Key.OuterHtml);
+            Assert.AreEqual("<table id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"10px\" style=\"width: 10px\"></table>", result.ElementAt(1).Key.OuterHtml);
+            Assert.AreEqual("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"10px\" style=\"height: 10px\"></table>", result.ElementAt(2).Key.OuterHtml);
+            Assert.AreEqual("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"#008003\" width=\"10px\" style=\"background-color: #008003;width: 10px\"></table>", result.ElementAt(3).Key.OuterHtml);
         }
     }
 }

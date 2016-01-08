@@ -1,15 +1,18 @@
-﻿using CsQuery;
-using PreMailer.Net.Sources;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using AngleSharp.Dom;
+using AngleSharp.Dom.Html;
+using AngleSharp.Extensions;
+using AngleSharp.Parser.Html;
+using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
 {
 	public class PreMailer
 	{
-		private readonly CQ _document;
+		private readonly IHtmlDocument _document;
 		private bool _removeStyleElements;
 		private bool _stripIdAndClassAttributes;
 		private string _ignoreElements;
@@ -27,7 +30,7 @@ namespace PreMailer.Net
 		public PreMailer(string html, Uri baseUri = null)
 		{
 			_baseUri = baseUri;
-			_document = CQ.CreateDocument(html);
+			_document = new HtmlParser().Parse(html);
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
@@ -106,7 +109,17 @@ namespace PreMailer.Net
 			if (_stripIdAndClassAttributes)
 				StripElementAttributes("id", "class");
 
-			var html = _document.Render(removeComments ? DomRenderingOptions.RemoveComments : DomRenderingOptions.Default);
+			if (removeComments)
+			{
+				var comments = _document.Descendents<IComment>().ToList();
+
+				foreach (var comment in comments)
+				{
+					comment.Remove();
+				}
+			}
+
+			var html = _document.DocumentElement.OuterHtml;
 			return new InlineResult(html, _warnings);
 		}
 
@@ -122,14 +135,15 @@ namespace PreMailer.Net
 		public PreMailer AddAnalyticsTags(string source, string medium, string campaign, string content, string domain = null)
 		{
 			var tracking = "utm_source=" + source + "&utm_medium=" + medium + "&utm_campaign=" + campaign + "&utm_content=" + content;
-			foreach (var tag in _document["a[href]"])
+			foreach (var tag in _document.QuerySelectorAll("a[href]"))
 			{
 				var href = tag.Attributes["href"];
-				if (href.StartsWith("http", StringComparison.OrdinalIgnoreCase) && (domain == null || DomainMatch(domain, href)))
+				if (href.Value.StartsWith("http", StringComparison.OrdinalIgnoreCase) && (domain == null || DomainMatch(domain, href.Value)))
 				{
-					tag.SetAttribute("href", href + (href.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
+					tag.SetAttribute("href", href.Value + (href.Value.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
 				}
 			}
+
 			return this;
 		}
 
@@ -169,7 +183,7 @@ namespace PreMailer.Net
 		/// Returns a list of CSS sources ('style', 'link' tags etc.) based on the elements given.<para/>
 		/// These will be returned in their order of definition.
 		/// </summary>
-		private IEnumerable<ICssSource> ConvertToStyleSources(CQ nodesWithStyles)
+		private IEnumerable<ICssSource> ConvertToStyleSources(IEnumerable<IElement> nodesWithStyles)
 		{
 			var result = new List<ICssSource>();
 			var nodes = nodesWithStyles;
@@ -198,30 +212,44 @@ namespace PreMailer.Net
 		/// <summary>
 		/// Returns a collection of CQ 'sytle' nodes that can be used to source CSS content.<para/>
 		/// </summary>
-		private CQ CssSourceNodes()
+		private IEnumerable<IElement> CssSourceNodes()
 		{
-			var elements = _document.Find("style").Not(_ignoreElements).Filter(elem =>
+			IEnumerable<IElement> elements = _document.QuerySelectorAll("style");
+
+			if (!String.IsNullOrEmpty(_ignoreElements))
+			{
+				elements = elements.Not(_ignoreElements);
+			}
+
+			elements = elements.Where(elem =>
 			{
 				var mediaAttribute = elem.GetAttribute("media");
 
 				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
 			});
+
 			return elements;
 		}
 
 		/// <summary>
 		/// Returns a collection of CQ 'link' nodes that can be used to source CSS content.<para/>
 		/// </summary>
-		private CQ CssLinkNodes()
+		private IEnumerable<IElement> CssLinkNodes()
 		{
-			return _document.Find("link").Not(_ignoreElements)
-					.Filter(e => e.Attributes
-							.Any(a => a.Key.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-							a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase)));
+			IEnumerable<IElement> elements = _document.QuerySelectorAll("link");
+
+			if (!String.IsNullOrEmpty(_ignoreElements))
+			{
+				elements = elements.Not(_ignoreElements);
+			}
+
+			return elements.Where(e => e.Attributes
+				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
+						  a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase)));
 		}
 
 
-		private void RemoveStyleElements(CQ cssSourceNodes)
+		private void RemoveStyleElements(IEnumerable<IElement> cssSourceNodes)
 		{
 			foreach (var node in cssSourceNodes)
 			{
@@ -267,14 +295,14 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		private Dictionary<IDomObject, List<StyleClass>> FindElementsWithStyles(
+		private Dictionary<IElement, List<StyleClass>> FindElementsWithStyles(
 				SortedList<string, StyleClass> stylesToApply)
 		{
-			var result = new Dictionary<IDomObject, List<StyleClass>>();
+			var result = new Dictionary<IElement, List<StyleClass>>();
 
 			foreach (var style in stylesToApply)
 			{
-				var elementsForSelector = _document[style.Value.Name];
+				var elementsForSelector = _document.QuerySelectorAll(style.Value.Name);
 
 				foreach (var el in elementsForSelector)
 				{
@@ -287,24 +315,25 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		private Dictionary<IDomObject, List<StyleClass>> SortBySpecificity(
-				Dictionary<IDomObject, List<StyleClass>> styles)
+		private Dictionary<IElement, List<StyleClass>> SortBySpecificity(
+				Dictionary<IElement, List<StyleClass>> styles)
 		{
-			var result = new Dictionary<IDomObject, List<StyleClass>>();
+			var result = new Dictionary<IElement, List<StyleClass>>();
 
 			foreach (var style in styles)
 			{
 				if (style.Key.Attributes != null)
 				{
 					var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
+					var styleAttr = style.Key.Attributes["style"];
 
-					if (String.IsNullOrWhiteSpace(style.Key.Attributes["style"]))
+					if (styleAttr == null || String.IsNullOrWhiteSpace(styleAttr.Value))
 					{
 						style.Key.SetAttribute("style", String.Empty);
 					}
 					else // Ensure that existing inline styles always win.
 					{
-						sortedStyles.Add(_cssParser.ParseStyleClass("inline", style.Key.Attributes["style"]));
+						sortedStyles.Add(_cssParser.ParseStyleClass("inline", styleAttr.Value));
 					}
 
 					result[style.Key] = sortedStyles;
@@ -314,10 +343,10 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		private Dictionary<IDomObject, StyleClass> MergeStyleClasses(
-				Dictionary<IDomObject, List<StyleClass>> styles)
+		private Dictionary<IElement, StyleClass> MergeStyleClasses(
+				Dictionary<IElement, List<StyleClass>> styles)
 		{
-			var result = new Dictionary<IDomObject, StyleClass>();
+			var result = new Dictionary<IElement, StyleClass>();
 			var stylesBySpecificity = SortBySpecificity(styles);
 
 			foreach (var elemStyle in stylesBySpecificity)
@@ -344,10 +373,10 @@ namespace PreMailer.Net
 				selectors.Add(String.Format("*[{0}]", attribute));
 			}
 
-			CQ elementsWithAttributes = _document.Find(String.Join(",", selectors.Cast<string>().ToList()));
+			var elementsWithAttributes = _document.QuerySelectorAll(String.Join(",", selectors.Cast<string>().ToList()));
 			foreach (var item in elementsWithAttributes)
 			{
-				foreach (string attribute in attributeNames)
+				foreach (var attribute in attributeNames)
 				{
 					item.RemoveAttribute(attribute);
 				}

@@ -1,9 +1,9 @@
-﻿using CsQuery;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PreMailer.Net.Downloaders;
 using PreMailer.Net.Sources;
 using System;
+using AngleSharp.Parser.Html;
 
 namespace PreMailer.Net.Tests
 {
@@ -60,8 +60,8 @@ namespace PreMailer.Net.Tests
 
 		private LinkTagCssSource CreateSUT(string baseUrl = "http://a.com", string path = "a.css")
 		{
-			var node = CQ.CreateFragment(String.Format("<link href=\"{0}\" />", path));
-			var sut = new LinkTagCssSource(node.FirstElement(), new Uri(baseUrl));
+			var node = new HtmlParser().Parse(String.Format("<link href=\"{0}\" />", path));
+			var sut = new LinkTagCssSource(node.Head.FirstElementChild, new Uri(baseUrl));
 
 			return sut;
 		}
