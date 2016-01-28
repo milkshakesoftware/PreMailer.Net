@@ -146,15 +146,30 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void AddStylesheet_ContainsEncodedImage()
         {
-            var stylesheet = @"#logo 
-{ 
-    content: url('data:image/jpeg; base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='); 
-    max-width: 200px; 
-    height: auto; 
+            var stylesheet = @"#logo
+{
+    content: url('data:image/jpeg; base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=');
+    max-width: 200px;
+    height: auto;
 }";
             var parser = new CssParser();
             parser.AddStyleSheet(stylesheet);
             var attributes = parser.Styles["#logo"].Attributes;
+        }
+
+        [TestMethod]
+        public void AddStylesheet_ShouldSetStyleClassPositions()
+        {
+            var stylesheet1 = "#id .class1 element { color: #fff; } #id .class2 element { color: #aaa; }";
+            var stylesheet2 = "#id .class3 element { color: #000; } #id .class2 element { color: #bbb; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet1);
+            parser.AddStyleSheet(stylesheet2);
+
+            Assert.AreEqual(1, parser.Styles.Values[0].Position);
+            Assert.AreEqual(4, parser.Styles.Values[1].Position);
+            Assert.AreEqual(3, parser.Styles.Values[2].Position);
         }
     }
 }

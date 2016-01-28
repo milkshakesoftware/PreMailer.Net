@@ -6,7 +6,7 @@ namespace PreMailer.Net {
         /// <summary>
         /// Initializes a new instance of the <see cref="StyleClass"/> class.
         /// </summary>
-        public StyleClass() 
+        public StyleClass()
         {
             Attributes = new Dictionary<string, CssAttribute>(StringComparer.CurrentCultureIgnoreCase);
         }
@@ -16,6 +16,11 @@ namespace PreMailer.Net {
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; set; }
+
+        /// <summary>
+        /// The position, relative to other style classes.
+        /// </summary>
+        public int Position { get; set; }
 
         /// <summary>
         /// Gets or sets the attributes.
@@ -31,7 +36,7 @@ namespace PreMailer.Net {
         public void Merge(StyleClass styleClass, bool canOverwrite) {
             foreach (var item in styleClass.Attributes) {
                 CssAttribute existing;
-                
+
                 if (!Attributes.TryGetValue(item.Key, out existing) ||
                     canOverwrite && (!existing.Important || item.Value.Important))
                 {

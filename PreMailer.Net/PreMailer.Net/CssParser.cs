@@ -8,6 +8,7 @@ namespace PreMailer.Net
     {
         private readonly List<string> _styleSheets;
         private SortedList<string, StyleClass> _scc;
+        private int styleCount = 0;
 
         public SortedList<string, StyleClass> Styles
         {
@@ -77,6 +78,8 @@ namespace PreMailer.Net
                 {
                     sc = new StyleClass();
                 }
+
+                sc.Position = ++styleCount;
 
                 FillStyleClass(sc, styleName, parts[1]);
 

@@ -324,7 +324,7 @@ namespace PreMailer.Net
 			{
 				if (style.Key.Attributes != null)
 				{
-					var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ToList();
+					var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ThenBy(x => x.Position).ToList();
 					var styleAttr = style.Key.Attributes["style"];
 
 					if (styleAttr == null || String.IsNullOrWhiteSpace(styleAttr.Value))
