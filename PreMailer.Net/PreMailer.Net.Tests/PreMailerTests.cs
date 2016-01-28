@@ -93,6 +93,21 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
+		public void MoveCssInline_CrazyCssSelector_DoesNotThrowError()
+		{
+			string input = "<html><head><style type=\"text/css\">li:crazy { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
+
+			try
+			{
+				PreMailer.MoveCssInline(input);
+			}
+			catch (Exception ex)
+			{
+				Assert.Fail(ex.Message);
+			}
+		}
+
+		[TestMethod]
 		public void MoveCssInline_SupportedjQuerySelector_AppliesCss()
 		{
 			string input = "<html><head><style type=\"text/css\">li:first-child { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
