@@ -7,11 +7,28 @@ namespace PreMailer.Net
 {
     public class CssSelectorParser : ICssSelectorParser
     {
-		private static readonly Regex IdMatcher = new Regex(@"#([\w]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		private static readonly Regex AttribMatcher = new Regex(@"\[[\w=]+\]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		private static readonly Regex ClassMatcher = new Regex(@"\.([\w]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		private static readonly Regex ElemMatcher = new Regex(@"[a-zA-Z]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		private static readonly Regex PseudoClassMatcher = BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", @"\(\w+\)"));
+        #region "CSS definitions"
+        // These definitions have been taken from https://www.w3.org/TR/css3-selectors/#lex
+        private static readonly string Css_NonAscii = @"[^\0-\177]";
+        private static readonly string Css_Unicode = @"(\\[0-9a-f]{1,6}(\r\n|[ \t\r\n\f])?)";
+        private static readonly string Css_Escape = string.Format(@"({0}|\\[^\r\n\f0-9a-f])", Css_Unicode);
+        private static readonly string Css_NmStart = string.Format(@"([_a-z]|{0}|{1})", Css_NonAscii, Css_Escape);
+        private static readonly string Css_NmChar = string.Format(@"([_a-z0-9-]|{0}|{1})", Css_NonAscii, Css_Escape);
+
+        private static readonly string Css_Ident = string.Format(@"(-?{0}{1}*)", Css_NmStart, Css_NmChar);
+
+        private static readonly string Css_Nl = @"(\n|\r\n|\r|\f)";
+        private static readonly string Css_String1 = string.Format(@"(""([^\n\r\f\\""]|\\{0}|{1}|{2})*"")", Css_Nl, Css_NonAscii, Css_Escape);
+        private static readonly string Css_String2 = string.Format(@"('([^\n\r\f\\']|\\{0}|{1}|{2})*')", Css_Nl, Css_NonAscii, Css_Escape);
+        private static readonly string Css_String = string.Format(@"({0}|{1})", Css_String1, Css_String2);
+        #endregion
+
+        // These definitions have been taken from https://www.w3.org/TR/css3-selectors/#grammar
+        private static readonly Regex IdMatcher = new Regex(String.Format(@"#{0}", Css_Ident), RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex AttribMatcher = new Regex(String.Format(@"\[\s*{0}\s*(([$*^~|]?=)\s*({0}|{1})\s*)?\]", Css_Ident, Css_String), RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex ClassMatcher = new Regex(String.Format(@"\.{0}", Css_Ident), RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex ElemMatcher = new Regex(Css_Ident, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex PseudoClassMatcher = BuildOrRegex(PseudoClasses, ":", x => x.Replace("()", String.Format(@"\({0}\)", Css_Ident)));
 		private static readonly Regex PseudoElemMatcher = BuildOrRegex(PseudoElements, "::?");
 		private static readonly Regex PseudoUnimplemented = BuildOrRegex(UnimplementedPseudoSelectors, "::?");
 

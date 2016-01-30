@@ -63,7 +63,26 @@ namespace PreMailer.Net.Tests
 			Assert.AreEqual(11, result);
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void GetSelectorSpecificity_AttributeVariants_AllEqual()
+        {
+            var result1 = _parser.GetSelectorSpecificity("[REL ~= \"up\"]");
+            var result2 = _parser.GetSelectorSpecificity("[REL ~= 'up']");
+            var result3 = _parser.GetSelectorSpecificity("[REL|=up]");
+            var result4 = _parser.GetSelectorSpecificity("[ REL^=up ]");
+            var result5 = _parser.GetSelectorSpecificity("[REL$=up]");
+            var result6 = _parser.GetSelectorSpecificity("[REL*=up]");
+
+            Assert.IsTrue(  
+                result1 == result2 && 
+                result2 == result3 && 
+                result3 == result4 && 
+                result4 == result5 && 
+                result5 == result6
+            );
+        }
+
+        [TestMethod]
 		public void GetSelectorSpecificity_ThreeElementNamesAndOneClass_Returns13()
 		{
 			var result = _parser.GetSelectorSpecificity("UL OL LI.red");
@@ -98,7 +117,14 @@ namespace PreMailer.Net.Tests
 			Assert.AreEqual(101, result);
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void GetSelectorSpecificity_OneIdAndElementWithHyphenInNotPseudoClass_Returns101()
+        {
+            var result = _parser.GetSelectorSpecificity("#s12:not(FOO-BAR)");
+            Assert.AreEqual(101, result);
+        }
+
+        [TestMethod]
 		public void GetSelectorSpecificity_OneIdTenClassesOneElement_Returns1101()
 		{
 			var result = _parser.GetSelectorSpecificity("#id .class .class .class .class .class .class .class .class .class .class element");
@@ -126,7 +152,42 @@ namespace PreMailer.Net.Tests
 			Assert.AreEqual(1110, result);
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void GetSelectorSpecificity_OneIdOneClassOneElementWithHypens_Returns111()
+        {
+            var result = _parser.GetSelectorSpecificity("my-element#my-id.my-class");
+            Assert.AreEqual(111, result);
+        }
+
+        [TestMethod]
+        public void GetSelectorSpecificity_OneIdOneClassOneElementWithUnderscores_Returns111()
+        {
+            var result = _parser.GetSelectorSpecificity("my_element#my_id.my_class");
+            Assert.AreEqual(111, result);
+        }
+        
+        [TestMethod]
+        public void GetSelectorSpecificity_OneIdOneClassOneElementWithNonAsciiBeginnings_Returns111()
+        {
+            var result = _parser.GetSelectorSpecificity("ɟmyelement#ʇmyid.ɹmyclass");
+            Assert.AreEqual(111, result);
+        }
+        
+        [TestMethod]
+        public void GetSelectorSpecificity_OneIdOneClassOneElementWithNonAsciiMiddles_Returns111()
+        {
+            var result = _parser.GetSelectorSpecificity("my™element#myǝid.myɐclass");
+            Assert.AreEqual(111, result);
+        }
+
+        [TestMethod]
+        public void GetSelectorSpecificity_OneIdOneClassOneElementWithNonAsciiEndings_Returns111()
+        {
+            var result = _parser.GetSelectorSpecificity("myelement♫#myid♫.myclass♫");
+            Assert.AreEqual(111, result);
+        }
+
+        [TestMethod]
 		public void IsPseudoClass_SelectorWithoutPseudoClass_ReturnsFalse()
 		{
 			var result = _parser.IsPseudoClass("a");
@@ -153,5 +214,5 @@ namespace PreMailer.Net.Tests
 			var result = _parser.IsPseudoElement("p:first-line");
 			Assert.IsTrue(result);
 		}
-	}
+    }
 }
