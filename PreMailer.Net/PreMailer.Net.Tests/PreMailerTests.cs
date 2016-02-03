@@ -262,18 +262,18 @@ namespace PreMailer.Net.Tests
 			Assert.IsTrue(expected == premailedOutput.Html);
 		}
 
-        [TestMethod]
-        public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_InSameBlock()
-        {
-            string input1 = "<html><head><style type=\"text/css\">table.acolor td { color: #0F0; } table.bcolor td { color: #00F; }</style></head><body><table class=\"acolor bcolor\"><tr><td>test</td></tr></table></body></html>";
-            string input2 = "<html><head><style type=\"text/css\">table.bcolor td { color: #00F; } table.acolor td { color: #0F0; }</style></head><body><table class=\"acolor bcolor\"><tr><td>test</td></tr></table></body></html>";
+		[TestMethod]
+		public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_InSameBlock()
+		{
+			string input1 = "<html><head><style type=\"text/css\">table.acolor td { color: #0F0; } table.bcolor td { color: #00F; }</style></head><body><table class=\"acolor bcolor\"><tr><td>test</td></tr></table></body></html>";
+			string input2 = "<html><head><style type=\"text/css\">table.bcolor td { color: #00F; } table.acolor td { color: #0F0; }</style></head><body><table class=\"acolor bcolor\"><tr><td>test</td></tr></table></body></html>";
 
-            var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
-            var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
-            
-            Assert.IsTrue(premailedOutput1.Html.Contains("<td style=\"color: #00F\">test</td>"));
-            Assert.IsTrue(premailedOutput2.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-        }
+			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
+			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
+
+			Assert.IsTrue(premailedOutput1.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.IsTrue(premailedOutput2.Html.Contains("<td style=\"color: #0F0\">test</td>"));
+		}
 
         [TestMethod]
         public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_Nested_InSameBlock()
