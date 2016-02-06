@@ -302,13 +302,20 @@ namespace PreMailer.Net
 
 			foreach (var style in stylesToApply)
 			{
-				var elementsForSelector = _document.QuerySelectorAll(style.Value.Name);
-
-				foreach (var el in elementsForSelector)
+				try
 				{
-					var existing = result.ContainsKey(el) ? result[el] : new List<StyleClass>();
-					existing.Add(style.Value);
-					result[el] = existing;
+					var elementsForSelector = _document.QuerySelectorAll(style.Value.Name);
+
+					foreach (var el in elementsForSelector)
+					{
+						var existing = result.ContainsKey(el) ? result[el] : new List<StyleClass>();
+						existing.Add(style.Value);
+						result[el] = existing;
+					}
+				}
+				catch (DomException ex)
+				{
+					_warnings.Add(String.Format("Error finding element with selector: '{0}: {1}", style.Value.Name, ex.Message));
 				}
 			}
 
