@@ -41,6 +41,7 @@ namespace PreMailer.Net
 		public static int SelectorSpecificity(string selector)
 		{
 			var instance = new CssSelectorParser();
+
 			return instance.GetSelectorSpecificity(selector);
 		}
 
@@ -78,6 +79,7 @@ namespace PreMailer.Net
 			var pseudoElements = MatchCountAndStrip(PseudoElemMatcher, buffer, out buffer);
 
 			var specificity = new CssSpecificity(ids, (classes + attributes + pseudoClasses), (elementNames + pseudoElements));
+
 			return result + specificity;
 		}
 
@@ -203,6 +205,7 @@ namespace PreMailer.Net
 			var sb = new StringBuilder();
 			sb.Append(prefix);
 			sb.Append("(");
+
 			for (var i = 0; i < items.Length; i++)
 			{
 				var @class = items[i];

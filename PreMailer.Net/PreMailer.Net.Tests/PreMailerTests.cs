@@ -93,6 +93,21 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
+		public void MoveCssInline_CrazyCssSelector_DoesNotThrowError()
+		{
+			string input = "<html><head><style type=\"text/css\">li:crazy { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
+
+			try
+			{
+				PreMailer.MoveCssInline(input);
+			}
+			catch (Exception ex)
+			{
+				Assert.Fail(ex.Message);
+			}
+		}
+
+		[TestMethod]
 		public void MoveCssInline_SupportedjQuerySelector_AppliesCss()
 		{
 			string input = "<html><head><style type=\"text/css\">li:first-child { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
@@ -384,5 +399,24 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 150px\">"));
 		}
-    }
+
+		[TestMethod]
+		public void ContainsKeyframeCSS_InlinesCSSWithOutError()
+		{
+			string keyframeAnimation = @"
+				@keyframes mymove {
+						0%   {top: 0px;}
+						25%  {top: 200px;}
+						75%  {top: 50px}
+						100% {top: 100px;}
+				}
+			";
+
+			string input = "<html><head><style type=\"text/css\">.test { background-color:#f1f1f1; } " + keyframeAnimation + "</style></head><body><div class=\"test\">test</div></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"background-color: #f1f1f1\""));
+		}
+	}
 }
