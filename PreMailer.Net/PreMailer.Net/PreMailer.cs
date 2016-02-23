@@ -10,7 +10,7 @@ using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
 {
-	public class PreMailer
+	public class PreMailer : IDisposable
 	{
 		private readonly IHtmlDocument _document;
 		private bool _removeStyleElements;
@@ -389,5 +389,24 @@ namespace PreMailer.Net
 				}
 			}
 		}
-	}
+
+
+        /// <summary>
+        /// Access underlying IHTMLDocument
+        /// </summary>
+        public IHtmlDocument Document {
+            get {
+                return _document;
+            }
+        }
+
+
+        /// <summary>
+        /// Dispose underlying document
+        /// </summary>
+        public void Dispose()
+        {
+            _document.Dispose();
+        }
+    }
 }

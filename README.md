@@ -48,7 +48,7 @@ Both absolute and relative URLs are suppored. If the URL is relative, you must s
 If you want to [apply mobile styles to your e-mail](http://help.campaignmonitor.com/topic.aspx?t=164), you should put your
 mobile specific styles in its own `style` block that targets the appropriate devices using media queries.
 
-But since you cannot know by the time of sending an e-mail wether or not it will be viewed on a mobile device, the `style` 
+But since you cannot know by the time of sending an e-mail wether or not it will be viewed on a mobile device, the `style`
 block that targets mobile devices should not be inlined!
 
 To ignore a `style` block, you need to specify an ignore selector when calling the `MoveCssInline` method, like this:
@@ -56,9 +56,9 @@ To ignore a `style` block, you need to specify an ignore selector when calling t
 ```csharp
 var result = PreMailer.MoveCssInline(input, false, ignoreElements: "#ignore");
 ```
-    
+
 And your mobile specific `style` block should have an ID of `ignore`:
-    
+
 ```html
 <style type="text/css" id="ignore">.target { width: 1337px; }</style>
 ```
@@ -70,7 +70,7 @@ For example
 
 ```css
 table {
-    -premailer-cellspacing: 5; 
+    -premailer-cellspacing: 5;
     -premailer-width: 500;
 }
 ```
@@ -80,6 +80,19 @@ will make a `table` element render as
 ```html
 <table cellspacing="5" width="500">
 ```
+
+### Custom Dom Processing
+```csharp
+using(var pm = new PreMailer(html)){
+
+  var document = pm.Document;
+
+  // use AngleSharp to process document before moving css inline ...
+
+  var result = pm.MoveCssInline();
+}
+```
+
 
 ### Notes
 
