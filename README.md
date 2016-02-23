@@ -81,7 +81,7 @@ will make a `table` element render as
 <table cellspacing="5" width="500">
 ```
 
-### Custom Dom Processing
+### Custom DOM Processing
 ```csharp
 using(var pm = new PreMailer(html)){
 
@@ -93,10 +93,9 @@ using(var pm = new PreMailer(html)){
 }
 ```
 
-
 ### Notes
 
-- Pseudo classes/elements are not supported by [CsQuery](https://github.com/jamietre/CsQuery) (which PreMailer.Net uses internally).  Any that are encountered in your HTML will be ignored and logged to the `InlineResult.Warnings` collection.
+- Pseudo classes/elements which not supported by external dependencies, or doesn't make sense in email, will be ignored and logged to the `InlineResult.Warnings` collection.
 
 ## Installation
 **NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
