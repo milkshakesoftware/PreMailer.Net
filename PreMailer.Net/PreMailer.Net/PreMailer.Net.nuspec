@@ -15,7 +15,7 @@
 		<releaseNotes>
 			Bump AngleSharp to version 0.9.5 https://github.com/milkshakesoftware/PreMailer.Net/pull/99
 		</releaseNotes>
-		<copyright>Copyright 2015</copyright>
+		<copyright>Copyright 2016</copyright>
 		<tags>email css newsletter html</tags>
 		<dependencies>
 			<dependency id="AngleSharp" version="0.9.5" />
