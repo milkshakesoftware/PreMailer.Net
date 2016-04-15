@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>PreMailer.Net</id>
-		<version>1.5.2</version>
+		<version>1.5.3</version>
 		<authors>Martin H. Normark</authors>
 		<owners>milkshakesoftware</owners>
 		<licenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</licenseUrl>
@@ -13,7 +13,7 @@
 			PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 		</description>
 		<releaseNotes>
-			Bump AngleSharp to version 0.9.5 https://github.com/milkshakesoftware/PreMailer.Net/pull/99
+			Preserve original DOCTYPE https://github.com/milkshakesoftware/PreMailer.Net/pull/102
 		</releaseNotes>
 		<copyright>Copyright 2016</copyright>
 		<tags>email css newsletter html</tags>
