@@ -119,7 +119,8 @@ namespace PreMailer.Net
 				}
 			}
 
-			var html = _document.DocumentElement.OuterHtml;
+			var html = _document.ToHtml();
+
 			return new InlineResult(html, _warnings);
 		}
 
