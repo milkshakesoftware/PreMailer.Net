@@ -1,4 +1,4 @@
-# PreMailer.Net [![Build status](https://ci.appveyor.com/api/projects/status/github/milkshakesoftware/PreMailer.Net?branch=master&svg=true)](https://ci.appveyor.com/project/milkshakesoftware/premailer-net) [![Coverage Status](https://coveralls.io/repos/github/milkshakesoftware/PreMailer.Net/badge.svg?branch=master)](https://coveralls.io/github/milkshakesoftware/PreMailer.Net?branch=master)
+# PreMailer.Net [![Build status](https://ci.appveyor.com/api/projects/status/github/milkshakesoftware/PreMailer.Net?branch=master&svg=true)](https://ci.appveyor.com/project/milkshakesoftware/premailer-net) [![Coverage Status](https://coveralls.io/repos/github/milkshakesoftware/PreMailer.Net/badge.svg?branch=master)](https://coveralls.io/github/milkshakesoftware/PreMailer.Net?branch=master) [![Nuget count](https://img.shields.io/nuget/v/PreMailer.Net.svg?style=flat-square)](https://www.nuget.org/packages/PreMailer.Net/)
 
 C# Library for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
 
