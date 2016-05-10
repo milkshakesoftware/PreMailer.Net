@@ -1,0 +1,35 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "PreMailer.Net.Core Class Library",
+  "authors": [ "NickA" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "frameworks": {
+    "dnxcore50": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23516",
+        "System.Collections": "4.0.11-beta-23516",
+        "System.Linq": "4.0.1-beta-23516",
+        "System.Runtime": "4.0.21-beta-23516",
+        "System.Threading": "4.0.11-beta-23516",
+        "System.Text.RegularExpressions": "4.0.11-beta-23516",
+        "System.Collections.Specialized": "4.0.1-beta-23516",
+        "System.Net.Http": "4.0.1-beta-23516",
+        "AngleSharp": "0.9.5"
+      }
+    },
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Runtime": "4.0.10.0",
+        "System.Collections": "4.0.0.0",
+        "System.IO": "4.0.0.0",
+        "System.Net.Http": "4.0.0.0"
+      },
+      "dependencies": {
+        "AngleSharp": "0.9.5"
+
+      }
+    }
+  }
+}

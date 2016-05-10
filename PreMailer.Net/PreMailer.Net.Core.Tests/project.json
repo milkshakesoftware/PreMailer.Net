@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0-*",
+  "description": "PreMailer.Net.Core.Tests Class Library",
+  "authors": [ "" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+        "Moq": "4.2.1312.1622"
+      }
+    }
+  },
+  "dependencies": {
+    "AngleSharp": "0.9.5",
+    "xunit": "2.1.0",
+    "PreMailer.Net.Core": "1.0.0-*",
+    "xunit.runner.dnx": "2.1.0-rc1-build204"
+  }
+}
