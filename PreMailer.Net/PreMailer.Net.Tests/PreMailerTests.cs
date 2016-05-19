@@ -369,6 +369,23 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
+		public void ContainsLinkCssElement_Bundle_DownloadsCss()
+		{
+			var mockDownloader = new Mock<IWebDownloader>();
+			mockDownloader.Setup(d => d.DownloadString(It.IsAny<Uri>())).Returns(".a { display: block; }");
+			WebDownloader.SharedDownloader = mockDownloader.Object;
+
+			Uri baseUri = new Uri("http://a.com");
+			Uri fullUrl = new Uri(baseUri, "/Content/css?v=7V7TZzP9Wo7LiH9_q-r5mRBdC_N0lA_YJpRL_1V424E1");
+			string input = String.Format("<html><head><link href=\"{0}\" rel=\"stylesheet\"></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>", fullUrl);
+
+			PreMailer sut = new PreMailer(input, baseUri);
+			sut.MoveCssInline();
+
+			mockDownloader.Verify(d => d.DownloadString(fullUrl));
+		}
+
+		[TestMethod]
 		public void ContainsLinkCssElement_NotCssFile_DoNotDownload()
 		{
 			var mockDownloader = new Mock<IWebDownloader>();
