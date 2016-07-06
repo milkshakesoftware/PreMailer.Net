@@ -14,7 +14,7 @@
   },
   "frameworks": {
     "netstandard1.6": {
-      "imports": [ "dnxcore50", "dotnet5.6", "net452" ]
+      "imports": [ "dnxcore50", "dotnet5.6", "net452", "portable-net45+win8" ]
     }
   },
   "tooling": {
