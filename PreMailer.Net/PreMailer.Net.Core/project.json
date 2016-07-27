@@ -3,19 +3,15 @@
   "description": "PreMailer.Net Core Class Library",
   "authors": [ "NickA" ],
   "dependencies": {
-    "System.Collections": "4.0.11",
-    "System.Linq": "4.1.0",
-    "System.Net.Http": "4.1.0",
-    "System.Runtime": "4.1.0",
-    "System.Runtime.InteropServices": "4.1.0",
-    "System.Text.RegularExpressions": "4.1.0",
+    "NETStandard.Library": "1.6.0",
     "AngleSharp": "0.9.6",
     "System.Collections.Specialized": "4.0.1"
   },
   "frameworks": {
     "netstandard1.6": {
-      "imports": [ "dnxcore50", "dotnet5.6", "net452", "portable-net45+win8" ]
-    }
+      "imports": [ "dnxcore50", "dotnet5.6", "portable-net45+win8" ]
+    },
+    "net461": {}
   },
   "tooling": {
     "defaultNamespace": "testlib"
