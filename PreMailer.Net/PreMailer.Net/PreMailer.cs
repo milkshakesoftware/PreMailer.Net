@@ -120,9 +120,9 @@ namespace PreMailer.Net
 				}
 			}
 
-            var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
+			var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
 
-            return new InlineResult(html, _warnings);
+			return new InlineResult(html, _warnings);
 		}
 
 		/// <summary>
