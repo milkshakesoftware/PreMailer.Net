@@ -136,6 +136,10 @@ UpgradeLog*.htm
 App_Data/*.mdf
 App_Data/*.ldf
 
+# .NET Core files
+project.lock.json
+.vs
+
 # =========================
 # Windows detritus
 # =========================
