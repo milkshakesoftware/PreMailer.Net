@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
@@ -119,7 +120,7 @@ namespace PreMailer.Net
 				}
 			}
 
-			var html = _document.ToHtml();
+			var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
 
 			return new InlineResult(html, _warnings);
 		}
@@ -246,7 +247,9 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						  a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase)));
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
+												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
 
 
