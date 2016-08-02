@@ -210,7 +210,7 @@ namespace PreMailer.Net
 			return result;
 		}
 
-		/// <summary>
+		/// <summary>StringCollection
 		/// Returns a collection of CQ 'sytle' nodes that can be used to source CSS content.<para/>
 		/// </summary>
 		private IEnumerable<IElement> CssSourceNodes()
