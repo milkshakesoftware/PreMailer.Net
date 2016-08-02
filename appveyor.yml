@@ -1,0 +1,26 @@
+version: 1.0.{build}
+os: Visual Studio 2015
+
+configuration: Release
+
+shallow_clone: true
+
+before_build:
+- cmd: cd PreMailer.Net
+- cmd: dotnet restore
+
+build_script:
+- cmd: dotnet build PreMailer.Net.Core -c Release
+
+test: off
+test_script:
+- cmd: dotnet test PreMailer.Net.Core.Tests
+
+init:
+- appveyor version
+- cmd: echo %APPVEYOR_REPO_TAG%
+- cmd: IF %APPVEYOR_REPO_TAG%==true echo %APPVEYOR_REPO_TAG_NAME%
+#- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+#on_finish:
+#- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

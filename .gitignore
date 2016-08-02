@@ -14,6 +14,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+.vs/
 
 !Libraries/Redis/bin/
 !Libraries/Mongo/bin/
@@ -134,6 +135,10 @@ UpgradeLog*.htm
 # SQL Server files
 App_Data/*.mdf
 App_Data/*.ldf
+
+# .NET Core files
+project.lock.json
+.vs
 
 # =========================
 # Windows detritus
