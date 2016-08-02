@@ -247,7 +247,9 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						  a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase)));
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
+												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
 
 

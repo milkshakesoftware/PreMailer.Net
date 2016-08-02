@@ -28,7 +28,20 @@ namespace PreMailer.Net.Sources
 
 		public string GetCss()
 		{
-			return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+			if (IsSupported(_downloadUri.Scheme))
+			{
+				return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+			}
+			return string.Empty;
+		}
+
+		private bool IsSupported(string scheme)
+		{
+			return
+				scheme == Uri.UriSchemeHttp ||
+				scheme == Uri.UriSchemeHttps ||
+				scheme == Uri.UriSchemeFtp ||
+				scheme == Uri.UriSchemeFile;
 		}
 	}
 }
