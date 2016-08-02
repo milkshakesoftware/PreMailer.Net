@@ -40,7 +40,7 @@ The following options can be passed to the `PreMailer.MoveCssInline` method to c
 ### External style sheets
 Sometimes it's handy to reference external style sheets with a `<link href="..." />` element. PreMailer will download and use external style sheets as long as the value of `href` ends with `.css`.
 
-Both absolute and relative URLs are suppored. If the URL is relative, you must specify the `baseUri` parameter in either the constructor, or when calling the static `MoveCssInline` method.
+Both absolute and relative URLs are supported. If the URL is relative, you must specify the `baseUri` parameter in either the constructor, or when calling the static `MoveCssInline` method.
 
 `<link />` elements that match the `ignoreElements` selector won't be downloaded.
 
@@ -48,7 +48,7 @@ Both absolute and relative URLs are suppored. If the URL is relative, you must s
 If you want to [apply mobile styles to your e-mail](http://help.campaignmonitor.com/topic.aspx?t=164), you should put your
 mobile specific styles in its own `style` block that targets the appropriate devices using media queries.
 
-But since you cannot know by the time of sending an e-mail wether or not it will be viewed on a mobile device, the `style`
+But since you cannot know by the time of sending an e-mail whether or not it will be viewed on a mobile device, the `style`
 block that targets mobile devices should not be inlined!
 
 To ignore a `style` block, you need to specify an ignore selector when calling the `MoveCssInline` method, like this:

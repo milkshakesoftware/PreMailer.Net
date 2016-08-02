@@ -1,35 +1,35 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-	[TestClass]
+	
 	public class CssSpecificityTests
 	{
-		[TestMethod]
+		[Fact]
 		public void PlusOperator_OneIdForBothInstances_ReturnsTwoIds()
 		{
 			var first = new CssSpecificity(1, 0, 0);
 			var second = new CssSpecificity(1, 0, 0);
 			var result = first + second;
-			Assert.AreEqual(2, result.Ids);
+			Assert.Equal(2, result.Ids);
 		}
 		
-		[TestMethod]
+		[Fact]
 		public void PlusOperator_OneClassForBothInstances_ReturnsTwoClasses()
 		{
 			var first = new CssSpecificity(0, 1, 0);
 			var second = new CssSpecificity(0, 1, 0);
 			var result = first + second;
-			Assert.AreEqual(2, result.Classes);
+			Assert.Equal(2, result.Classes);
 		}
 		
-		[TestMethod]
+		[Fact]
 		public void PlusOperator_OneElementForBothInstances_ReturnsTwoElements()
 		{
 			var first = new CssSpecificity(0, 0, 1);
 			var second = new CssSpecificity(0, 0, 1);
 			var result = first + second;
-			Assert.AreEqual(2, result.Elements);
+			Assert.Equal(2, result.Elements);
 		}
 	}
 }

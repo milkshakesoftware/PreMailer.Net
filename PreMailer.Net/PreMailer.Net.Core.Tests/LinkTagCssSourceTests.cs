@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using PreMailer.Net.Downloaders;
 using PreMailer.Net.Sources;
 using System;
 using AngleSharp.Parser.Html;
+using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-	[TestClass]
+	
 	public class LinkTagCssSourceTests
 	{
 		private readonly Mock<IWebDownloader> _webDownloader = new Mock<IWebDownloader>();
@@ -17,15 +17,17 @@ namespace PreMailer.Net.Tests
 			WebDownloader.SharedDownloader = _webDownloader.Object;
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ImplementsInterface()
 		{
 			LinkTagCssSource sut = CreateSUT();
 
-			Assert.IsInstanceOfType(sut, typeof(ICssSource));
+            ICssSource sut2 = sut as ICssSource;
+
+			Assert.True(sut2 != null);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void GetCSS_CallsWebDownloader_WithSpecifiedDomain()
 		{
 			string baseUrl = "http://a.co";
@@ -36,7 +38,7 @@ namespace PreMailer.Net.Tests
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.Scheme == "http" && u.Host == "a.co")));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void GetCSS_CallsWebDownloader_WithSpecifiedPath()
 		{
 			string path = "b.css";
@@ -47,7 +49,7 @@ namespace PreMailer.Net.Tests
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.PathAndQuery == "/" + path)));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void GetCSS_AbsoluteUrlInHref_CallsWebDownloader_WithSpecifiedPath()
 		{
 			string path = "http://b.co/a.css";
