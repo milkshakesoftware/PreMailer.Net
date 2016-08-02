@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
@@ -119,7 +120,7 @@ namespace PreMailer.Net
 				}
 			}
 
-			var html = _document.ToHtml();
+			var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
 
 			return new InlineResult(html, _warnings);
 		}
