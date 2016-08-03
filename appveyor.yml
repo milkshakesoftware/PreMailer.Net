@@ -16,6 +16,31 @@ test: off
 test_script:
 - cmd: dotnet test PreMailer.Net.Core.Tests
 
+artifacts:
+- path: '*.nupkg'
+  name: PreMailer.nupkg
+
+before_deploy:
+- cmd: dotnet pack PreMailer.Net.Core -c Release
+
+deploy:
+- provider: NuGet
+  api_key:
+    secure: SkGbCeLcNMjPh6nghMU4johO4Nfhz/HhVjDfAybWV6kImAKwwT7iQXzh98ksnqcS
+  artifact: PreMailer.nupkg
+  on:
+    APPVEYOR_REPO_TAG: true
+
+notifications:
+- provider: Slack
+  incoming_webhook: https://hooks.slack.com/services/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
+  auth_token:
+    secure: gZ2OpPFLjVnhnhvUdG4JZw==
+  channel: general
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: false
+
 init:
 - appveyor version
 - cmd: echo %APPVEYOR_REPO_TAG%
