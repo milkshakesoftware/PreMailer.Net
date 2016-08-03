@@ -9,9 +9,13 @@
   },
   "frameworks": {
     "netstandard1.4": {
-      "imports": [ "dnxcore50", "dotnet5.6", "portable-net45+win8" ]
     },
-    "net461": {}
+    "net461": {
+      "dependencies":{
+        
+      }
+    }
+
   },
   "tooling": {
     "defaultNamespace": "testlib"
