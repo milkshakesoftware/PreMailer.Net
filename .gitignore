@@ -14,6 +14,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+dist
 
 # .NET Core files
 project.lock.json
