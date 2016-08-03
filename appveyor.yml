@@ -26,6 +26,7 @@ deploy:
 - provider: NuGet
   api_key:
     secure: SkGbCeLcNMjPh6nghMU4johO4Nfhz/HhVjDfAybWV6kImAKwwT7iQXzh98ksnqcS
+  skip_symbols: false
   artifact: PreMailer.nupkg
   on:
     APPVEYOR_REPO_TAG: true
