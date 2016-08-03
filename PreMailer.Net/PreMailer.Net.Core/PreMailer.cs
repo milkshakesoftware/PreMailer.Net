@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
 using PreMailer.Net.Sources;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace PreMailer.Net
 {
@@ -246,7 +246,9 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						  a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase)));
+							(a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
+							(e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
+																		r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
 
 
@@ -392,22 +394,24 @@ namespace PreMailer.Net
 		}
 
 
-        /// <summary>
-        /// Access underlying IHTMLDocument
-        /// </summary>
-        public IHtmlDocument Document {
-            get {
-                return _document;
-            }
-        }
+		/// <summary>
+		/// Access underlying IHTMLDocument
+		/// </summary>
+		public IHtmlDocument Document
+		{
+			get
+			{
+				return _document;
+			}
+		}
 
 
-        /// <summary>
-        /// Dispose underlying document
-        /// </summary>
-        public void Dispose()
-        {
-            _document.Dispose();
-        }
-    }
+		/// <summary>
+		/// Dispose underlying document
+		/// </summary>
+		public void Dispose()
+		{
+			_document.Dispose();
+		}
+	}
 }

@@ -1,13 +1,13 @@
-﻿using Moq;
+﻿using AngleSharp.Parser.Html;
+using Moq;
 using PreMailer.Net.Downloaders;
 using PreMailer.Net.Sources;
 using System;
-using AngleSharp.Parser.Html;
 using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-	
+
 	public class LinkTagCssSourceTests
 	{
 		private readonly Mock<IWebDownloader> _webDownloader = new Mock<IWebDownloader>();
@@ -22,7 +22,7 @@ namespace PreMailer.Net.Tests
 		{
 			LinkTagCssSource sut = CreateSUT();
 
-            ICssSource sut2 = sut as ICssSource;
+			ICssSource sut2 = sut as ICssSource;
 
 			Assert.True(sut2 != null);
 		}
@@ -36,6 +36,17 @@ namespace PreMailer.Net.Tests
 			sut.GetCss();
 
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.Scheme == "http" && u.Host == "a.co")));
+		}
+
+		[Fact]
+		public void GetCSS_CallsWebDownloader_WithSpecifiedBundle()
+		{
+			string path = "/Content/css?v=7V7TZzP9Wo7LiH9_q-r5mRBdC_N0lA_YJpRL_1V424E1";
+
+			LinkTagCssSource sut = CreateSUT(path: path, link: "<link href=\"{0}\" rel=\"stylesheet\"/>");
+			sut.GetCss();
+
+			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.PathAndQuery == path)));
 		}
 
 		[Fact]
@@ -60,9 +71,20 @@ namespace PreMailer.Net.Tests
 			_webDownloader.Verify(w => w.DownloadString(new Uri(path)));
 		}
 
-		private LinkTagCssSource CreateSUT(string baseUrl = "http://a.com", string path = "a.css")
+		[Fact]
+		public void GetCSS_DoesNotCallWebDownloader_WhenSchemeNotSupported()
 		{
-			var node = new HtmlParser().Parse(String.Format("<link href=\"{0}\" />", path));
+			string path = "chrome-extension://fcdjadjbdihbaodagojiomdljhjhjfho/css/atd.css";
+
+			LinkTagCssSource sut = CreateSUT(path: path);
+			sut.GetCss();
+
+			_webDownloader.Verify(w => w.DownloadString(new Uri(path)), Times.Never);
+		}
+
+		private LinkTagCssSource CreateSUT(string baseUrl = "http://a.com", string path = "a.css", string link = "<link href=\"{0}\" />")
+		{
+			var node = new HtmlParser().Parse(String.Format(link, path));
 			var sut = new LinkTagCssSource(node.Head.FirstElementChild, new Uri(baseUrl));
 
 			return sut;

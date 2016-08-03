@@ -1,12 +1,13 @@
-﻿using System;
-using System.Linq;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using PreMailer.Net.Downloaders;
+using System;
+using System.Linq;
 
 namespace PreMailer.Net.Sources
 {
 	public class LinkTagCssSource : ICssSource
 	{
+		private static readonly string[] _validUriSchemes = new string[] { "http", "https", "ftp", "file" };
 		private readonly Uri _downloadUri;
 		private string _cssContents;
 
@@ -28,7 +29,17 @@ namespace PreMailer.Net.Sources
 
 		public string GetCss()
 		{
-			return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+			if (IsSupported(_downloadUri.Scheme))
+			{
+				return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+			}
+
+			return string.Empty;
+		}
+
+		private bool IsSupported(string scheme)
+		{
+			return _validUriSchemes.Contains(scheme?.ToLowerInvariant());
 		}
 	}
 }
