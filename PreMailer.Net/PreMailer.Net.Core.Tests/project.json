@@ -1,6 +1,6 @@
 {
-    "version": "1.0.0-*",
-    "testRunner": "xunit",
+  "version": "1.0.0-*",
+  "testRunner": "xunit",
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
     "PreMailer.Net.Core": "1.0.0-*",
