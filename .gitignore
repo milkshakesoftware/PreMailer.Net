@@ -14,6 +14,9 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+
+# .NET Core files
+project.lock.json
 .vs/
 
 !Libraries/Redis/bin/
