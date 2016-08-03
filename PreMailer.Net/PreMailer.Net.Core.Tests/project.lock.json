@@ -2704,7 +2704,7 @@
           "lib/netstandard1.1/xunit.runner.utility.dotnet.dll": {}
         }
       },
-      "PreMailer.Net.Core/1.0.0": {
+      "PreMailer.Net.Core/1.5.4": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.4",
         "dependencies": {
@@ -8025,7 +8025,7 @@
         "xunit.runner.utility.nuspec"
       ]
     },
-    "PreMailer.Net.Core/1.0.0": {
+    "PreMailer.Net.Core/1.5.4": {
       "type": "project",
       "path": "../PreMailer.Net.Core/project.json",
       "msbuildProject": "../PreMailer.Net.Core/PreMailer.Net.Core.xproj"

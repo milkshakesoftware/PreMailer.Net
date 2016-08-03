@@ -1,4 +1,3 @@
-version: 1.0.{build}
 os: Visual Studio 2015
 
 configuration: Release
@@ -10,7 +9,7 @@ before_build:
 - cmd: dotnet restore
 
 build_script:
-- cmd: dotnet build PreMailer.Net.Core -c Release
+- cmd: dotnet build PreMailer.Net.Core -c Release --version-suffix {build}
 
 test: off
 test_script:
@@ -20,8 +19,8 @@ artifacts:
 - path: '*.nupkg'
   name: PreMailer.nupkg
 
-before_deploy:
-- cmd: dotnet pack PreMailer.Net.Core -c Release
+after_build:
+- cmd: dotnet pack PreMailer.Net.Core -c Release --version-suffix {build}
 
 deploy:
 - provider: NuGet
