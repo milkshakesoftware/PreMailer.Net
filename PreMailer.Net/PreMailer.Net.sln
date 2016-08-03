@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PreMailer.Net.Core", "PreMailer.Net.Core\PreMailer.Net.Core.xproj", "{4FD99B58-5FCD-4D2D-92F6-1C7BBAE6CCB0}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PreMailer.Net", "PreMailer.Net\PreMailer.Net.xproj", "{4FD99B58-5FCD-4D2D-92F6-1C7BBAE6CCB0}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PreMailer.Net.Core.Tests", "PreMailer.Net.Core.Tests\PreMailer.Net.Core.Tests.xproj", "{19A50897-9630-483A-B222-8E50CAB720BE}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PreMailer.Net.Tests", "PreMailer.Net.Tests\PreMailer.Net.Tests.xproj", "{19A50897-9630-483A-B222-8E50CAB720BE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{965B1D5F-8DCB-4D0D-8B38-93BD0E72BCFE}"
 	ProjectSection(SolutionItems) = preProject

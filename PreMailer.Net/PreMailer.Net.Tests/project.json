@@ -3,7 +3,7 @@
   "testRunner": "xunit",
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
-    "PreMailer.Net.Core": "1.0.0-*",
+    "PreMailer.Net": "1.0.0-*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.6.36-alpha"
   },

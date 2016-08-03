@@ -9,18 +9,18 @@ before_build:
 - cmd: dotnet restore
 
 build_script:
-- cmd: dotnet build PreMailer.Net.Core -c Release --version-suffix beta%APPVEYOR_BUILD_NUMBER%
+- cmd: dotnet build PreMailer.Net -c Release --version-suffix beta%APPVEYOR_BUILD_NUMBER%
 
 test: off
 test_script:
-- cmd: dotnet test PreMailer.Net.Core.Tests
+- cmd: dotnet test PreMailer.Net.Tests
 
 artifacts:
 - path: '**/*.nupkg'
   name: PreMailer.nupkg
 
 after_build:
-- cmd: dotnet pack PreMailer.Net.Core -c Release -o ./dist --version-suffix beta%APPVEYOR_BUILD_NUMBER%
+- cmd: dotnet pack PreMailer.Net -c Release -o ./dist --version-suffix beta%APPVEYOR_BUILD_NUMBER%
 
 deploy:
 - provider: NuGet
