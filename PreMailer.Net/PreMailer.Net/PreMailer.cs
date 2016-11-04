@@ -46,9 +46,9 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, SortedList<string, StyleClass> precompiledStyles = null)
 		{
-			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, precompiledStyles);
 		}
 
 		/// <summary>
@@ -63,9 +63,9 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, SortedList<string, StyleClass> precompiledStyles = null)
 		{
-			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, precompiledStyles);
 		}
 
 		/// <summary>
@@ -76,8 +76,9 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="precompiledStyles"></param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, SortedList<string, StyleClass> precompiledStyles = null)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
@@ -89,9 +90,9 @@ namespace PreMailer.Net
 			var cssLinkNodes = CssLinkNodes();
 			var cssSources = new List<ICssSource>(ConvertToStyleSources(cssSourceNodes));
 			cssSources.AddRange(ConvertToStyleSources(cssLinkNodes));
-			cssSources.AddRange(ConvertToStyleSources(css));
+			cssSources.AddRange(PreMailer.ConvertToStyleSources(css));
 
-			var cssBlocks = GetCssBlocks(cssSources);
+			var cssBlocks = PreMailer.GetCssBlocks(cssSources);
 
 			if (_removeStyleElements)
 			{
@@ -99,8 +100,13 @@ namespace PreMailer.Net
 				RemoveStyleElements(cssLinkNodes);
 			}
 
-			var joinedBlocks = Join(cssBlocks);
+			var joinedBlocks = PreMailer.Join(cssBlocks);
 			var validSelectors = CleanUnsupportedSelectors(joinedBlocks);
+			if (precompiledStyles != null)
+			{
+				precompiledStyles.ToList().ForEach(kvp => { validSelectors.Add(kvp.Key, kvp.Value); });
+			}
+
 			var elementsWithStyles = FindElementsWithStyles(validSelectors);
 			var mergedStyles = MergeStyleClasses(elementsWithStyles);
 
@@ -122,6 +128,25 @@ namespace PreMailer.Net
 			var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
 
 			return new InlineResult(html, _warnings);
+		}
+
+		/// <summary>
+		/// Function to precompile a style sheet allowing it be be preserved in 
+		/// memory for performance purposes.
+		/// </summary>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="warnings">A list of warnings indicating css elements that are not supported.</param>
+		/// <returns>A tokenized sorted list representing the css that was passed in</returns>
+		public static SortedList<string, StyleClass> PrecompileCssString(string css, out List<string> warnings)
+		{
+			var cssSource = new List<ICssSource>(PreMailer.ConvertToStyleSources(css));
+			var cssBlocks = PreMailer.GetCssBlocks(cssSource);
+			var joinedBlocks = PreMailer.Join(cssBlocks);
+
+			warnings = new List<string>();
+			var cleanJoinedBlocks = PreMailer.CleanUnsupportedSelectors(joinedBlocks, warnings);
+
+			return cleanJoinedBlocks;
 		}
 
 		/// <summary>
@@ -168,7 +193,7 @@ namespace PreMailer.Net
 		/// Returns the blocks of CSS within the documents supported CSS sources.<para/>
 		/// Blocks are returned in the order they are declared within the document.
 		/// </summary>
-		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
+		private static IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
 			var styleBlocks = new List<string>();
 
@@ -209,7 +234,7 @@ namespace PreMailer.Net
 		/// Returns a list with a single StringCssSource instance based on the 
 		/// css string provided if it is not null or white space.<para/>
 		/// </summary>
-		private IEnumerable<ICssSource> ConvertToStyleSources(string styles)
+		private static IEnumerable<ICssSource> ConvertToStyleSources(string styles)
 		{
 			var result = new List<ICssSource>();
 
@@ -220,6 +245,7 @@ namespace PreMailer.Net
 
 			return result;
 		}
+
 
 		/// <summary>
 		/// Returns a collection of CQ 'sytle' nodes that can be used to source CSS content.<para/>
@@ -257,7 +283,7 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
 						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
 												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
@@ -308,6 +334,43 @@ namespace PreMailer.Net
 
 			return result;
 		}
+
+		/// <summary>
+		/// This is a duplicate of the instance method CleanUnsupportedSelectors().
+		/// <para>It was necessary to make a static method performing the same work to support PrecompileCssString(). 
+		/// The use of the instance method may be converted if they pass in the instance of warnings rather than
+		/// reference the instance directly.</para>
+		/// </summary>
+		/// <param name="selectors"></param>
+		/// <param name="warnings"></param>
+		/// <returns>A tokenized sorted list of StyleClass instances filtered by those supported.</returns>
+		private static SortedList<string, StyleClass> CleanUnsupportedSelectors(SortedList<string, StyleClass> selectors, List<string> warnings)
+		{
+			var result = new SortedList<string, StyleClass>();
+			var failedSelectors = new List<StyleClass>();
+			var cssSelectorParser = new CssSelectorParser();
+
+			foreach (var selector in selectors)
+			{
+				if (cssSelectorParser.IsSupportedSelector(selector.Key))
+					result.Add(selector.Key, selector.Value);
+				else
+					failedSelectors.Add(selector.Value);
+			}
+
+			if (!failedSelectors.Any())
+				return selectors;
+
+			foreach (var failedSelector in failedSelectors)
+			{
+				warnings.Add(String.Format(
+						"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
+						failedSelector.Name));
+			}
+
+			return result;
+		}
+
 
 		private Dictionary<IElement, List<StyleClass>> FindElementsWithStyles(
 				SortedList<string, StyleClass> stylesToApply)
@@ -405,22 +468,24 @@ namespace PreMailer.Net
 		}
 
 
-        /// <summary>
-        /// Access underlying IHTMLDocument
-        /// </summary>
-        public IHtmlDocument Document {
-            get {
-                return _document;
-            }
-        }
+		/// <summary>
+		/// Access underlying IHTMLDocument
+		/// </summary>
+		public IHtmlDocument Document
+		{
+			get
+			{
+				return _document;
+			}
+		}
 
 
-        /// <summary>
-        /// Dispose underlying document
-        /// </summary>
-        public void Dispose()
-        {
-            _document.Dispose();
-        }
-    }
+		/// <summary>
+		/// Dispose underlying document
+		/// </summary>
+		public void Dispose()
+		{
+			_document.Dispose();
+		}
+	}
 }
