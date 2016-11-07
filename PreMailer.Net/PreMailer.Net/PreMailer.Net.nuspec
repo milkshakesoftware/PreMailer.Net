@@ -20,7 +20,7 @@
 		<copyright>Copyright 2016</copyright>
 		<tags>email css newsletter html</tags>
 		<dependencies>
-			<dependency id="AngleSharp" version="0.9.5" />
+			<dependency id="AngleSharp" version="0.9.9" />
 		</dependencies>
 	</metadata>
 </package>
