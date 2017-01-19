@@ -130,6 +130,7 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void MoveCssInline_KeepStyleElementsIgnoreElementsMatchesStyleElement_DoesntRemoveScriptTag()
 		{
+			string input = "<html><head><style id=\"ignore\" type=\"text/css\">li { width: 42px; } </style></head><body><div class=\"target\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, removeStyleElements: true, ignoreElements: "#ignore");
 
@@ -139,6 +140,7 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void MoveCssInline_KeepMediaQueries_InsertsStyleTag()
 			{
+			string input = "<html><head><style type=\"text/css\">li:before { width: 42px; } @media only screen and (max-width:620px) { div { width: 100% } }</style></head><body><div class=\"target\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, removeStyleElements: true, keepMediaQueries: true);
 
