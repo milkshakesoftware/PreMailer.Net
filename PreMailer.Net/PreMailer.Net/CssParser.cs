@@ -8,6 +8,7 @@ namespace PreMailer.Net
 	{
 		private readonly List<string> _styleSheets;
 		private SortedList<string, StyleClass> _scc;
+		private IList<string> _mqs;
 		private int styleCount = 0;
 
 		public SortedList<string, StyleClass> Styles
@@ -16,10 +17,17 @@ namespace PreMailer.Net
 			set { _scc = value; }
 		}
 
+		public IList<string> MediaQueries
+		{
+			get { return _mqs; }
+			set { _mqs = value; }
+		}
+
 		public CssParser()
 		{
 			_styleSheets = new List<string>();
 			_scc = new SortedList<string, StyleClass>();
+			_mqs = new List<string>();
 		}
 
 		public void AddStyleSheet(string styleSheetContent)
@@ -123,14 +131,21 @@ namespace PreMailer.Net
 			return temp;
 		}
 
-		public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		public static Regex SupportedMediaAttributesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		private static Regex MediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}", RegexOptions.Compiled);
 
 		private string CleanupMediaQueries(string s)
 		{
 			string temp = s;
 
-			temp = MediaQueryRegex.Replace(temp, m => SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
+			var mqMatch = MediaQueryRegex.Match(temp);
+			while (mqMatch.Success)
+			{
+				_mqs.Add(mqMatch.Value);
+				mqMatch = mqMatch.NextMatch();
+			}
+
+			temp = MediaQueryRegex.Replace(temp, string.Empty);
 
 			return temp;
 		}

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using AngleSharp;
+﻿using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
 using PreMailer.Net.Sources;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace PreMailer.Net
 {
@@ -16,6 +16,7 @@ namespace PreMailer.Net
 		private readonly IHtmlDocument _document;
 		private bool _removeStyleElements;
 		private bool _stripIdAndClassAttributes;
+		private bool _keepMediaQueries;
 		private string _ignoreElements;
 		private string _css;
 		private readonly Uri _baseUri;
@@ -46,10 +47,11 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="keepMediaQueries">True to add back any mediaqueries</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool keepMediaQueries = false)
 		{
-			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, keepMediaQueries);
 		}
 
 		/// <summary>
@@ -63,10 +65,11 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="keepMediaQueries">True to add back any mediaqueries</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool keepMediaQueries = false)
 		{
-			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, keepMediaQueries);
 		}
 
 		/// <summary>
@@ -77,13 +80,15 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="keepMediaQueries">True to add back any mediaqueries</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool keepMediaQueries = false)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
 			_stripIdAndClassAttributes = stripIdAndClassAttributes;
 			_ignoreElements = ignoreElements;
+			_keepMediaQueries = keepMediaQueries;
 			_css = css;
 
 			// Gather all of the CSS that we can work with.
@@ -100,7 +105,9 @@ namespace PreMailer.Net
 				RemoveStyleElements(cssLinkNodes);
 			}
 
-			var joinedBlocks = Join(cssBlocks);
+			var joinedStyles = Join(cssBlocks);
+			var joinedBlocks = joinedStyles.Styles;
+			var mediaQueries = joinedStyles.MediaQueries;
 			var validSelectors = CleanUnsupportedSelectors(joinedBlocks);
 			var elementsWithStyles = FindElementsWithStyles(validSelectors);
 			var mergedStyles = MergeStyleClasses(elementsWithStyles);
@@ -108,7 +115,16 @@ namespace PreMailer.Net
 			StyleClassApplier.ApplyAllStyles(mergedStyles);
 
 			if (_stripIdAndClassAttributes)
+			{
 				StripElementAttributes("id", "class");
+			}
+
+			if (removeStyleElements && _keepMediaQueries)
+			{
+				var styleElem = _document.CreateElement("style");
+				styleElem.TextContent = String.Join(",", mediaQueries);
+				_document.Body.Prepend(styleElem);
+			}
 
 			if (removeComments)
 			{
@@ -227,7 +243,7 @@ namespace PreMailer.Net
 			{
 				var mediaAttribute = elem.GetAttribute("media");
 
-				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
+				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaAttributesRegex.IsMatch(mediaAttribute);
 			});
 
 			return elements;
@@ -247,7 +263,7 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
 						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
 												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
@@ -261,7 +277,7 @@ namespace PreMailer.Net
 			}
 		}
 
-		private static SortedList<string, StyleClass> Join(IEnumerable<string> cssBlocks)
+		private static CssParser Join(IEnumerable<string> cssBlocks)
 		{
 			var parser = new CssParser();
 
@@ -270,7 +286,7 @@ namespace PreMailer.Net
 				parser.AddStyleSheet(block);
 			}
 
-			return parser.Styles;
+			return parser;
 		}
 
 		private SortedList<string, StyleClass> CleanUnsupportedSelectors(SortedList<string, StyleClass> selectors)

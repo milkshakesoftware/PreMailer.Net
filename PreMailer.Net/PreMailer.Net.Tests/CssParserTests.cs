@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using System.Runtime.Remoting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
 {
@@ -29,7 +31,7 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void AddStylesheet_ContainsUnsupportedMediaQuery_ShouldStrip()
+		public void AddStylesheet_ContainsMediaQuery_ShouldExtract()
 		{
 			var stylesheet = "@media print { div { width: 90%; } }";
 
@@ -37,10 +39,11 @@ namespace PreMailer.Net.Tests
 			parser.AddStyleSheet(stylesheet);
 
 			Assert.AreEqual(0, parser.Styles.Count);
+			Assert.AreEqual(stylesheet, parser.MediaQueries[0]);
 		}
 
 		[TestMethod]
-		public void AddStylesheet_ContainsUnsupportedMediaQueryAndNormalRules_ShouldStripMediaQueryAndParseRules()
+		public void AddStylesheet_ContainsMediaQueryAndNormalRules_ShouldExtractMediaQueryAndParseRules()
 		{
 			var stylesheet = "div { width: 600px; } @media only screen and (max-width:620px) { div { width: 100% } } p { font-family: serif; }";
 
@@ -54,22 +57,24 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(parser.Styles.ContainsKey("p"));
 			Assert.AreEqual("serif", parser.Styles["p"].Attributes["font-family"].Value);
+
+			Assert.AreEqual("@media only screen and (max-width:620px) { div { width: 100% } }", parser.MediaQueries[0]);
 		}
 
 		[TestMethod]
-		public void AddStylesheet_ContainsSupportedMediaQuery_ShouldParseQueryRules()
+		public void AddStylesheet_ContainsMultipleMediaQueries_ShouldExtractMediaQueries()
 		{
-			var stylesheet = "@media only screen { div { width: 600px; } }";
+			var stylesheet = "@media print { div { width:100% } } @media only screen and (max-width:620px) { div { width: 100% } }";
 
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
 
-			Assert.AreEqual(1, parser.Styles.Count);
+			Assert.AreEqual(2, parser.MediaQueries.Count);
 
-			Assert.IsTrue(parser.Styles.ContainsKey("div"));
-			Assert.AreEqual("600px", parser.Styles["div"].Attributes["width"].Value);
+			Assert.AreEqual("@media print { div { width:100% } }", parser.MediaQueries[0]);
+			Assert.AreEqual("@media only screen and (max-width:620px) { div { width: 100% } }", parser.MediaQueries[1]);
 		}
-
+		
 		[TestMethod]
 		public void AddStylesheet_ContainsImportStatement_ShouldStripOutImportStatement()
 		{
