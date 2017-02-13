@@ -170,6 +170,32 @@ namespace PreMailer.Net.Tests
 			Assert.AreEqual(1, parser.Styles.Values[0].Position);
 			Assert.AreEqual(4, parser.Styles.Values[1].Position);
 			Assert.AreEqual(3, parser.Styles.Values[2].Position);
-		}
-	}
+        }
+
+        [TestMethod]
+        public void AddStylesheet_ContainsSingleQuotes_ShouldParseStylesheet()
+        {
+            var stylesheet = "a { color: #fff; font-family: 'Segoe UI', Verdana, Arial, sans-serif; text-decoration: underline; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.IsNotNull(parser.Styles["a"]);
+            Assert.IsNotNull(parser.Styles["a"].Attributes["font-family"]);
+            Assert.AreEqual(3, parser.Styles["a"].Attributes.Count);
+        }
+
+        [TestMethod]
+        public void AddStylesheet_ContainsDoubleQuotes_ShouldParseStylesheet()
+        {
+            var stylesheet = "a { color: #fff; font-family: \"Segoe UI\", Verdana, Arial, sans-serif; text-decoration: underline; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.IsNotNull(parser.Styles["a"]);
+            Assert.IsNotNull(parser.Styles["a"].Attributes["font-family"]);
+            Assert.AreEqual(3, parser.Styles["a"].Attributes.Count);
+        }
+    }
 }
