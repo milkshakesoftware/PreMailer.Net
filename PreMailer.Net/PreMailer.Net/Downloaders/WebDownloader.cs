@@ -28,7 +28,7 @@ namespace PreMailer.Net.Downloaders
 		public string DownloadString(Uri uri)
 		{
 			var request = WebRequest.Create(uri);
-			using (var response = request.GetResponse())
+			using (var response = request.GetResponseAsync().Result)
 			using (var stream = response.GetResponseStream())
 			using (var reader = new StreamReader(stream))
 			{
