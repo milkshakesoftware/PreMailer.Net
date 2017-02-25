@@ -38,10 +38,10 @@ namespace PreMailer.Net.Sources
 		private bool IsSupported(string scheme)
 		{
 			return
-				scheme == Uri.UriSchemeHttp ||
-				scheme == Uri.UriSchemeHttps ||
-				scheme == Uri.UriSchemeFtp ||
-				scheme == Uri.UriSchemeFile;
+				scheme == "http" ||
+				scheme == "https" ||
+				scheme == "ftp" ||
+				scheme == "file";
 		}
 	}
 }

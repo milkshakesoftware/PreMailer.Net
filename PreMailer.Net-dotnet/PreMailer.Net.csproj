@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+    <Version>1.5.6</Version>
+    <Authors>Martin H. Normark</Authors>
+    <Description>
+        PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
+    </Description>
+    <Copyright>Copyright 2016</Copyright>
+    <PackageLicenseUrl>https://github.com/milkshakesoftware/PreMailer.Net/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/milkshakesoftware/PreMailer.Net</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/milkshakesoftware/PreMailer.Net/raw/master/icon.png</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>
+        Fix missing method exception https://github.com/milkshakesoftware/PreMailer.Net/issues/130
+    </PackageReleaseNotes>
+    <PackageTags>email css newsletter html</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.9.9" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+  </ItemGroup>
+  
+  
+  <ItemGroup>  
+    <Compile
+      Include="../PreMailer.Net/PreMailer.Net/**/*.cs"
+      Exclude="**/AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>
