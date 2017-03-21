@@ -4,9 +4,9 @@
 echo.
 echo Restoring project...
 
-dotnet restore
+dotnet restore PreMailer.Net-dotnet\PreMailer.Net.csproj
 
 echo.
 echo Creating NuGet Package...
 
-dotnet pack --configuration Release --include-symbols
+dotnet pack PreMailer.Net-dotnet\PreMailer.Net.csproj --configuration Release --include-symbols
