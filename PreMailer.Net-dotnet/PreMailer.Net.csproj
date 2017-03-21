@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
-    <Version>2.0.0-beta1</Version>
+    <Version>2.0.0-beta2</Version>
     <Authors>Martin H. Normark</Authors>
     <Description>
         PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
@@ -14,6 +14,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
         Support for .NET Core https://github.com/milkshakesoftware/PreMailer.Net/pull/141
+		Fix: Duplicated style properties added with different values https://github.com/milkshakesoftware/PreMailer.Net/pull/139
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
   </PropertyGroup>
