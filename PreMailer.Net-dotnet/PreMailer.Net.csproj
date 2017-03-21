@@ -29,6 +29,6 @@
   <ItemGroup>  
     <Compile
       Include="../PreMailer.Net/PreMailer.Net/**/*.cs"
-      Exclude="**/AssemblyInfo.cs" />
+      Exclude="**\bin\**;**\obj\**;**/AssemblyInfo.cs" />
   </ItemGroup>
 </Project>
