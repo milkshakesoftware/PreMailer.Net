@@ -109,7 +109,7 @@ namespace PreMailer.Net
 			}
 		}
 
-		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|[""|'][^""']*"")*$)", RegexOptions.Multiline | RegexOptions.Compiled);
+		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|""[^""]*""|'[^']*')*$)", RegexOptions.Multiline | RegexOptions.Compiled);
 		private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)", RegexOptions.Compiled);
 		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
