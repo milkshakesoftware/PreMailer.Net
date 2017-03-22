@@ -1,0 +1,23 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "PreMailer.Net Core Class Library",
+  "authors": [ "NickA" ],
+  "dependencies": {
+    "NETStandard.Library": "1.4.0",
+    "AngleSharp": "0.9.7",
+    "System.Collections.Specialized": "4.0.1"
+  },
+  "frameworks": {
+    "netstandard1.4": {
+    },
+    "net461": {
+      "dependencies":{
+        
+      }
+    }
+
+  },
+  "tooling": {
+    "defaultNamespace": "testlib"
+  }
+}
