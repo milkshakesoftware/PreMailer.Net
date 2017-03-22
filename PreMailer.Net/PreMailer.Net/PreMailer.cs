@@ -17,7 +17,6 @@ namespace PreMailer.Net
 		private bool _removeStyleElements;
 		private bool _stripIdAndClassAttributes;
 		private string _ignoreElements;
-		private string _css;
 		private readonly Uri _baseUri;
 		private readonly CssParser _cssParser;
 		private readonly CssSelectorParser _cssSelectorParser;
@@ -84,13 +83,13 @@ namespace PreMailer.Net
 			_removeStyleElements = removeStyleElements;
 			_stripIdAndClassAttributes = stripIdAndClassAttributes;
 			_ignoreElements = ignoreElements;
-			_css = css;
 
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
 			var cssLinkNodes = CssLinkNodes();
 			var cssSources = new List<ICssSource>(ConvertToStyleSources(cssSourceNodes));
 			cssSources.AddRange(ConvertToStyleSources(cssLinkNodes));
+			cssSources.AddRange(ConvertToStyleSources(css));
 
 			var cssBlocks = GetCssBlocks(cssSources);
 
@@ -203,9 +202,20 @@ namespace PreMailer.Net
 				}
 			}
 
-			if (!String.IsNullOrWhiteSpace(_css))
+			return result;
+		}
+
+		/// <summary>
+		/// Returns a list with a single StringCssSource instance based on the 
+		/// css string provided if it is not null or white space.<para/>
+		/// </summary>
+		private IEnumerable<ICssSource> ConvertToStyleSources(string styles)
+		{
+			var result = new List<ICssSource>();
+
+			if (!String.IsNullOrWhiteSpace(styles))
 			{
-				result.Add(new StringCssSource(_css));
+				result.Add(new StringCssSource(styles));
 			}
 
 			return result;
