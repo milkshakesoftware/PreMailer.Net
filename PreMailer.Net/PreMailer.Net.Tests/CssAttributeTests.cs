@@ -43,6 +43,16 @@ namespace PreMailer.Net.Tests
         }
 
         [TestMethod]
+        public void ImportantRule_ReturnsValidCssWithoutWhitespaces()
+        {
+            var attribute = CssAttribute.FromRule("color:red!important");
+
+            Assert.AreEqual("color", attribute.Style);
+            Assert.AreEqual("red", attribute.Value);
+            Assert.IsTrue(attribute.Important);
+        }
+
+        [TestMethod]
         public void NonRule_ReturnsNull()
         {
             var attribute = CssAttribute.FromRule(" ");
