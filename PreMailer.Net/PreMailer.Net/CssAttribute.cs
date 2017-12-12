@@ -25,7 +25,7 @@ namespace PreMailer.Net
 			if (value.IndexOf("!important", StringComparison.CurrentCultureIgnoreCase) != -1)
 			{
 				important = true;
-				value = value.Replace(" !important", "");
+				value = value.Replace("!important", "").Trim();
 			}
 
 			return new CssAttribute
