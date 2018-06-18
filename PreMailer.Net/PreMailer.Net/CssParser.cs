@@ -119,7 +119,7 @@ namespace PreMailer.Net
 			temp = UnsupportedAtRuleRegex.Replace(temp, "");
 			temp = CleanupMediaQueries(temp);
 			temp = temp.Replace("\r", "").Replace("\n", "");
-
+            temp = temp.Replace("<!--", "").Replace("-->", "");
 			return temp;
 		}
 

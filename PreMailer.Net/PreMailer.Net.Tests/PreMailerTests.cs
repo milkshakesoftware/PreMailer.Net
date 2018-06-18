@@ -455,5 +455,30 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.StartsWith("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">"));
 		}
-	}
+
+        [TestMethod]
+        public void MoveCSSInline_MergingTwoValidCssRules()
+        {
+            string input = @"<html>
+<head>
+<style><!--
+/* Font Definitions */
+p.MsoNormal
+  {margin:0cm;}
+p
+  {mso-style-priority:99;}
+--></style>
+</head>
+<body>
+<div>
+<p class=""MsoNormal""><span style=""font-family:Source Sans Pro,serif"">Line1</span></p>
+</div>
+</body>
+</html>";
+
+            var premailedOutput = PreMailer.MoveCssInline(input, true, null, null);
+
+            Assert.IsTrue(premailedOutput.Html.Contains("style=\"mso-style-priority: 99;margin: 0cm\""));
+        }
+    }
 }
