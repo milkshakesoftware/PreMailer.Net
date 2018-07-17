@@ -1,11 +1,11 @@
 @echo off
 
 echo.
-echo Building project...
+echo Restoring project...
 
-msbuild PreMailer.Net\PreMailer.Net.csproj /p:Configuration=Release /t:Clean;Rebuild
+dotnet restore PreMailer.Net\PreMailer.Net.csproj
 
 echo.
 echo Creating NuGet Package...
 
-.nuget\nuget pack PreMailer.Net\PreMailer.Net.csproj -Prop Configuration=Release
+dotnet pack PreMailer.Net\PreMailer.Net.csproj --configuration Release --include-symbols
