@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PreMailer.Net.Downloaders;
 using Moq;
+using System.IO;
 
 namespace PreMailer.Net.Tests
 {
@@ -455,5 +456,24 @@ namespace PreMailer.Net.Tests
 
 			Assert.IsTrue(premailedOutput.Html.StartsWith("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">"));
 		}
-	}
+
+        [TestMethod]
+        public void MoveCSSInline_AcceptsStream()
+        {
+            string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new StreamWriter(stream))
+                {
+                    writer.Write(input);
+                    writer.Flush();
+                    stream.Position = 0;
+                    var premailer = new PreMailer(stream);
+                    var premailedOutput = premailer.MoveCssInline();
+
+                    Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
+                }
+            }
+        }
+    }
 }
