@@ -38,94 +38,94 @@ namespace PreMailer.Net
 			_cssSelectorParser = new CssSelectorParser();
 		}
 
-        /// <summary>
+		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
 		/// <param name="html">The HTML stream.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(Stream stream, Uri baseUri = null)
-        {
-            _baseUri = baseUri;
-            _document = new HtmlParser().Parse(stream);
-            _warnings = new List<string>();
-            _cssParser = new CssParser();
-            _cssSelectorParser = new CssSelectorParser();
-        }
+		{
+			_baseUri = baseUri;
+			_document = new HtmlParser().Parse(stream);
+			_warnings = new List<string>();
+			_cssParser = new CssParser();
+			_cssSelectorParser = new CssSelectorParser();
+		}
 
-        /// <summary>
-        /// In-lines the CSS within the HTML given.
-        /// </summary>
-        /// <param name="html">The HTML input.</param>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <param name="removeComments">True to remove comments, false to leave them intact</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-        public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// <param name="html">The HTML input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
 			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
-        /// <summary>
-        /// In-lines the CSS within the HTML given.
-        /// </summary>
-        /// <param name="stream">The Stream input.</param>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <param name="removeComments">True to remove comments, false to leave them intact</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-        public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
-        {
-            return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
-        }
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// <param name="stream">The Stream input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		{
+			return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+		}
 
-        /// <summary>
-        /// In-lines the CSS within the HTML given.
-        /// </summary>
-        /// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-        /// <param name="baseUri">The Url that all relative urls will be off of.</param>
-        /// <param name="html">The HTML input.</param>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <param name="removeComments">True to remove comments, false to leave them intact</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-        public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
+		/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+		/// <param name="html">The HTML input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
 			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
-        /// <summary>
-        /// In-lines the CSS within the HTML given.
-        /// </summary>
-        /// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-        /// <param name="baseUri">The Url that all relative urls will be off of.</param>
-        /// <param name="stream">The HTML input.</param>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <param name="removeComments">True to remove comments, false to leave them intact</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-        public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
-        {
-            return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
-        }
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
+		/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+		/// <param name="stream">The HTML input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		{
+			return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+		}
 
-        /// <summary>
-        /// In-lines the CSS for the current HTML
-        /// </summary>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <param name="removeComments">True to remove comments, false to leave them intact</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-        public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		/// <summary>
+		/// In-lines the CSS for the current HTML
+		/// </summary>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
@@ -167,11 +167,11 @@ namespace PreMailer.Net
 				}
 			}
 
-            using (var sw = new StringWriter())
-            {
-                _document.ToHtml(sw, new AutoSelectedMarkupFormatter(_document.Doctype));
-                return new InlineResult(sw.GetStringBuilder(), _warnings);
-            }
+			using (var sw = new StringWriter())
+			{
+				_document.ToHtml(sw, new AutoSelectedMarkupFormatter(_document.Doctype));
+				return new InlineResult(sw.GetStringBuilder(), _warnings);
+			}
 		}
 
 		/// <summary>
@@ -296,7 +296,7 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
 						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
 												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
@@ -444,22 +444,24 @@ namespace PreMailer.Net
 		}
 
 
-        /// <summary>
-        /// Access underlying IHTMLDocument
-        /// </summary>
-        public IHtmlDocument Document {
-            get {
-                return _document;
-            }
-        }
+		/// <summary>
+		/// Access underlying IHTMLDocument
+		/// </summary>
+		public IHtmlDocument Document
+		{
+			get
+			{
+				return _document;
+			}
+		}
 
 
-        /// <summary>
-        /// Dispose underlying document
-        /// </summary>
-        public void Dispose()
-        {
-            _document.Dispose();
-        }
-    }
+		/// <summary>
+		/// Dispose underlying document
+		/// </summary>
+		public void Dispose()
+		{
+			_document.Dispose();
+		}
+	}
 }
