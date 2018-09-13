@@ -468,8 +468,7 @@ namespace PreMailer.Net.Tests
 					writer.Write(input);
 					writer.Flush();
 					stream.Position = 0;
-					var premailer = new PreMailer(stream);
-					var premailedOutput = premailer.MoveCssInline();
+					var premailedOutput = PreMailer.MoveCssInline(stream);
 
 					Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
 				}
