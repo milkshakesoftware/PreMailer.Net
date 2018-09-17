@@ -17,6 +17,8 @@
 		Fix: Duplicated style properties added with different values https://github.com/milkshakesoftware/PreMailer.Net/pull/139
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>PreMailer.Net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
