@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PreMailer.Net.Downloaders;
 using Moq;
@@ -473,6 +473,31 @@ namespace PreMailer.Net.Tests
 					Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
 				}
 			}
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_MergingTwoValidCssRules()
+		{
+			string input = @"<html>
+<head>
+<style><!--
+/* Font Definitions */
+p.MsoNormal
+	{margin:0cm;}
+p
+	{mso-style-priority:99;}
+--></style>
+</head>
+<body>
+<div>
+<p class=""MsoNormal""><span style=""font-family:Source Sans Pro,serif"">Line1</span></p>
+</div>
+</body>
+</html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, true, null, null);
+
+			Assert.IsTrue(premailedOutput.Html.Contains("style=\"mso-style-priority: 99;margin: 0cm\""));
 		}
 	}
 }
