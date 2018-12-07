@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Version>2.0.0</Version>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <Version>2.0.1</Version>
     <Authors>Martin H. Normark</Authors>
     <Description>
         PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
@@ -13,14 +13,13 @@
     <PackageIconUrl>https://github.com/milkshakesoftware/PreMailer.Net/raw/master/icon.png</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-        Support for .NET Core https://github.com/milkshakesoftware/PreMailer.Net/pull/141
-		Fix: Duplicated style properties added with different values https://github.com/milkshakesoftware/PreMailer.Net/pull/139
+        Support for .NET Framework 4.5 and up, besides .NET Core 2
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="AngleSharp" Version="0.9.11" />
   </ItemGroup>
 
 </Project>
