@@ -28,11 +28,13 @@ namespace PreMailer.Net.Downloaders
 		public string DownloadString(Uri uri)
 		{
 			var request = WebRequest.Create(uri);
-			using (var response = request.GetResponse())
-			using (var stream = response.GetResponseStream())
-			using (var reader = new StreamReader(stream))
-			{
-				return reader.ReadToEnd();
+			using (var response = (HttpWebResponse)request.GetResponse()) {
+				string Charset = response.CharacterSet;
+				Encoding encoding = Encoding.GetEncoding( Charset );
+				using( var stream = response.GetResponseStream( ) )
+				using( var reader = new StreamReader( stream, encoding ) ) {
+					return reader.ReadToEnd( );
+				}
 			}
 		}
 	}
