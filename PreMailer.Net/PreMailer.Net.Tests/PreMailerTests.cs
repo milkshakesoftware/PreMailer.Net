@@ -213,7 +213,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" cellspacing=\"5\" width=\"14%\" style=\"padding: 7px\">"), "Actual: " + premailedOutput.Html);
+			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"padding: 7px\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
 		}
 
 		[TestMethod]

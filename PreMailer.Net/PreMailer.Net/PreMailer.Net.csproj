@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <Version>2.0.1</Version>
     <Authors>Martin H. Normark</Authors>
     <Description>
@@ -13,13 +13,13 @@
     <PackageIconUrl>https://github.com/milkshakesoftware/PreMailer.Net/raw/master/icon.png</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-        Support for .NET Framework 4.5 and up, besides .NET Core 2
+        Support for .NET Framework 4.6 and up, besides .NET Core 2
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.9.11" />
+    <PackageReference Include="AngleSharp" Version="0.11.0" />
   </ItemGroup>
 
 </Project>

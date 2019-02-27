@@ -4,9 +4,8 @@ using System.Collections.Specialized;
 using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Extensions;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
@@ -31,7 +30,7 @@ namespace PreMailer.Net
 		public PreMailer(string html, Uri baseUri = null)
 		{
 			_baseUri = baseUri;
-			_document = new HtmlParser().Parse(html);
+            _document = new HtmlParser().ParseDocument(html);
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
@@ -120,7 +119,7 @@ namespace PreMailer.Net
 				}
 			}
 
-			var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
+			var html = _document.ToHtml();
 
 			return new InlineResult(html, _warnings);
 		}
