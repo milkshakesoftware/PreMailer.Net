@@ -29,34 +29,34 @@ namespace PreMailer.Net
 		/// <param name="html">The HTML input.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(string html, Uri baseUri = null)
-            : this(new HtmlParser().Parse(html), baseUri)
+			: this(new HtmlParser().Parse(html), baseUri)
 		{ }
 
-        /// <summary>
+		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
 		/// <param name="htmlDoc">The HTML document.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(IHtmlDocument htmlDoc, Uri baseUri = null)
-        {
-            _baseUri = baseUri;
-            _document = htmlDoc;
-            _warnings = new List<string>();
-            _cssParser = new CssParser();
-            _cssSelectorParser = new CssSelectorParser();
-        }
+		{
+			_baseUri = baseUri;
+			_document = htmlDoc;
+			_warnings = new List<string>();
+			_cssParser = new CssParser();
+			_cssSelectorParser = new CssSelectorParser();
+		}
 
-        /// <summary>
-        /// In-lines the CSS within the HTML given.
-        /// </summary>
-        /// <param name="html">The HTML input.</param>
-        /// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
-        /// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
-        /// <param name="css">A string containing a style-sheet for inlining.</param>
-        /// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
-        /// <param name="removeComments">True to remove comments, false to leave them intact</param>
-        /// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-        public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// <param name="html">The HTML input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
 			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
@@ -256,7 +256,7 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
 						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
 												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
@@ -404,22 +404,24 @@ namespace PreMailer.Net
 		}
 
 
-        /// <summary>
-        /// Access underlying IHTMLDocument
-        /// </summary>
-        public IHtmlDocument Document {
-            get {
-                return _document;
-            }
-        }
+		/// <summary>
+		/// Access underlying IHTMLDocument
+		/// </summary>
+		public IHtmlDocument Document
+		{
+			get
+			{
+				return _document;
+			}
+		}
 
 
-        /// <summary>
-        /// Dispose underlying document
-        /// </summary>
-        public void Dispose()
-        {
-            _document.Dispose();
-        }
-    }
+		/// <summary>
+		/// Dispose underlying document
+		/// </summary>
+		public void Dispose()
+		{
+			_document.Dispose();
+		}
+	}
 }
