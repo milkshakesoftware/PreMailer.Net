@@ -22,15 +22,26 @@ namespace PreMailer.Net
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
+		/// <inheritdoc />
 		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
 		/// <param name="html">The HTML input.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(string html, Uri baseUri = null)
+			: this(new HtmlParser().ParseDocument(html), baseUri)
+		{
+		}
+
+		/// <summary>
+		/// Constructor for the PreMailer class
+		/// </summary>
+		/// <param name="htmlDocument">The <seealso cref="IHtmlDocument">HtmlDocument</seealso> input.</param>
+		/// <param name="baseUri">Url that all relative urls will be off of</param>
+		public PreMailer(IHtmlDocument htmlDocument, Uri baseUri = null)
 		{
 			_baseUri = baseUri;
-            _document = new HtmlParser().ParseDocument(html);
+			_document = htmlDocument;
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
@@ -246,7 +257,7 @@ namespace PreMailer.Net
 
 			return elements.Where(e => e.Attributes
 				.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
-						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) || 
+						 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
 						 (e.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
 												r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase))))));
 		}
@@ -394,22 +405,24 @@ namespace PreMailer.Net
 		}
 
 
-        /// <summary>
-        /// Access underlying IHTMLDocument
-        /// </summary>
-        public IHtmlDocument Document {
-            get {
-                return _document;
-            }
-        }
+		/// <summary>
+		/// Access underlying IHTMLDocument
+		/// </summary>
+		public IHtmlDocument Document
+		{
+			get
+			{
+				return _document;
+			}
+		}
 
 
-        /// <summary>
-        /// Dispose underlying document
-        /// </summary>
-        public void Dispose()
-        {
-            _document.Dispose();
-        }
-    }
+		/// <summary>
+		/// Dispose underlying document
+		/// </summary>
+		public void Dispose()
+		{
+			_document.Dispose();
+		}
+	}
 }
