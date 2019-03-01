@@ -184,7 +184,14 @@ namespace PreMailer.Net
 
 			foreach (var styleSource in cssSources)
 			{
-				styleBlocks.Add(styleSource.GetCss());
+                try
+                {
+                    styleBlocks.Add(styleSource.GetCss());
+                }
+                catch (System.Net.WebException e)
+                {
+                    _warnings.Add(e.Message);
+                }
 			}
 
 			return styleBlocks;
