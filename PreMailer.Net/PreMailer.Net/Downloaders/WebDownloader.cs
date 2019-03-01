@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace PreMailer.Net.Downloaders
 {
@@ -28,11 +29,15 @@ namespace PreMailer.Net.Downloaders
 		public string DownloadString(Uri uri)
 		{
 			var request = WebRequest.Create(uri);
-			using (var response = request.GetResponse())
-			using (var stream = response.GetResponseStream())
-			using (var reader = new StreamReader(stream))
+			using (var response = (HttpWebResponse)request.GetResponse())
 			{
-				return reader.ReadToEnd();
+				var charset = response.CharacterSet;
+				var encoding = Encoding.GetEncoding(charset);
+				using (var stream = response.GetResponseStream())
+				using (var reader = new StreamReader(stream, encoding))
+				{
+					return reader.ReadToEnd();
+				}
 			}
 		}
 	}
