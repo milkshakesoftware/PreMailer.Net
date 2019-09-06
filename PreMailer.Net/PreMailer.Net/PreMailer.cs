@@ -4,9 +4,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Extensions;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using AngleSharp.Xhtml;
 using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
@@ -23,24 +24,26 @@ namespace PreMailer.Net
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
+		/// <inheritdoc />
 		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
 		/// <param name="html">The HTML input.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(string html, Uri baseUri = null)
-			: this(new HtmlParser().Parse(html), baseUri)
-		{ }
+			: this(new HtmlParser().ParseDocument(html), baseUri)
+		{
+		}
 
 		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
-		/// <param name="htmlDoc">The HTML document.</param>
+		/// <param name="htmlDocument">The <seealso cref="IHtmlDocument">HtmlDocument</seealso> input.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
-		public PreMailer(IHtmlDocument htmlDoc, Uri baseUri = null)
+		public PreMailer(IHtmlDocument htmlDocument, Uri baseUri = null)
 		{
 			_baseUri = baseUri;
-			_document = htmlDoc;
+			_document = htmlDocument;
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
@@ -129,7 +132,9 @@ namespace PreMailer.Net
 				}
 			}
 
-			var html = _document.ToHtml(new AutoSelectedMarkupFormatter(_document.Doctype));
+			IMarkupFormatter markupFormatter = GetMarkupFormatterForDocType();
+
+			var html = _document.ToHtml(markupFormatter);
 
 			return new InlineResult(html, _warnings);
 		}
@@ -184,14 +189,7 @@ namespace PreMailer.Net
 
 			foreach (var styleSource in cssSources)
 			{
-                try
-                {
-                    styleBlocks.Add(styleSource.GetCss());
-                }
-                catch (System.Net.WebException e)
-                {
-                    _warnings.Add(e.Message);
-                }
+				styleBlocks.Add(styleSource.GetCss());
 			}
 
 			return styleBlocks;
@@ -408,6 +406,16 @@ namespace PreMailer.Net
 					item.RemoveAttribute(attribute);
 				}
 			}
+		}
+
+		private IMarkupFormatter GetMarkupFormatterForDocType()
+		{
+			if (_document != null && _document.Doctype != null && _document.Doctype.PublicIdentifier != null && _document.Doctype.PublicIdentifier.Contains("XHTML"))
+			{
+				return XhtmlMarkupFormatter.Instance;
+			}
+
+			return HtmlMarkupFormatter.Instance;
 		}
 
 
