@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
@@ -50,6 +51,20 @@ namespace PreMailer.Net
 		}
 
 		/// <summary>
+		/// Constructor for the PreMailer class
+		/// </summary>
+		/// <param name="html">The HTML stream.</param>
+		/// <param name="baseUri">Url that all relative urls will be off of</param>
+		public PreMailer(Stream stream, Uri baseUri = null)
+		{
+			_baseUri = baseUri;
+			_document = new HtmlParser().ParseDocument(stream);
+			_warnings = new List<string>();
+			_cssParser = new CssParser();
+			_cssSelectorParser = new CssSelectorParser();
+		}
+
+		/// <summary>
 		/// In-lines the CSS within the HTML given.
 		/// </summary>
 		/// <param name="html">The HTML input.</param>
@@ -67,6 +82,21 @@ namespace PreMailer.Net
 		/// <summary>
 		/// In-lines the CSS within the HTML given.
 		/// </summary>
+		/// <param name="stream">The Stream input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		{
+			return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+		}
+
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
 		/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
 		/// <param name="baseUri">The Url that all relative urls will be off of.</param>
 		/// <param name="html">The HTML input.</param>
@@ -79,6 +109,23 @@ namespace PreMailer.Net
 		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
 		{
 			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
+		}
+
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
+		/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+		/// <param name="stream">The HTML input.</param>
+		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+		/// <param name="css">A string containing a style-sheet for inlining.</param>
+		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false)
+		{
+			return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments);
 		}
 
 		/// <summary>
@@ -134,9 +181,12 @@ namespace PreMailer.Net
 
 			IMarkupFormatter markupFormatter = GetMarkupFormatterForDocType();
 
-			var html = _document.ToHtml(markupFormatter);
+			using (var sw = new StringWriter())
+			{
+				_document.ToHtml(sw, markupFormatter);
 
-			return new InlineResult(html, _warnings);
+				return new InlineResult(sw.GetStringBuilder(), _warnings);
+			}
 		}
 
 		/// <summary>

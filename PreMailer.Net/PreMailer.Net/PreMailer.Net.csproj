@@ -16,6 +16,8 @@
         Support for .NET Framework 4.6 and up, besides .NET Core 2
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>PreMailer.Net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
