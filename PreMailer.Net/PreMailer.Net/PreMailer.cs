@@ -394,12 +394,13 @@ namespace PreMailer.Net
 				Dictionary<IElement, List<StyleClass>> styles)
 		{
 			var result = new Dictionary<IElement, List<StyleClass>>();
+			var specificityCache = new Dictionary<string, int>();
 
 			foreach (var style in styles)
 			{
 				if (style.Key.Attributes != null)
 				{
-					var sortedStyles = style.Value.OrderBy(x => _cssSelectorParser.GetSelectorSpecificity(x.Name)).ThenBy(x => x.Position).ToList();
+					var sortedStyles = style.Value.OrderBy(x => GetSelectorSpecificity(specificityCache, x.Name)).ThenBy(x => x.Position).ToList();
 					var styleAttr = style.Key.Attributes["style"];
 
 					if (styleAttr == null || String.IsNullOrWhiteSpace(styleAttr.Value))
@@ -468,6 +469,19 @@ namespace PreMailer.Net
 			return HtmlMarkupFormatter.Instance;
 		}
 
+		private int GetSelectorSpecificity(Dictionary<string, int> cache, string selector)
+		{
+			selector = selector ?? "";
+			int specificity;
+
+			if (!cache.TryGetValue(selector, out specificity))
+			{
+				specificity = _cssSelectorParser.GetSelectorSpecificity(selector);
+				cache[selector] = specificity;
+			}
+
+			return specificity;
+		}
 
 		/// <summary>
 		/// Access underlying IHTMLDocument
