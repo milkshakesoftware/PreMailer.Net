@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Extensions;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using AngleSharp.Xhtml;
 using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
@@ -24,15 +25,26 @@ namespace PreMailer.Net
 		private readonly CssSelectorParser _cssSelectorParser;
 		private readonly List<string> _warnings;
 
+		/// <inheritdoc />
 		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
 		/// <param name="html">The HTML input.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(string html, Uri baseUri = null)
+			: this(new HtmlParser().ParseDocument(html), baseUri)
+		{
+		}
+
+		/// <summary>
+		/// Constructor for the PreMailer class
+		/// </summary>
+		/// <param name="htmlDocument">The <seealso cref="IHtmlDocument">HtmlDocument</seealso> input.</param>
+		/// <param name="baseUri">Url that all relative urls will be off of</param>
+		public PreMailer(IHtmlDocument htmlDocument, Uri baseUri = null)
 		{
 			_baseUri = baseUri;
-			_document = new HtmlParser().Parse(html);
+			_document = htmlDocument;
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
@@ -167,9 +179,12 @@ namespace PreMailer.Net
 				}
 			}
 
+			IMarkupFormatter markupFormatter = GetMarkupFormatterForDocType();
+
 			using (var sw = new StringWriter())
 			{
-				_document.ToHtml(sw, new AutoSelectedMarkupFormatter(_document.Doctype));
+				_document.ToHtml(sw, markupFormatter);
+
 				return new InlineResult(sw.GetStringBuilder(), _warnings);
 			}
 		}
@@ -441,6 +456,16 @@ namespace PreMailer.Net
 					item.RemoveAttribute(attribute);
 				}
 			}
+		}
+
+		private IMarkupFormatter GetMarkupFormatterForDocType()
+		{
+			if (_document != null && _document.Doctype != null && _document.Doctype.PublicIdentifier != null && _document.Doctype.PublicIdentifier.Contains("XHTML"))
+			{
+				return XhtmlMarkupFormatter.Instance;
+			}
+
+			return HtmlMarkupFormatter.Instance;
 		}
 
 

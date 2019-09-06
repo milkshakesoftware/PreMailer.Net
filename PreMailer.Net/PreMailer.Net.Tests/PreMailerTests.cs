@@ -2,7 +2,6 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PreMailer.Net.Downloaders;
 using Moq;
-using System.IO;
 
 namespace PreMailer.Net.Tests
 {
@@ -214,7 +213,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" cellspacing=\"5\" width=\"14%\" style=\"padding: 7px\">"), "Actual: " + premailedOutput.Html);
+			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"padding: 7px\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
 		}
 
 		[TestMethod]
@@ -448,6 +447,94 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML5()
+		{
+			string docType = "<!DOCTYPE html>";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML401_Strict()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML401_Transitional()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML401_Frameset()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML10_Strict()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML10_Transitional()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML10_Frameset()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML11()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
 		public void MoveCSSInline_PreservesXMLNamespace()
 		{
 			string input = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head></head><body></body></html>";
@@ -458,24 +545,6 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void MoveCSSInline_AcceptsStream()
-		{
-			string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
-			using (var stream = new MemoryStream())
-			{
-				using (var writer = new StreamWriter(stream))
-				{
-					writer.Write(input);
-					writer.Flush();
-					stream.Position = 0;
-					var premailedOutput = PreMailer.MoveCssInline(stream);
-
-					Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
-				}
-			}
-		}
-
-		[TestMethod]
 		public void MoveCSSInline_MergingTwoValidCssRules()
 		{
 			string input = @"<html>
@@ -483,9 +552,9 @@ namespace PreMailer.Net.Tests
 <style><!--
 /* Font Definitions */
 p.MsoNormal
-	{margin:0cm;}
+  {margin:0cm;}
 p
-	{mso-style-priority:99;}
+  {mso-style-priority:99;}
 --></style>
 </head>
 <body>
@@ -498,6 +567,24 @@ p
 			var premailedOutput = PreMailer.MoveCssInline(input, true, null, null);
 
 			Assert.IsTrue(premailedOutput.Html.Contains("style=\"mso-style-priority: 99;margin: 0cm\""));
+		}
+	}
+	
+	[TestMethod]
+	public void MoveCSSInline_AcceptsStream()
+	{
+		string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
+		using (var stream = new MemoryStream())
+		{
+			using (var writer = new StreamWriter(stream))
+			{
+				writer.Write(input);
+				writer.Flush();
+				stream.Position = 0;
+				var premailedOutput = PreMailer.MoveCssInline(stream);
+
+				Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
+			}
 		}
 	}
 }
