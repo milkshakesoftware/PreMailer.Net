@@ -58,7 +58,7 @@ namespace PreMailer.Net
 		public PreMailer(Stream stream, Uri baseUri = null)
 		{
 			_baseUri = baseUri;
-			_document = new HtmlParser().Parse(stream);
+			_document = new HtmlParser().ParseDocument(stream);
 			_warnings = new List<string>();
 			_cssParser = new CssParser();
 			_cssSelectorParser = new CssSelectorParser();
