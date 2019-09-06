@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
@@ -15,10 +14,10 @@ namespace PreMailer.Net.Tests
         {
             var elementDictionary = new Dictionary<IElement, StyleClass>();
 
-            var tableDomObject1 = new HtmlParser().Parse("<table id=\"tabletest1\" class=\"test1\" bgcolor=\"\"></table>");
-            var tableDomObject2 = new HtmlParser().Parse("<table id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"\"></table>");
-            var tableDomObject3 = new HtmlParser().Parse("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"\"></table>");
-            var tableDomObject4 = new HtmlParser().Parse("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"\" width=\"\"></table>");
+            var tableDomObject1 = new HtmlParser().ParseDocument("<table id=\"tabletest1\" class=\"test1\" bgcolor=\"\"></table>");
+            var tableDomObject2 = new HtmlParser().ParseDocument("<table id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"\"></table>");
+            var tableDomObject3 = new HtmlParser().ParseDocument("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"\"></table>");
+            var tableDomObject4 = new HtmlParser().ParseDocument("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"\" width=\"\"></table>");
 
             var styleClassBgColor = new StyleClass();
             styleClassBgColor.Attributes["background-color"] = CssAttribute.FromRule("background-color: #008001");

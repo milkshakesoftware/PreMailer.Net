@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using AngleSharp.Dom;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
@@ -11,7 +11,7 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void GetAllStylesForElement()
         {
-            var tableDomObject = new HtmlParser().Parse("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
+            var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
             var nodewithoutselector = (IElement)tableDomObject.Body.FirstChild;
 
             var clazz = new StyleClass();

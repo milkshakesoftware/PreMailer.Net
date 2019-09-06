@@ -1,0 +1,6 @@
+[*.cs]
+
+#Core editorconfig formatting - indentation
+
+#use hard tabs for indentation
+indent_style = tab
