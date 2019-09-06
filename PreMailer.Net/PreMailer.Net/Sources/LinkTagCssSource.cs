@@ -30,8 +30,14 @@ namespace PreMailer.Net.Sources
 		{
 			if (IsSupported(_downloadUri.Scheme))
 			{
-				return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
-			}
+                try
+                {
+                    return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+                } catch (System.Net.WebException)
+                {
+                    throw new System.Net.WebException(string.Format("PreMailer.Net is unable to fetch the requested URL: {0}", _downloadUri));
+                }
+            }
 			return string.Empty;
 		}
 

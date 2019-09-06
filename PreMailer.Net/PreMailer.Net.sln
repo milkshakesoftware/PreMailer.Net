@@ -1,21 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PreMailer.Net", "PreMailer.Net\PreMailer.Net.csproj", "{7B4A85FA-FA98-40FD-83B7-5E84C8853736}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreMailer.Net", "PreMailer.Net\PreMailer.Net.csproj", "{7B4A85FA-FA98-40FD-83B7-5E84C8853736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PreMailer.Net.Tests", "PreMailer.Net.Tests\PreMailer.Net.Tests.csproj", "{F5A0FED0-4A6C-49AA-B49E-C47A034D8098}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{46DF8D1A-662E-4BCF-BD11-0B2B2830DCEF}"
-	ProjectSection(SolutionItems) = preProject
-		GlobalAssemblyInfo.cs = GlobalAssemblyInfo.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BBB1F8CD-8C6C-4777-A66B-1D96BB2FA851}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreMailer.Net.Tests", "PreMailer.Net.Tests\PreMailer.Net.Tests.csproj", "{F5A0FED0-4A6C-49AA-B49E-C47A034D8098}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBC52989-0CC3-40E9-8DB3-109FBC0B6C49}
 	EndGlobalSection
 EndGlobal

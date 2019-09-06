@@ -1,5 +1,5 @@
 ﻿using AngleSharp.Dom;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PreMailer.Net.Tests
@@ -10,7 +10,7 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void FindEquivalentStyles()
         {
-            var tableDomObject = new HtmlParser().Parse("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
+            var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
             var nodewithoutselector = (IElement)tableDomObject.Body.FirstChild;
 
             var clazz = new StyleClass();
@@ -24,7 +24,7 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void FindEquivalentStylesNoMatchingStyles()
         {
-            var tableDomObject = new HtmlParser().Parse("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
+            var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
 
             var clazz = new StyleClass();
             clazz.Attributes["border"] = CssAttribute.FromRule("border: 1px");
