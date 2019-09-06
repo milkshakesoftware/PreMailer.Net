@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html;
@@ -10,6 +5,11 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using AngleSharp.Xhtml;
 using PreMailer.Net.Sources;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
 
 namespace PreMailer.Net
 {
