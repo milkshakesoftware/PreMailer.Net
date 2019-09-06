@@ -447,6 +447,94 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML5()
+		{
+			string docType = "<!DOCTYPE html>";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML401_Strict()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML401_Transitional()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_HTML401_Frameset()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">";
+			string input = $"{docType}<html><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML10_Strict()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML10_Transitional()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML10_Frameset()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
+		public void MoveCSSInline_PreservesDocType_XHTML11()
+		{
+			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
+			string input = $"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, false);
+
+			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+		}
+
+		[TestMethod]
 		public void MoveCSSInline_PreservesXMLNamespace()
 		{
 			string input = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head></head><body></body></html>";

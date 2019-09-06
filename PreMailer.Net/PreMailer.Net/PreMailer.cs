@@ -4,8 +4,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using AngleSharp;
 using AngleSharp.Dom;
+using AngleSharp.Html;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+using AngleSharp.Xhtml;
 using PreMailer.Net.Sources;
 
 namespace PreMailer.Net
@@ -130,7 +132,9 @@ namespace PreMailer.Net
 				}
 			}
 
-			var html = _document.ToHtml();
+			IMarkupFormatter markupFormatter = GetMarkupFormatterForDocType();
+
+			var html = _document.ToHtml(markupFormatter);
 
 			return new InlineResult(html, _warnings);
 		}
@@ -402,6 +406,16 @@ namespace PreMailer.Net
 					item.RemoveAttribute(attribute);
 				}
 			}
+		}
+
+		private IMarkupFormatter GetMarkupFormatterForDocType()
+		{
+			if (_document != null && _document.Doctype != null && _document.Doctype.PublicIdentifier != null && _document.Doctype.PublicIdentifier.Contains("XHTML"))
+			{
+				return XhtmlMarkupFormatter.Instance;
+			}
+
+			return HtmlMarkupFormatter.Instance;
 		}
 
 
