@@ -29,14 +29,32 @@ namespace PreMailer.Net.Downloaders
 		public string DownloadString(Uri uri)
 		{
 			var request = WebRequest.Create(uri);
-			using (var response = (HttpWebResponse)request.GetResponse())
+			using (var response = request.GetResponse())
 			{
-				var charset = response.CharacterSet;
-				var encoding = Encoding.GetEncoding(charset);
-				using (var stream = response.GetResponseStream())
-				using (var reader = new StreamReader(stream, encoding))
+				switch (response)
 				{
-					return reader.ReadToEnd();
+					case HttpWebResponse httpWebResponse:
+					{
+						var charset = httpWebResponse.CharacterSet;
+						var encoding = Encoding.GetEncoding(charset);
+						using (var stream = httpWebResponse.GetResponseStream())
+						using (var reader = new StreamReader(stream, encoding))
+						{
+							return reader.ReadToEnd();
+						}
+					}
+
+					case FileWebResponse fileWebResponse:
+					{
+						using (var stream = fileWebResponse.GetResponseStream())
+						using (var reader = new StreamReader(stream))
+						{
+							return reader.ReadToEnd();
+						}
+					}
+
+					default:
+						throw new NotSupportedException($"The Uri type is giving a response in unsupported type '{response.GetType()}'.");
 				}
 			}
 		}
