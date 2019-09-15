@@ -13,10 +13,8 @@
     <PackageIconUrl>https://github.com/milkshakesoftware/PreMailer.Net/raw/master/icon.png</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-        Update AngleSharp to v0.12.1 https://github.com/milkshakesoftware/PreMailer.Net/pull/175
-		Allow Stream as input of PreMailer https://github.com/milkshakesoftware/PreMailer.Net/pull/159
-		Optimization: Cache selector specificity https://github.com/milkshakesoftware/PreMailer.Net/pull/153
-		FIX: Problems with minified Css https://github.com/milkshakesoftware/PreMailer.Net/pull/151
+        Add support on fetching Uri with local filepath like "file:///C:/websiite/style.css" https://github.com/milkshakesoftware/PreMailer.Net/pull/182
+        Bump AngleSharp from 0.12.1 to 0.13.0 https://github.com/milkshakesoftware/PreMailer.Net/pull/176
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
     <SignAssembly>true</SignAssembly>
