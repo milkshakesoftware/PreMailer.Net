@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Authors>Martin H. Normark</Authors>
     <Description>
         PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
