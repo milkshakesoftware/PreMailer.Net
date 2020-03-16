@@ -19,19 +19,39 @@ namespace PreMailer.Net.Tests
             var tableDomObject3 = new HtmlParser().ParseDocument("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"\"></table>");
             var tableDomObject4 = new HtmlParser().ParseDocument("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"\" width=\"\"></table>");
 
-            var styleClassBgColor = new StyleClass();
-            styleClassBgColor.Attributes["background-color"] = CssAttribute.FromRule("background-color: #008001");
+            var styleClassBgColor = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["background-color"] = CssAttribute.FromRule("background-color: #008001")
+	            }
+            };
 
-            var styleClassWidth = new StyleClass();
-            styleClassWidth.Attributes["width"] = CssAttribute.FromRule("width: 10px");
+            var styleClassWidth = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["width"] = CssAttribute.FromRule("width: 10px")
+	            }
+            };
 
-            var styleClassHeight = new StyleClass();
-            styleClassHeight.Attributes["height"] = CssAttribute.FromRule("height: 10px");
+            var styleClassHeight = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["height"] = CssAttribute.FromRule("height: 10px")
+	            }
+            };
 
-            var styleClassBgAndWidth = new StyleClass();
-            styleClassBgAndWidth.Attributes["background-color"] = CssAttribute.FromRule("background-color: #008003");
-            styleClassBgAndWidth.Attributes["width"] = CssAttribute.FromRule("width: 10px");
-            
+            var styleClassBgAndWidth = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["background-color"] = CssAttribute.FromRule("background-color: #008003"),
+		            ["width"] = CssAttribute.FromRule("width: 10px")
+	            }
+            };
+
             elementDictionary.Add(tableDomObject1.Body.FirstElementChild, styleClassBgColor);
             elementDictionary.Add(tableDomObject2.Body.FirstElementChild, styleClassWidth);
             elementDictionary.Add(tableDomObject3.Body.FirstElementChild, styleClassHeight);

@@ -13,8 +13,13 @@ namespace PreMailer.Net.Tests
             var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
             var nodewithoutselector = (IElement)tableDomObject.Body.FirstChild;
 
-            var clazz = new StyleClass();
-            clazz.Attributes["background-color"] = CssAttribute.FromRule("background-color: red");
+            var clazz = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["background-color"] = CssAttribute.FromRule("background-color: red")
+	            }
+            };
 
             var result = CssStyleEquivalence.FindEquivalent(nodewithoutselector, clazz);
 
@@ -26,8 +31,13 @@ namespace PreMailer.Net.Tests
         {
             var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
 
-            var clazz = new StyleClass();
-            clazz.Attributes["border"] = CssAttribute.FromRule("border: 1px");
+            var clazz = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["border"] = CssAttribute.FromRule("border: 1px")
+	            }
+            };
 
             var nodewithoutselector = (IElement)tableDomObject.Body.FirstChild;
 

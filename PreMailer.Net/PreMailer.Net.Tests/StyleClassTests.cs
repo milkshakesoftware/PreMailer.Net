@@ -8,20 +8,30 @@ namespace PreMailer.Net.Tests
         [TestMethod]
         public void SingleAttribute_ShouldNotAppendSemiColonToString()
         {
-            var clazz = new StyleClass();
-            clazz.Attributes["color"] = CssAttribute.FromRule("color: red");
+	        var clazz = new StyleClass
+	        {
+		        Attributes =
+		        {
+			        ["color"] = CssAttribute.FromRule("color: red")
+		        }
+	        };
 
-            Assert.AreEqual("color: red", clazz.ToString());
+	        Assert.AreEqual("color: red", clazz.ToString());
         }
 
         [TestMethod]
         public void MultipleAttributes_ShouldJoinAttributesWithSemiColonInString()
         {
-            var clazz = new StyleClass();
-            clazz.Attributes["color"] = CssAttribute.FromRule("color: red");
-            clazz.Attributes["height"] = CssAttribute.FromRule("height: 100%");
+	        var clazz = new StyleClass
+	        {
+		        Attributes =
+		        {
+			        ["color"] = CssAttribute.FromRule("color: red"),
+			        ["height"] = CssAttribute.FromRule("height: 100%")
+		        }
+	        };
 
-            Assert.AreEqual("color: red;height: 100%", clazz.ToString());
+	        Assert.AreEqual("color: red;height: 100%", clazz.ToString());
         }
 
         [TestMethod]

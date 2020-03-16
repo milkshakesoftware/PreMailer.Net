@@ -14,8 +14,13 @@ namespace PreMailer.Net.Tests
             var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
             var nodewithoutselector = (IElement)tableDomObject.Body.FirstChild;
 
-            var clazz = new StyleClass();
-            clazz.Attributes["background-color"] = CssAttribute.FromRule("background-color: red");
+            var clazz = new StyleClass
+            {
+	            Attributes =
+	            {
+		            ["background-color"] = CssAttribute.FromRule("background-color: red")
+	            }
+            };
 
             var result = CssElementStyleResolver.GetAllStyles(nodewithoutselector, clazz);
 
