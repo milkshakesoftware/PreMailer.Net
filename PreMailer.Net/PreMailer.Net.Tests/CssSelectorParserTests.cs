@@ -153,7 +153,7 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void GetSelectorSpecificity_OneIdOneClassOneElementWithHypens_Returns111()
+		public void GetSelectorSpecificity_OneIdOneClassOneElementWithHyphens_Returns111()
 		{
 			var result = _parser.GetSelectorSpecificity("my-element#my-id.my-class");
 			Assert.AreEqual(111, result);

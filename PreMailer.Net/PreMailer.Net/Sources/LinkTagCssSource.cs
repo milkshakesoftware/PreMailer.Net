@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using AngleSharp.Dom;
 using PreMailer.Net.Downloaders;
 
@@ -33,15 +34,15 @@ namespace PreMailer.Net.Sources
                 try
                 {
                     return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
-                } catch (System.Net.WebException)
+                } catch (WebException)
                 {
-                    throw new System.Net.WebException(string.Format("PreMailer.Net is unable to fetch the requested URL: {0}", _downloadUri));
+                    throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
                 }
             }
 			return string.Empty;
 		}
 
-		private bool IsSupported(string scheme)
+		private static bool IsSupported(string scheme)
 		{
 			return
 				scheme == "http" ||

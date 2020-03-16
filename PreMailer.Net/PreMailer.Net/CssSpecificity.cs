@@ -14,13 +14,7 @@
 		/// </summary>
 		public int Elements { get; protected set; }
 
-		public static CssSpecificity None
-		{
-			get
-			{
-				return new CssSpecificity(0, 0, 0);
-			}
-		}
+		public static CssSpecificity None => new CssSpecificity(0, 0, 0);
 
 		public CssSpecificity(int ids, int classes, int elements)
 		{
@@ -32,14 +26,13 @@
 		public int ToInt()
 		{
 			var s = ToString();
-			var result = 0;
-			var success = int.TryParse(s, out result);
+			var success = int.TryParse(s, out var result);
 			return result;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}{1}{2}", Ids, Classes, Elements);
+			return $"{Ids}{Classes}{Elements}";
 		}
 
 		public static CssSpecificity operator +(CssSpecificity first, CssSpecificity second)
