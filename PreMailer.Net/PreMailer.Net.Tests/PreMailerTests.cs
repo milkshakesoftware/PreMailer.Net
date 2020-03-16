@@ -361,7 +361,7 @@ namespace PreMailer.Net.Tests
 
 			Uri baseUri = new Uri("http://a.com");
 			Uri fullUrl = new Uri(baseUri, "b.css");
-			string input = String.Format("<html><head><link href=\"{0}\"></link></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>", fullUrl);
+			string input = $"<html><head><link href=\"{fullUrl}\"></link></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
 			PreMailer sut = new PreMailer(input, baseUri);
 			sut.MoveCssInline();
@@ -378,7 +378,7 @@ namespace PreMailer.Net.Tests
 
 			Uri baseUri = new Uri("http://a.com");
 			Uri fullUrl = new Uri(baseUri, "/Content/css?v=7V7TZzP9Wo7LiH9_q-r5mRBdC_N0lA_YJpRL_1V424E1");
-			string input = String.Format("<html><head><link href=\"{0}\" rel=\"stylesheet\"></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>", fullUrl);
+			string input = $"<html><head><link href=\"{fullUrl}\" rel=\"stylesheet\"></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
 			PreMailer sut = new PreMailer(input, baseUri);
 			sut.MoveCssInline();
@@ -395,7 +395,7 @@ namespace PreMailer.Net.Tests
 
 			Uri baseUri = new Uri("http://a.com");
 			Uri fullUrl = new Uri(baseUri, "b.bs");
-			string input = String.Format("<html><head><link href=\"{0}\"></link></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>", fullUrl);
+			string input = $"<html><head><link href=\"{fullUrl}\"></link></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
 			PreMailer sut = new PreMailer(input, baseUri);
 			sut.MoveCssInline();

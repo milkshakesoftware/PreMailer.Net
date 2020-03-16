@@ -35,10 +35,8 @@ namespace PreMailer.Net {
 		/// <param name="canOverwrite">if set to <c>true</c> [can overwrite].</param>
 		public void Merge(StyleClass styleClass, bool canOverwrite) {
 			foreach (var item in styleClass.Attributes) {
-				CssAttribute existing;
-
-				if (!Attributes.TryGetValue(item.Key, out existing) ||
-					canOverwrite && (!existing.Important || item.Value.Important))
+				if (!Attributes.TryGetValue(item.Key, out var existing) ||
+				    canOverwrite && (!existing.Important || item.Value.Important))
 				{
 					Attributes[item.Key] = item.Value;
 				}

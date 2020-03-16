@@ -38,7 +38,7 @@ namespace PreMailer.Net
 
 		public override string ToString()
 		{
-			return string.Format("{0}: {1}{2}", Style, Value, Important ? " !important" : string.Empty);
+			return $"{Style}: {Value}{(Important ? " !important" : string.Empty)}";
 		}
 	}
 }

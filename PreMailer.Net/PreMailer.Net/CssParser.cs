@@ -7,19 +7,14 @@ namespace PreMailer.Net
 	public class CssParser
 	{
 		private readonly List<string> _styleSheets;
-		private SortedList<string, StyleClass> _scc;
 		private int styleCount = 0;
 
-		public SortedList<string, StyleClass> Styles
-		{
-			get { return _scc; }
-			set { _scc = value; }
-		}
+		public SortedList<string, StyleClass> Styles { get; set; }
 
 		public CssParser()
 		{
 			_styleSheets = new List<string>();
-			_scc = new SortedList<string, StyleClass>();
+			Styles = new SortedList<string, StyleClass>();
 		}
 
 		public void AddStyleSheet(string styleSheetContent)
@@ -69,10 +64,10 @@ namespace PreMailer.Net
 			foreach (var styleName in styleNames)
 			{
 				StyleClass sc;
-				if (_scc.ContainsKey(styleName))
+				if (Styles.ContainsKey(styleName))
 				{
-					sc = _scc[styleName];
-					_scc.Remove(styleName);
+					sc = Styles[styleName];
+					Styles.Remove(styleName);
 				}
 				else
 				{
@@ -83,7 +78,7 @@ namespace PreMailer.Net
 
 				FillStyleClass(sc, styleName, parts[1]);
 
-				_scc.Add(sc.Name, sc);
+				Styles.Add(sc.Name, sc);
 			}
 		}
 
@@ -93,7 +88,7 @@ namespace PreMailer.Net
 		/// <param name="sc">The style class.</param>
 		/// <param name="styleName">Name of the style.</param>
 		/// <param name="style">The styles.</param>
-		private void FillStyleClass(StyleClass sc, string styleName, string style)
+		private static void FillStyleClass(StyleClass sc, string styleName, string style)
 		{
 			sc.Name = styleName;
 
@@ -113,7 +108,7 @@ namespace PreMailer.Net
 		private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)//.*)", RegexOptions.Compiled);
 		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-		private string CleanUp(string s)
+		private static string CleanUp(string s)
 		{
 			string temp = CssCommentRegex.Replace(s, "");
 			temp = UnsupportedAtRuleRegex.Replace(temp, "");
@@ -126,13 +121,9 @@ namespace PreMailer.Net
 		public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		private static Regex MediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}", RegexOptions.Compiled);
 
-		private string CleanupMediaQueries(string s)
+		private static string CleanupMediaQueries(string s)
 		{
-			string temp = s;
-
-			temp = MediaQueryRegex.Replace(temp, m => SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
-
-			return temp;
+			return MediaQueryRegex.Replace(s, m => SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
 		}
 	}
 }

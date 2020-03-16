@@ -8,14 +8,8 @@ namespace PreMailer.Net
 
 		public string Selector { get; protected set; }
 
-		public bool HasNotPseudoClass
-		{
-			get
-			{
-				return NotMatcher.IsMatch(Selector);
-			}
-		}
-		
+		public bool HasNotPseudoClass => NotMatcher.IsMatch(Selector);
+
 		public string NotPseudoClassContent
 		{
 			get

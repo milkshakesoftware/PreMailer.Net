@@ -16,7 +16,6 @@ namespace PreMailer.Net
 
         public static IList<AttributeToCss> FindEquivalent(IElement domobject, StyleClass styles)
         {
-
             return (from attributeRuleMatch in _linkedAttributes
                     where domobject.HasAttribute(attributeRuleMatch.Key) && styles.Attributes.ContainsKey(attributeRuleMatch.Value)
                     select new AttributeToCss

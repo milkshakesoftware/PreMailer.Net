@@ -132,7 +132,7 @@ namespace PreMailer.Net.Tests
 		}
 
 		[TestMethod]
-		public void AddStylesheet_ContainsMuiltpleImportStatementWithMediaQuerys_ShouldStripOutImportStatements()
+		public void AddStylesheet_ContainsMultipleImportStatementWithMediaQueries_ShouldStripOutImportStatements()
 		{
 			var stylesheet = "@import url(http://google.com/stylesheet) mobile; @import url(http://google.com/stylesheet) mobile; @import url(http://google.com/stylesheet) mobile; div { width : 600px; }";
 			var parser = new CssParser();

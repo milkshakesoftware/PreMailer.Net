@@ -53,7 +53,7 @@ namespace PreMailer.Net
 		/// <summary>
 		/// Constructor for the PreMailer class
 		/// </summary>
-		/// <param name="html">The HTML stream.</param>
+		/// <param name="stream">The HTML stream.</param>
 		/// <param name="baseUri">Url that all relative urls will be off of</param>
 		public PreMailer(Stream stream, Uri baseUri = null)
 		{
@@ -200,7 +200,7 @@ namespace PreMailer.Net
 		/// <returns>Reference to the instance so you can chain calls.</returns>
 		public PreMailer AddAnalyticsTags(string source, string medium, string campaign, string content, string domain = null)
 		{
-			var tracking = "utm_source=" + source + "&utm_medium=" + medium + "&utm_campaign=" + campaign + "&utm_content=" + content;
+			var tracking = $"utm_source={source}&utm_medium={medium}&utm_campaign={campaign}&utm_content={content}";
 			foreach (var tag in _document.QuerySelectorAll("a[href]"))
 			{
 				var href = tag.Attributes["href"];
@@ -235,14 +235,7 @@ namespace PreMailer.Net
 		/// </summary>
 		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
-			var styleBlocks = new List<string>();
-
-			foreach (var styleSource in cssSources)
-			{
-				styleBlocks.Add(styleSource.GetCss());
-			}
-
-			return styleBlocks;
+			return cssSources.Select(styleSource => styleSource.GetCss()).ToList();
 		}
 
 		/// <summary>
@@ -276,7 +269,7 @@ namespace PreMailer.Net
 		}
 
 		/// <summary>
-		/// Returns a collection of CQ 'sytle' nodes that can be used to source CSS content.<para/>
+		/// Returns a collection of CQ 'style' nodes that can be used to source CSS content.<para/>
 		/// </summary>
 		private IEnumerable<IElement> CssSourceNodes()
 		{
@@ -355,9 +348,7 @@ namespace PreMailer.Net
 
 			foreach (var failedSelector in failedSelectors)
 			{
-				_warnings.Add(String.Format(
-						"PreMailer.Net is unable to process the pseudo class/element '{0}' due to a limitation in CsQuery.",
-						failedSelector.Name));
+				_warnings.Add($"PreMailer.Net is unable to process the pseudo class/element '{failedSelector.Name}' due to a limitation in CsQuery.");
 			}
 
 			return result;
@@ -383,7 +374,7 @@ namespace PreMailer.Net
 				}
 				catch (DomException ex)
 				{
-					_warnings.Add(String.Format("Error finding element with selector: '{0}: {1}", style.Value.Name, ex.Message));
+					_warnings.Add($"Error finding element with selector: '{style.Value.Name}: {ex.Message}");
 				}
 			}
 
@@ -446,7 +437,7 @@ namespace PreMailer.Net
 
 			foreach (string attribute in attributeNames)
 			{
-				selectors.Add(String.Format("*[{0}]", attribute));
+				selectors.Add($"*[{attribute}]");
 			}
 
 			var elementsWithAttributes = _document.QuerySelectorAll(String.Join(",", selectors.Cast<string>().ToList()));
@@ -486,14 +477,7 @@ namespace PreMailer.Net
 		/// <summary>
 		/// Access underlying IHTMLDocument
 		/// </summary>
-		public IHtmlDocument Document
-		{
-			get
-			{
-				return _document;
-			}
-		}
-
+		public IHtmlDocument Document => _document;
 
 		/// <summary>
 		/// Dispose underlying document

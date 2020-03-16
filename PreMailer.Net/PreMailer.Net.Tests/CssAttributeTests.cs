@@ -6,7 +6,7 @@ namespace PreMailer.Net.Tests
 	public class CssAttributeTests
 	{
 		[TestMethod]
-		public void StandandUnimportantRule_ReturnsAttribute()
+		public void StandardUnimportantRule_ReturnsAttribute()
 		{
 			var attribute = CssAttribute.FromRule("color: red");
 
