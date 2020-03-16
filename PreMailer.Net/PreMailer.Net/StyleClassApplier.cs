@@ -36,8 +36,8 @@ namespace PreMailer.Net
 
 		private static void PrepareAttribute(IElement domElement, AttributeToCss attributeToCss)
 		{
-			string name = attributeToCss.AttributeName;
-			string value = attributeToCss.CssValue;
+			var name = attributeToCss.AttributeName;
+			var value = attributeToCss.CssValue;
 
 			//When rendering images, we need to prevent breaking the WIDTH and HEIGHT attributes. See PreMailerTests.MoveCssInline_HasStyle_DoesNotBreakImageWidthAttribute().
 			//The old code could end up writing an image tag like <img width="206px"> which violates the HTML spec. It should render <img width="206">.

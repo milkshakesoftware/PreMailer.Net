@@ -179,7 +179,7 @@ namespace PreMailer.Net
 				}
 			}
 
-			IMarkupFormatter markupFormatter = GetMarkupFormatterForDocType();
+			var markupFormatter = GetMarkupFormatterForDocType();
 
 			using (var sw = new StringWriter())
 			{
@@ -433,9 +433,9 @@ namespace PreMailer.Net
 
 		private void StripElementAttributes(params string[] attributeNames)
 		{
-			StringCollection selectors = new StringCollection();
+			var selectors = new StringCollection();
 
-			foreach (string attribute in attributeNames)
+			foreach (var attribute in attributeNames)
 			{
 				selectors.Add($"*[{attribute}]");
 			}

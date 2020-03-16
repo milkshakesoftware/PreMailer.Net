@@ -39,10 +39,10 @@ namespace PreMailer.Net
 
 		private void ProcessStyleSheet(string styleSheetContent)
 		{
-			string content = CleanUp(styleSheetContent);
-			string[] parts = content.Split('}');
+			var content = CleanUp(styleSheetContent);
+			var parts = content.Split('}');
 
-			foreach (string s in parts)
+			foreach (var s in parts)
 			{
 				if (s.IndexOf('{') > -1)
 				{
@@ -57,7 +57,7 @@ namespace PreMailer.Net
 		/// <param name="s">The style block.</param>
 		private void FillStyleClassFromBlock(string s)
 		{
-			string[] parts = s.Split('{');
+			var parts = s.Split('{');
 			var cleaned = parts[0].Trim();
 			var styleNames = cleaned.Split(',').Select(x => x.Trim());
 
@@ -94,9 +94,9 @@ namespace PreMailer.Net
 
 			//string[] atrs = style.Split(';');
 			//string[] atrs = CleanUp(style).Split(';');
-			string[] atrs = FillStyleClassRegex.Split(CleanUp(style));
+			var atrs = FillStyleClassRegex.Split(CleanUp(style));
 
-			foreach (string a in atrs)
+			foreach (var a in atrs)
 			{
 				var attribute = CssAttribute.FromRule(a);
 
@@ -110,7 +110,7 @@ namespace PreMailer.Net
 
 		private static string CleanUp(string s)
 		{
-			string temp = CssCommentRegex.Replace(s, "");
+			var temp = CssCommentRegex.Replace(s, "");
 			temp = UnsupportedAtRuleRegex.Replace(temp, "");
 			temp = CleanupMediaQueries(temp);
 			temp = temp.Replace("\r", "").Replace("\n", "");

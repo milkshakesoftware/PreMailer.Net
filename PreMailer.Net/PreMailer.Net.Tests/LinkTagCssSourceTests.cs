@@ -20,7 +20,7 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void ImplementsInterface()
 		{
-			LinkTagCssSource sut = CreateSUT();
+			var sut = CreateSUT();
 
 			Assert.IsInstanceOfType(sut, typeof(ICssSource));
 		}
@@ -28,9 +28,9 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void GetCSS_CallsWebDownloader_WithSpecifiedDomain()
 		{
-			string baseUrl = "http://a.co";
+			var baseUrl = "http://a.co";
 
-			LinkTagCssSource sut = CreateSUT(baseUrl: baseUrl);
+			var sut = CreateSUT(baseUrl: baseUrl);
 			sut.GetCss();
 
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.Scheme == "http" && u.Host == "a.co")));
@@ -39,9 +39,9 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void GetCSS_CallsWebDownloader_WithSpecifiedPath()
 		{
-			string path = "b.css";
+			var path = "b.css";
 
-			LinkTagCssSource sut = CreateSUT(path: path);
+			var sut = CreateSUT(path: path);
 			sut.GetCss();
 
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.PathAndQuery == "/" + path)));
@@ -50,9 +50,9 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void GetCSS_CallsWebDownloader_WithSpecifiedBundle()
 		{
-			string path = "/Content/css?v=7V7TZzP9Wo7LiH9_q-r5mRBdC_N0lA_YJpRL_1V424E1";
+			var path = "/Content/css?v=7V7TZzP9Wo7LiH9_q-r5mRBdC_N0lA_YJpRL_1V424E1";
 
-			LinkTagCssSource sut = CreateSUT(path: path, link: "<link href=\"{0}\" rel=\"stylesheet\"/>");
+			var sut = CreateSUT(path: path, link: "<link href=\"{0}\" rel=\"stylesheet\"/>");
 			sut.GetCss();
 
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.PathAndQuery == path)));
@@ -61,9 +61,9 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void GetCSS_AbsoluteUrlInHref_CallsWebDownloader_WithSpecifiedPath()
 		{
-			string path = "http://b.co/a.css";
+			var path = "http://b.co/a.css";
 
-			LinkTagCssSource sut = CreateSUT(path: path);
+			var sut = CreateSUT(path: path);
 			sut.GetCss();
 
 			_webDownloader.Verify(w => w.DownloadString(new Uri(path)));
@@ -72,9 +72,9 @@ namespace PreMailer.Net.Tests
 		[TestMethod]
 		public void GetCSS_DoesNotCallWebDownloader_WhenSchemeNotSupported()
 		{
-			string path = "chrome-extension://fcdjadjbdihbaodagojiomdljhjhjfho/css/atd.css";
+			var path = "chrome-extension://fcdjadjbdihbaodagojiomdljhjhjfho/css/atd.css";
 
-			LinkTagCssSource sut = CreateSUT(path: path);
+			var sut = CreateSUT(path: path);
 			sut.GetCss();
 
 			_webDownloader.Verify(w => w.DownloadString(new Uri(path)), Times.Never);
