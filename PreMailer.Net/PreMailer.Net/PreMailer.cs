@@ -74,7 +74,7 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
 		{
 			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
 		}
@@ -89,7 +89,7 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
 		{
 			return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
 		}
@@ -106,7 +106,7 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
 		{
 			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
 		}
@@ -123,7 +123,7 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool removeComments = false)
+		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
 		{
 			return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
 		}
@@ -137,7 +137,7 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, bool removeComments = false)
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
