@@ -18,6 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
+      working-directory: ./PreMailer.Net
       run: dotnet restore
     - name: Build
       working-directory: ./PreMailer.Net
