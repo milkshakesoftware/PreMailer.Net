@@ -29,11 +29,15 @@ namespace PreMailer.Net.Sources
 
 		public string GetCss()
 		{
+			Console.WriteLine($"GetCss scheme: {_downloadUri.Scheme}");
+
 			if (IsSupported(_downloadUri.Scheme))
 			{
                 try
                 {
-                    return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+					Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
+
+										return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
                 } catch (WebException)
                 {
                     throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
