@@ -2,14 +2,13 @@
 using System.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-    [TestClass]
     public class StyleClassApplierTests
     {
-        [TestMethod]
+        [Fact]
         public void ApplyStylesToAllElements()
         {
             var elementDictionary = new Dictionary<IElement, StyleClass>();
@@ -39,10 +38,10 @@ namespace PreMailer.Net.Tests
 
             var result = StyleClassApplier.ApplyAllStyles(elementDictionary);
 
-            Assert.AreEqual("<table id=\"tabletest1\" class=\"test1\" bgcolor=\"#008001\" style=\"background-color: #008001\"></table>", result.ElementAt(0).Key.OuterHtml);
-            Assert.AreEqual("<table id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"10px\" style=\"width: 10px\"></table>", result.ElementAt(1).Key.OuterHtml);
-            Assert.AreEqual("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"10px\" style=\"height: 10px\"></table>", result.ElementAt(2).Key.OuterHtml);
-            Assert.AreEqual("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"#008003\" width=\"10px\" style=\"background-color: #008003;width: 10px\"></table>", result.ElementAt(3).Key.OuterHtml);
+            Assert.Equal("<table id=\"tabletest1\" class=\"test1\" bgcolor=\"#008001\" style=\"background-color: #008001\"></table>", result.ElementAt(0).Key.OuterHtml);
+            Assert.Equal("<table id=\"tabletest2\" class=\"test2\" bgcolor=\"\" width=\"10px\" style=\"width: 10px\"></table>", result.ElementAt(1).Key.OuterHtml);
+            Assert.Equal("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"10px\" style=\"height: 10px\"></table>", result.ElementAt(2).Key.OuterHtml);
+            Assert.Equal("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"#008003\" width=\"10px\" style=\"background-color: #008003;width: 10px\"></table>", result.ElementAt(3).Key.OuterHtml);
         }
     }
 }

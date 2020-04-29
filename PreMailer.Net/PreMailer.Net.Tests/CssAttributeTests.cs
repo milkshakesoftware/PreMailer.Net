@@ -1,71 +1,70 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-	[TestClass]
 	public class CssAttributeTests
 	{
-		[TestMethod]
+		[Fact]
 		public void StandardUnimportantRule_ReturnsAttribute()
 		{
 			var attribute = CssAttribute.FromRule("color: red");
 
-			Assert.AreEqual("color", attribute.Style);
-			Assert.AreEqual("red", attribute.Value);
+			Assert.Equal("color", attribute.Style);
+			Assert.Equal("red", attribute.Value);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MixedCaseRuleValue_RetainsCasing()
 		{
 			var attribute = CssAttribute.FromRule(" color: rED");
 
-			Assert.AreEqual("color", attribute.Style);
-			Assert.AreEqual("rED", attribute.Value);
+			Assert.Equal("color", attribute.Style);
+			Assert.Equal("rED", attribute.Value);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MixedCaseRule_RetainsCasing()
 		{
 			var attribute = CssAttribute.FromRule("Margin-bottom: 10px");
 
-			Assert.AreEqual("Margin-bottom", attribute.Style);
-			Assert.AreEqual("10px", attribute.Value);
+			Assert.Equal("Margin-bottom", attribute.Style);
+			Assert.Equal("10px", attribute.Value);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ImportantRule_ReturnsImportantAttribute()
 		{
 			var attribute = CssAttribute.FromRule("color: red !important");
 
-			Assert.AreEqual("color", attribute.Style);
-			Assert.AreEqual("red", attribute.Value);
-			Assert.IsTrue(attribute.Important);
+			Assert.Equal("color", attribute.Style);
+			Assert.Equal("red", attribute.Value);
+			Assert.True(attribute.Important);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ImportantRule_ReturnsValidCssWithoutWhitespaces()
 		{
 			var attribute = CssAttribute.FromRule("color:red!important");
 
-			Assert.AreEqual("color", attribute.Style);
-			Assert.AreEqual("red", attribute.Value);
-			Assert.IsTrue(attribute.Important);
+			Assert.Equal("color", attribute.Style);
+			Assert.Equal("red", attribute.Value);
+			Assert.True(attribute.Important);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void NonRule_ReturnsNull()
 		{
 			var attribute = CssAttribute.FromRule(" ");
 
-			Assert.IsNull(attribute);
+			Assert.Null(attribute);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void FromRule_OnlySplitsTheRuleAtTheFirstColonToSupportUrls()
 		{
 			var attribute = CssAttribute.FromRule("background: url('http://my.web.site.com/Content/email/content.png') repeat-y");
 
-			Assert.AreEqual("url('http://my.web.site.com/Content/email/content.png') repeat-y", attribute.Value);
+			Assert.Equal("url('http://my.web.site.com/Content/email/content.png') repeat-y", attribute.Value);
 		}
 	}
 }

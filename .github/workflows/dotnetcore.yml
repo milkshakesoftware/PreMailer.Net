@@ -25,4 +25,4 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       working-directory: ./PreMailer.Net
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal --collect "Code coverage"

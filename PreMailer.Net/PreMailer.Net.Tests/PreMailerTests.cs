@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using PreMailer.Net.Downloaders;
 using System;
@@ -6,10 +6,9 @@ using System.IO;
 
 namespace PreMailer.Net.Tests
 {
-	[TestClass]
 	public class PreMailerTests
 	{
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_HasStyle_DoesNotBreakImageWidthAttribute()
 		{
 			string input = "<html><head><style type=\"text/css\">img { }</style></head>" +
@@ -17,11 +16,11 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsFalse(premailedOutput.Html.Contains("width=\"206px\""));
-			Assert.IsTrue(premailedOutput.Html.Contains("width=\"206\""));
+			Assert.False(premailedOutput.Html.Contains("width=\"206px\""));
+			Assert.True(premailedOutput.Html.Contains("width=\"206\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_NoStyle_DoesNotBreakImageWidthAttribute()
 		{
 			string input = "<html><head><style type=\"text/css\"></style></head>" +
@@ -29,71 +28,71 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsFalse(premailedOutput.Html.Contains("width=\"206px\""));
-			Assert.IsTrue(premailedOutput.Html.Contains("width=\"206\""));
+			Assert.False(premailedOutput.Html.Contains("width=\"206px\""));
+			Assert.True(premailedOutput.Html.Contains("width=\"206\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_RespectExistingStyleElement()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"height: 100px;width: 100px"));
+			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"height: 100px;width: 100px"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_InlineStyleElementTakesPrecedence()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { width: 150px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 100px"));
+			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 100px"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_CssWithHigherSpecificity_AppliesMoreSpecificCss()
 		{
 			string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 42px\""));
+			Assert.True(premailedOutput.Html.Contains("style=\"width: 42px\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_CssWithHigherSpecificityInSeparateStyleTag_AppliesMoreSpecificCss()
 		{
 			string input = "<html><head><style type=\"text/css\">.target { width: 42px; }</style><style type=\"text/css\">.outer .inner .target { width: 1337px; }</style></head><body><div class=\"outer\"><div class=\"inner\"><div class=\"target\">test</div></div></div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 1337px\""));
+			Assert.True(premailedOutput.Html.Contains("style=\"width: 1337px\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_IgnoreStyleElement_DoesntApplyCss()
 		{
 			string input = "<html><head><style type=\"text/css\">.target { width: 42px; }</style><style type=\"text/css\" id=\"ignore\">.target { width: 1337px; }</style></head><body><div class=\"outer\"><div class=\"inner\"><div class=\"target\">test</div></div></div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, ignoreElements: "#ignore");
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"width: 42px\""));
+			Assert.True(premailedOutput.Html.Contains("style=\"width: 42px\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_SupportedPseudoSelector_AppliesCss()
 		{
 			string input = "<html><head><style type=\"text/css\">li:first-child { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px\">"));
+			Assert.True(premailedOutput.Html.Contains("<li style=\"width: 42px\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_CrazyCssSelector_DoesNotThrowError()
 		{
 			string input = "<html><head><style type=\"text/css\">li:crazy { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
@@ -104,170 +103,171 @@ namespace PreMailer.Net.Tests
 			}
 			catch (Exception ex)
 			{
-				Assert.Fail(ex.Message);
+				Assert.True(false, ex.Message);
 			}
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_SupportedjQuerySelector_AppliesCss()
 		{
 			string input = "<html><head><style type=\"text/css\">li:first-child { width: 42px; }</style></head><body><ul><li>target</li><li>blargh></li></ul></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<li style=\"width: 42px\">target</li>"));
+			Assert.True(premailedOutput.Html.Contains("<li style=\"width: 42px\">target</li>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_UnsupportedSelector_AppliesCss()
 		{
 			string input = "<html><head><style type=\"text/css\">p:first-letter { width: 42px; }</style></head><body><p>target</p></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<p>target</p>"));
+			Assert.True(premailedOutput.Html.Contains("<p>target</p>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_KeepStyleElementsIgnoreElementsMatchesStyleElement_DoesntRemoveScriptTag()
 		{
 			string input = "<html><head><style id=\"ignore\" type=\"text/css\">li:before { width: 42px; }</style></head><body><div class=\"target\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, removeStyleElements: false, ignoreElements: "#ignore");
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<style id=\"ignore\" type=\"text/css\">"));
+			Assert.True(premailedOutput.Html.Contains("<style id=\"ignore\" type=\"text/css\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_MultipleSelectors_HonorsIndividualSpecificity()
 		{
 			string input = "<html><head><style type=\"text/css\">p,li,tr.pub-heading td,tr.pub-footer td,tr.footer-heading td { font-size: 12px; line-height: 16px; } td.disclaimer p {font-size: 11px;} </style></head><body><table><tr class=\"pub-heading\"><td class=\"disclaimer\"><p></p></td></tr></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px\"></p>"));
+			Assert.True(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px\"></p>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_ImportantFlag_HonorsImportantFlagInStylesheet()
 		{
 			string input = "<style>div { color: blue !important; }</style><div style=\"color: red\">Red</div>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: blue"));
+			Assert.True(premailedOutput.Html.Contains("<div style=\"color: blue"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_ImportantFlag_HonorsImportantFlagInline()
 		{
 			string input = "<style>div { color: blue !important; }</style><div style=\"color: red !important\">Red</div>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"color: red"));
+			Assert.True(premailedOutput.Html.Contains("<div style=\"color: red"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_AbsoluteBackgroundUrl_ShouldNotBeCleanedAsComment()
 		{
 			string input = "<style>div { background: url('http://my.web.site.com/Content/email/content.png') repeat-y }</style><div></div>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/Content/email/content.png') repeat-y\"></div>"));
+			Assert.True(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/Content/email/content.png') repeat-y\"></div>"));
 		}
 
+		[Fact]
 		public void MoveCssInline_SupportedMediaAttribute_InlinesAsNormal()
 		{
 			string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%;\">Target</div>"));
+			Assert.True(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_UnsupportedMediaAttribute_IgnoresStyles()
 		{
 			string input = "<html><head><style type=\"text/css\" media=\"print\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div>Target</div>"));
+			Assert.True(premailedOutput.Html.Contains("<div>Target</div>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_AddBgColorStyle()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { background-color:#f1f1f1; }</style></head><body><table><tr><td class=\"test\" bgcolor=\"\"></td></tr></table></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" bgcolor=\"#f1f1f1\" style=\"background-color: #f1f1f1\">"));
+			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" bgcolor=\"#f1f1f1\" style=\"background-color: #f1f1f1\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_AddSpecial()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { padding: 7px; -premailer-cellspacing: 5; -premailer-width: 14%; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"padding: 7px\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
+			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" style=\"padding: 7px\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_AddSpecial_RemoveEmptyStyle()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { -premailer-cellspacing: 5; -premailer-width: 14%; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
+			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" cellspacing=\"5\" width=\"14%\">"), "Actual: " + premailedOutput.Html);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_AddBgColorStyle_IgnoreElementWithBackgroundColorAndNoBgColor()
 		{
 			string input = "<html><head><style type=\"text/css\">.test { background-color:#f1f1f1; }</style></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
+			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_NoStyleElement_StylesGivenInCSSParam_InlinesThat()
 		{
 			string input = "<html><head></head><body><table><tr><td class=\"test\"></td></tr></table></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, css: ".test { background-color:#f1f1f1; }");
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
+			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_StripsClassAttributes()
 		{
 			string input = "<html><head></head><body><table id=\"testTable\"><tr><td class=\"test\"></td></tr></table></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, css: ".test { background-color:#f1f1f1; }", stripIdAndClassAttributes: true);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<td style=\"background-color: #f1f1f1\""));
+			Assert.True(premailedOutput.Html.Contains("<td style=\"background-color: #f1f1f1\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_StripsIdAttributes()
 		{
 			string input = "<html><head><style type=\"text/css\">#high-imp.test { width: 42px; } .test { width: 150px; }</style></head><body><div id=\"high-imp\" class=\"test\">test</div></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, stripIdAndClassAttributes: true);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 42px\">"));
+			Assert.True(premailedOutput.Html.Contains("<div style=\"width: 42px\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_StripsComments()
 		{
 			string input = "<html><head></head><body><!--This should be removed--></body></html>";
@@ -275,10 +275,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, removeComments: true);
 
-			Assert.IsTrue(expected == premailedOutput.Html);
+			Assert.True(expected == premailedOutput.Html);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_InSameBlock()
 		{
 			string input1 = "<html><head><style type=\"text/css\">table.acolor td { color: #0F0; } table.bcolor td { color: #00F; }</style></head><body><table class=\"acolor bcolor\"><tr><td>test</td></tr></table></body></html>";
@@ -287,11 +287,11 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.IsTrue(premailedOutput1.Html.Contains("<td style=\"color: #00F\">test</td>"));
-			Assert.IsTrue(premailedOutput2.Html.Contains("<td style=\"color: #0F0\">test</td>"));
+			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #0F0\">test</td>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_Nested_InSameBlock()
 		{
 			string input1 = "<html><head><style type=\"text/css\">table.child td { color: #00F; } table.parent td { color: #0F0; }</style></head><body><table class=\"parent\"><tr><td><table class=\"child\"><tr><td>test</td></tr></table></td></tr></table></body></html>";
@@ -300,11 +300,11 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.IsTrue(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-			Assert.IsTrue(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
+			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_InSeparateBlocks()
 		{
 			string input1 = "<html><head><style type=\"text/css\">table.acolor td { color: #00F; }</style><style type=\"text/css\">table.bcolor td { color: #0F0; }</style></head><body><table class=\"acolor bcolor\"><tr><td>test</td></tr></table></body></html>";
@@ -313,11 +313,11 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.IsTrue(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-			Assert.IsTrue(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
+			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCssInline_LaterPositionStylesWithEqualSpecificityHasPrecedence_Nested_InSeparateBlocks()
 		{
 			string input1 = "<html><head><style type=\"text/css\">table.child td { color: #00F; } table.parent td { color: #00F; }</style><style type=\"text/css\">table.parent td { color: #0F0; }</style></head><body><table class=\"parent\"><tr><td><table class=\"child\"><tr><td>test</td></tr></table></td></tr></table></body></html>";
@@ -326,11 +326,11 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.IsTrue(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-			Assert.IsTrue(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
+			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddAnalyticsTags_AddsTags()
 		{
 			const string input = @"<div><a href=""http://blah.com/someurl"">Some URL</a><a>No href</a></div><div><a href=""http://blah.com/someurl?extra=1"">Extra Stuff</a><a href=""{{Handlebars}}"">Don't Touch</a></div>";
@@ -338,10 +338,10 @@ namespace PreMailer.Net.Tests
 			var premailedOutput = new PreMailer(input)
 				.AddAnalyticsTags("source", "medium", "campaign", "content")
 				.MoveCssInline();
-			Assert.IsTrue(expected == premailedOutput.Html);
+			Assert.True(expected == premailedOutput.Html);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void AddAnalyticsTags_AddsTagsAndExcludesDomain()
 		{
 			const string input = @"<div><a href=""http://www.blah.com/someurl"">Some URL</a><a>No href</a></div><div><a href=""https://www.nomatch.com/someurl?extra=1"">Extra Stuff</a><a href=""{{Handlebars}}"">Don't Touch</a></div>";
@@ -349,10 +349,10 @@ namespace PreMailer.Net.Tests
 			var premailedOutput = new PreMailer(input)
 				.AddAnalyticsTags("source", "medium", "campaign", "content", "www.Blah.com")
 				.MoveCssInline();
-			Assert.IsTrue(expected == premailedOutput.Html);
+			Assert.True(expected == premailedOutput.Html);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ContainsLinkCssElement_DownloadsCss()
 		{
 			var mockDownloader = new Mock<IWebDownloader>();
@@ -369,7 +369,7 @@ namespace PreMailer.Net.Tests
 			mockDownloader.Verify(d => d.DownloadString(fullUrl));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ContainsLinkCssElement_Bundle_DownloadsCss()
 		{
 			var mockDownloader = new Mock<IWebDownloader>();
@@ -386,7 +386,7 @@ namespace PreMailer.Net.Tests
 			mockDownloader.Verify(d => d.DownloadString(fullUrl));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ContainsLinkCssElement_NotCssFile_DoNotDownload()
 		{
 			var mockDownloader = new Mock<IWebDownloader>();
@@ -403,7 +403,7 @@ namespace PreMailer.Net.Tests
 			mockDownloader.Verify(d => d.DownloadString(It.IsAny<Uri>()), Times.Never());
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ContainsLinkCssElement_DownloadsCss_InlinesContent()
 		{
 			var mockDownloader = new Mock<IWebDownloader>();
@@ -415,10 +415,10 @@ namespace PreMailer.Net.Tests
 			PreMailer sut = new PreMailer(input, new Uri("http://a.com"));
 			var premailedOutput = sut.MoveCssInline();
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 150px\">"));
+			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 150px\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ContainsKeyframeCSS_InlinesCSSWithOutError()
 		{
 			string keyframeAnimation = @"
@@ -434,20 +434,20 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("<div class=\"test\" style=\"background-color: #f1f1f1\""));
+			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"background-color: #f1f1f1\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType()
 		{
 			string input = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.True(premailedOutput.Html.StartsWith("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_HTML5()
 		{
 			string docType = "<!DOCTYPE html>";
@@ -455,10 +455,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_HTML401_Strict()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
@@ -466,10 +466,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_HTML401_Transitional()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
@@ -477,10 +477,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_HTML401_Frameset()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">";
@@ -488,10 +488,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_XHTML10_Strict()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
@@ -499,10 +499,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_XHTML10_Transitional()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
@@ -510,10 +510,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_XHTML10_Frameset()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">";
@@ -521,10 +521,10 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesDocType_XHTML11()
 		{
 			string docType = "<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
@@ -532,20 +532,20 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_PreservesXMLNamespace()
 		{
 			string input = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head></head><body></body></html>";
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.IsTrue(premailedOutput.Html.StartsWith("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">"));
+			Assert.True(premailedOutput.Html.StartsWith("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">"));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_MergingTwoValidCssRules()
 		{
 			string input = @"<html>
@@ -567,10 +567,10 @@ p
 
 			var premailedOutput = PreMailer.MoveCssInline(input, true, null, null);
 
-			Assert.IsTrue(premailedOutput.Html.Contains("style=\"mso-style-priority: 99;margin: 0cm\""));
+			Assert.True(premailedOutput.Html.Contains("style=\"mso-style-priority: 99;margin: 0cm\""));
 		}
 
-		[TestMethod]
+		[Fact]
 		public void MoveCSSInline_AcceptsStream()
 		{
 			string input = "<html><head><style type=\"text/css\" media=\"screen\">div { width: 100% }</style></head><body><div>Target</div></body></html>";
@@ -583,7 +583,7 @@ p
 					stream.Position = 0;
 					var premailedOutput = PreMailer.MoveCssInline(stream);
 
-					Assert.IsTrue(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
+					Assert.True(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
 				}
 			}
 		}
