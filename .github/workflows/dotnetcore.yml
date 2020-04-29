@@ -26,3 +26,10 @@ jobs:
     - name: Test
       working-directory: ./PreMailer.Net
       run: dotnet test --no-restore --verbosity normal --collect "Code coverage"
+
+    # Publish
+    - name: publish on version change
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj
+        NUGET_KEY: ${{secrets.NUGET_APIKEY}}
