@@ -1,13 +1,12 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-    [TestClass]
     public class CssStyleEquivalenceTests
     {
-        [TestMethod]
+        [Fact]
         public void FindEquivalentStyles()
         {
             var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
@@ -18,10 +17,10 @@ namespace PreMailer.Net.Tests
 
             var result = CssStyleEquivalence.FindEquivalent(nodewithoutselector, clazz);
 
-            Assert.AreEqual(1, result.Count);
+            Assert.Equal(1, result.Count);
         }
 
-        [TestMethod]
+        [Fact]
         public void FindEquivalentStylesNoMatchingStyles()
         {
             var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
@@ -33,7 +32,7 @@ namespace PreMailer.Net.Tests
 
             var result = CssStyleEquivalence.FindEquivalent(nodewithoutselector, clazz);
 
-            Assert.AreEqual(0, result.Count);
+            Assert.Equal(0, result.Count);
         }
     }
 }

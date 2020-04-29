@@ -1,14 +1,13 @@
 ﻿using System.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-    [TestClass]
     public class CssElementStyleResolverTests
     {
-        [TestMethod]
+        [Fact]
         public void GetAllStylesForElement()
         {
             var tableDomObject = new HtmlParser().ParseDocument("<table id=\"tabletest\" class=\"test\" bgcolor=\"\"></table>");
@@ -19,9 +18,9 @@ namespace PreMailer.Net.Tests
 
             var result = CssElementStyleResolver.GetAllStyles(nodewithoutselector, clazz);
 
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("style", result.ElementAt(0).AttributeName);
-            Assert.AreEqual("bgcolor", result.ElementAt(1).AttributeName);
+            Assert.Equal(2, result.Count());
+            Assert.Equal("style", result.ElementAt(0).AttributeName);
+            Assert.Equal("bgcolor", result.ElementAt(1).AttributeName);
         }
     }
 }

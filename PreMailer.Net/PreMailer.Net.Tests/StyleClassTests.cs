@@ -1,30 +1,29 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace PreMailer.Net.Tests
 {
-    [TestClass]
     public class StyleClassTests
     {
-        [TestMethod]
+        [Fact]
         public void SingleAttribute_ShouldNotAppendSemiColonToString()
         {
             var clazz = new StyleClass();
             clazz.Attributes["color"] = CssAttribute.FromRule("color: red");
 
-            Assert.AreEqual("color: red", clazz.ToString());
+            Assert.Equal("color: red", clazz.ToString());
         }
 
-        [TestMethod]
+        [Fact]
         public void MultipleAttributes_ShouldJoinAttributesWithSemiColonInString()
         {
             var clazz = new StyleClass();
             clazz.Attributes["color"] = CssAttribute.FromRule("color: red");
             clazz.Attributes["height"] = CssAttribute.FromRule("height: 100%");
 
-            Assert.AreEqual("color: red;height: 100%", clazz.ToString());
+            Assert.Equal("color: red;height: 100%", clazz.ToString());
         }
 
-        [TestMethod]
+        [Fact]
         public void Merge_ShouldAddNonExistingAttributesToClass()
         {
             var target = new StyleClass();
@@ -35,11 +34,11 @@ namespace PreMailer.Net.Tests
 
             target.Merge(donator, true);
 
-            Assert.IsTrue(target.Attributes.ContainsKey("height"));
-            Assert.AreEqual("100%", target.Attributes["height"].Value);
+            Assert.True(target.Attributes.ContainsKey("height"));
+            Assert.Equal("100%", target.Attributes["height"].Value);
         }
 
-        [TestMethod]
+        [Fact]
         public void Merge_ShouldOverrideExistingEntriesIfSpecified()
         {
             var target = new StyleClass();
@@ -51,11 +50,11 @@ namespace PreMailer.Net.Tests
 
             target.Merge(donator, true);
 
-            Assert.IsTrue(target.Attributes.ContainsKey("height"));
-            Assert.AreEqual("100%", target.Attributes["height"].Value);
+            Assert.True(target.Attributes.ContainsKey("height"));
+            Assert.Equal("100%", target.Attributes["height"].Value);
         }
 
-        [TestMethod]
+        [Fact]
         public void Merge_ShouldNotOverrideExistingEntriesIfNotSpecified()
         {
             var target = new StyleClass();
@@ -67,11 +66,11 @@ namespace PreMailer.Net.Tests
 
             target.Merge(donator, false);
 
-            Assert.IsTrue(target.Attributes.ContainsKey("height"));
-            Assert.AreEqual("50%", target.Attributes["height"].Value);
+            Assert.True(target.Attributes.ContainsKey("height"));
+            Assert.Equal("50%", target.Attributes["height"].Value);
         }
 
-        [TestMethod]
+        [Fact]
         public void Merge_ShouldNotOverrideExistingImportantEntriesIfNewEntryIsNotImportant()
         {
             var target = new StyleClass();
@@ -83,11 +82,11 @@ namespace PreMailer.Net.Tests
 
             target.Merge(donator, true);
 
-            Assert.IsTrue(target.Attributes.ContainsKey("height"));
-            Assert.AreEqual("50%", target.Attributes["height"].Value);
+            Assert.True(target.Attributes.ContainsKey("height"));
+            Assert.Equal("50%", target.Attributes["height"].Value);
         }
 
-        [TestMethod]
+        [Fact]
         public void Merge_ShouldOverrideExistingImportantEntriesIfNewEntryIsImportant()
         {
             var target = new StyleClass();
@@ -99,11 +98,11 @@ namespace PreMailer.Net.Tests
 
             target.Merge(donator, true);
 
-            Assert.IsTrue(target.Attributes.ContainsKey("height"));
-            Assert.AreEqual("100%", target.Attributes["height"].Value);
+            Assert.True(target.Attributes.ContainsKey("height"));
+            Assert.Equal("100%", target.Attributes["height"].Value);
         }
 
-        [TestMethod]
+        [Fact]
         public void Merge_ShouldOverrideExistingEntriesIfSpecifiedIgnoringCasing()
         {
             var target = new StyleClass();
@@ -115,8 +114,8 @@ namespace PreMailer.Net.Tests
 
             target.Merge(donator, true);
 
-            Assert.IsTrue(target.Attributes.ContainsKey("height"));
-            Assert.AreEqual("100%", target.Attributes["height"].Value);
+            Assert.True(target.Attributes.ContainsKey("height"));
+            Assert.Equal("100%", target.Attributes["height"].Value);
         }
     }
 }
