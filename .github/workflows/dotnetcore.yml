@@ -20,6 +20,8 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
+      working-directory: ./PreMailer.Net
       run: dotnet build --configuration Release --no-restore
     - name: Test
+      working-directory: ./PreMailer.Net
       run: dotnet test --no-restore --verbosity normal
