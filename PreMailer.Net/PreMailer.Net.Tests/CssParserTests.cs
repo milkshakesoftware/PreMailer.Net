@@ -1,4 +1,5 @@
-﻿using Xunit;
+using System.Linq;
+using Xunit;
 
 namespace PreMailer.Net.Tests
 {
@@ -170,6 +171,26 @@ namespace PreMailer.Net.Tests
 			Assert.Equal(4, parser.Styles.Values[1].Position);
 			Assert.Equal(3, parser.Styles.Values[2].Position);
         }
+
+		[Fact]
+		public void AddStylesheet_ShouldKeepTheRightOrderOfCssAttributes()
+		{
+			var stylesheet1 = @"
+				.my-div { background-color: blue; }
+				.my-div { background: red; }
+				.my-div { background-color: green; }
+			";
+			var parser = new CssParser();
+
+			parser.AddStyleSheet(stylesheet1);
+
+			Assert.Single(parser.Styles);
+
+			var attributes = parser.Styles.First().Value.Attributes.ToArray();
+
+			Assert.True(attributes[0] is {Key: "background", Value: {Value: "red"}});
+			Assert.True(attributes[1] is {Key: "background-color", Value: {Value: "green"}});
+		}
 
         [Fact]
         public void AddStylesheet_ContainsSingleQuotes_ShouldParseStylesheet()
