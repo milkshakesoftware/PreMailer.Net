@@ -353,6 +353,17 @@ namespace PreMailer.Net.Tests
 		}
 
 		[Fact]
+		public void AddAnalyticsTags_AddsTagsBeforeAnchorTags()
+		{
+			const string input = @"<div><a href=""https://github.com/premailer/premailer#premailer-specific-css"">Premailer Specific CSS</a></div>";
+			const string expected = @"<html><head></head><body><div><a href=""https://github.com/premailer/premailer?utm_source=source&amp;utm_medium=medium&amp;utm_campaign=campaign&amp;utm_content=content#premailer-specific-css"">Premailer Specific CSS</a></div></body></html>";
+			var premailedOutput = new PreMailer(input)
+				.AddAnalyticsTags("source", "medium", "campaign", "content", "github.com")
+				.MoveCssInline();
+			Assert.True(expected == premailedOutput.Html);
+		}
+
+		[Fact]
 		public void ContainsLinkCssElement_DownloadsCss()
 		{
 			var mockDownloader = new Mock<IWebDownloader>();
