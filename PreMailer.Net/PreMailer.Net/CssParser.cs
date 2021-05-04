@@ -100,7 +100,7 @@ namespace PreMailer.Net
 			{
 				var attribute = CssAttribute.FromRule(a);
 
-				if (attribute != null) sc.Attributes[attribute.Style] = attribute;
+				if (attribute != null) sc.Attributes.Merge(attribute);
 			}
 		}
 
