@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace PreMailer.Net {
@@ -8,7 +8,7 @@ namespace PreMailer.Net {
 		/// </summary>
 		public StyleClass()
 		{
-			Attributes = new Dictionary<string, CssAttribute>(StringComparer.CurrentCultureIgnoreCase);
+			Attributes = new CssAttributeCollection();
 		}
 
 		/// <summary>
@@ -26,7 +26,7 @@ namespace PreMailer.Net {
 		/// Gets or sets the attributes.
 		/// </summary>
 		/// <value>The attributes.</value>
-		public Dictionary<string, CssAttribute> Attributes { get; set; }
+		public CssAttributeCollection Attributes { get; set; }
 
 		/// <summary>
 		/// Merges the specified style class, with this instance. Styles on this instance are not overriden by duplicates in the specified styleClass.
@@ -38,7 +38,7 @@ namespace PreMailer.Net {
 				if (!Attributes.TryGetValue(item.Key, out var existing) ||
 				    canOverwrite && (!existing.Important || item.Value.Important))
 				{
-					Attributes[item.Key] = item.Value;
+					Attributes.Merge(item.Value);
 				}
 			}
 		}

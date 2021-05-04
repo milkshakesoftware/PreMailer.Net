@@ -144,7 +144,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<p style=\"font-size: 11px;line-height: 16px\"></p>"));
+			Assert.True(premailedOutput.Html.Contains("<p style=\"line-height: 16px;font-size: 11px\"></p>"));
 		}
 
 		[Fact]
