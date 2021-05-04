@@ -206,7 +206,14 @@ namespace PreMailer.Net
 				var href = tag.Attributes["href"];
 				if (href.Value.StartsWith("http", StringComparison.OrdinalIgnoreCase) && (domain == null || DomainMatch(domain, href.Value)))
 				{
-					tag.SetAttribute("href", href.Value + (href.Value.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking);
+					var hrefValue = href.Value;
+					var anchor = "";
+					if (href.Value.Contains("#"))
+					{
+						anchor = href.Value.Substring(href.Value.IndexOf("#", StringComparison.Ordinal));
+						hrefValue = hrefValue.Replace(anchor, "");
+					}
+					tag.SetAttribute("href", hrefValue + (hrefValue.IndexOf("?", StringComparison.Ordinal) >= 0 ? "&" : "?") + tracking + anchor);
 				}
 			}
 
