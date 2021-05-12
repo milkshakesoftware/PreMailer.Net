@@ -1,17 +1,7 @@
 name: automerge
 on:
-  pull_request:
-    types:
-      - opened
-      - edited
-      - labeled
-      - unlabeled
-      - synchronize
-      - ready_for_review
-      - unlocked
-  pull_request_review:
-    types:
-      - submitted
+  pull_request_target
+
 jobs:
   automerge:
     runs-on: ubuntu-latest
