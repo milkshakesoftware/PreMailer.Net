@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PreMailer.Net {
 	public class StyleClass {
@@ -43,14 +44,18 @@ namespace PreMailer.Net {
 			}
 		}
 
-		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents this instance.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="System.String"/> that represents this instance.
-		/// </returns>
+		/// <inheritdoc />
 		public override string ToString() {
-			return string.Join(";", Attributes.Values);
+			return ToString(removeImportant: false);
+		}
+
+		/// <summary>
+		/// Generates css styles with or without !important
+		/// </summary>
+		/// <param name="removeImportant"> When set to <c>true</c> generates css styles without !important </param>
+		/// <returns> css styles with or without !important </returns>
+		public string ToString(bool removeImportant) {
+			return string.Join(";", Attributes.Values.Select(_ => _.ToString(removeImportant)));
 		}
 	}
 }

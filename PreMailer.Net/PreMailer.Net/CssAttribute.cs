@@ -36,9 +36,22 @@ namespace PreMailer.Net
 			};
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
-			return $"{Style}: {Value}{(Important ? " !important" : string.Empty)}";
+			return ToString(removeImportant: false);
+		}
+
+		/// <summary>
+		/// Generates css styles with or without !important
+		/// </summary>
+		/// <param name="removeImportant"> When set to <c>true</c> generates css styles without !important </param>
+		/// <returns> css styles with or without !important </returns>
+		public string ToString(bool removeImportant)
+		{
+			return removeImportant
+				? $"{Style}: {Value}"
+				: $"{Style}: {Value}{(Important ? " !important" : string.Empty)}";
 		}
 	}
 }
