@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
@@ -43,5 +43,22 @@ namespace PreMailer.Net.Tests
             Assert.Equal("<table id=\"tabletest3\" class=\"test3\" bgcolor=\"\" height=\"10px\" style=\"height: 10px\"></table>", result.ElementAt(2).Key.OuterHtml);
             Assert.Equal("<table id=\"tabletest4\" class=\"test4\" bgcolor=\"#008003\" width=\"10px\" style=\"background-color: #008003;width: 10px\"></table>", result.ElementAt(3).Key.OuterHtml);
         }
+
+		[Fact]
+		public void ApplyInlineStylesWithoutImportant()
+		{
+			var document = new HtmlParser().ParseDocument("<div></div>");
+
+			var clazz = new StyleClass();
+			clazz.Attributes["color"] = CssAttribute.FromRule("color: #000 !important");
+
+			var elementDictionary = new Dictionary<IElement, StyleClass> {
+				{document.Body.FirstElementChild, clazz}
+			};
+
+			var result = StyleClassApplier.ApplyAllStyles(elementDictionary);
+
+			Assert.Equal("<div style=\"color: #000\"></div>", result.ElementAt(0).Key.OuterHtml);
+		}
     }
 }
