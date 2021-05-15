@@ -117,5 +117,16 @@ namespace PreMailer.Net.Tests
             Assert.True(target.Attributes.ContainsKey("height"));
             Assert.Equal("100%", target.Attributes["height"].Value);
         }
-    }
+
+        [Fact]
+        public void Merge_ShouldEmitImportantOnlyWhenSpecified()
+        {
+			var clazz = new StyleClass();
+			clazz.Attributes["color"] = CssAttribute.FromRule("color: red !important");
+
+			Assert.Equal("color: red", clazz.ToString());
+			Assert.Equal("color: red", clazz.ToString(emitImportant: false));
+			Assert.Equal("color: red !important", clazz.ToString(emitImportant: true));
+		}
+	}
 }
