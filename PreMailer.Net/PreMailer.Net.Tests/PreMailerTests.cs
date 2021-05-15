@@ -16,8 +16,8 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.False(premailedOutput.Html.Contains("width=\"206px\""));
-			Assert.True(premailedOutput.Html.Contains("width=\"206\""));
+			Assert.DoesNotContain("width=\"206px\"", premailedOutput.Html);
+			Assert.Contains("width=\"206\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -28,8 +28,8 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.False(premailedOutput.Html.Contains("width=\"206px\""));
-			Assert.True(premailedOutput.Html.Contains("width=\"206\""));
+			Assert.DoesNotContain("width=\"206px\"", premailedOutput.Html);
+			Assert.Contains("width=\"206\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -39,7 +39,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"height: 100px;width: 100px"));
+			Assert.Contains("<div class=\"test\" style=\"height: 100px;width: 100px", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -49,7 +49,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 100px"));
+			Assert.Contains("<div class=\"test\" style=\"width: 100px", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -59,7 +59,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("style=\"width: 42px\""));
+			Assert.Contains("style=\"width: 42px\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -69,7 +69,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("style=\"width: 1337px\""));
+			Assert.Contains("style=\"width: 1337px\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -79,7 +79,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, ignoreElements: "#ignore");
 
-			Assert.True(premailedOutput.Html.Contains("style=\"width: 42px\""));
+			Assert.Contains("style=\"width: 42px\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -89,7 +89,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<li style=\"width: 42px\">"));
+			Assert.Contains("<li style=\"width: 42px\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -114,7 +114,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<li style=\"width: 42px\">target</li>"));
+			Assert.Contains("<li style=\"width: 42px\">target</li>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -124,7 +124,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<p>target</p>"));
+			Assert.Contains("<p>target</p>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -134,7 +134,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, removeStyleElements: false, ignoreElements: "#ignore");
 
-			Assert.True(premailedOutput.Html.Contains("<style id=\"ignore\" type=\"text/css\">"));
+			Assert.Contains("<style id=\"ignore\" type=\"text/css\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -144,7 +144,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<p style=\"line-height: 16px;font-size: 11px\"></p>"));
+			Assert.Contains("<p style=\"line-height: 16px;font-size: 11px\"></p>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -154,7 +154,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<div style=\"color: blue"));
+			Assert.Contains("<div style=\"color: blue", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -164,7 +164,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<div style=\"color: red"));
+			Assert.Contains("<div style=\"color: red", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -174,7 +174,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<div style=\"background: url('http://my.web.site.com/Content/email/content.png') repeat-y\"></div>"));
+			Assert.Contains("<div style=\"background: url('http://my.web.site.com/Content/email/content.png') repeat-y\"></div>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -184,7 +184,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
+			Assert.Contains("<div style=\"width: 100%\">Target</div>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -194,7 +194,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.True(premailedOutput.Html.Contains("<div>Target</div>"));
+			Assert.Contains("<div>Target</div>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -204,7 +204,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" bgcolor=\"#f1f1f1\" style=\"background-color: #f1f1f1\">"));
+			Assert.Contains("<td class=\"test\" bgcolor=\"#f1f1f1\" style=\"background-color: #f1f1f1\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -234,7 +234,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
+			Assert.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -244,7 +244,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, css: ".test { background-color:#f1f1f1; }");
 
-			Assert.True(premailedOutput.Html.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\""));
+			Assert.Contains("<td class=\"test\" style=\"background-color: #f1f1f1\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -254,7 +254,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, css: ".test { background-color:#f1f1f1; }", stripIdAndClassAttributes: true);
 
-			Assert.True(premailedOutput.Html.Contains("<td style=\"background-color: #f1f1f1\""));
+			Assert.Contains("<td style=\"background-color: #f1f1f1\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -264,7 +264,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false, stripIdAndClassAttributes: true);
 
-			Assert.True(premailedOutput.Html.Contains("<div style=\"width: 42px\">"));
+			Assert.Contains("<div style=\"width: 42px\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -287,8 +287,8 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #00F\">test</td>"));
-			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #0F0\">test</td>"));
+			Assert.Contains("<td style=\"color: #00F\">test</td>", premailedOutput1.Html);
+			Assert.Contains("<td style=\"color: #0F0\">test</td>", premailedOutput2.Html);
 		}
 
 		[Fact]
@@ -300,8 +300,8 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.Contains("<td style=\"color: #0F0\">test</td>", premailedOutput1.Html);
+			Assert.Contains("<td style=\"color: #00F\">test</td>", premailedOutput2.Html);
 		}
 
 		[Fact]
@@ -313,8 +313,8 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.Contains("<td style=\"color: #0F0\">test</td>", premailedOutput1.Html);
+			Assert.Contains("<td style=\"color: #00F\">test</td>", premailedOutput2.Html);
 		}
 
 		[Fact]
@@ -326,8 +326,8 @@ namespace PreMailer.Net.Tests
 			var premailedOutput1 = PreMailer.MoveCssInline(input1, false);
 			var premailedOutput2 = PreMailer.MoveCssInline(input2, false);
 
-			Assert.True(premailedOutput1.Html.Contains("<td style=\"color: #0F0\">test</td>"));
-			Assert.True(premailedOutput2.Html.Contains("<td style=\"color: #00F\">test</td>"));
+			Assert.Contains("<td style=\"color: #0F0\">test</td>", premailedOutput1.Html);
+			Assert.Contains("<td style=\"color: #00F\">test</td>", premailedOutput2.Html);
 		}
 
 		[Fact]
@@ -426,7 +426,7 @@ namespace PreMailer.Net.Tests
 			PreMailer sut = new PreMailer(input, new Uri("http://a.com"));
 			var premailedOutput = sut.MoveCssInline();
 
-			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"width: 150px\">"));
+			Assert.Contains("<div class=\"test\" style=\"width: 150px\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -445,7 +445,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.Contains("<div class=\"test\" style=\"background-color: #f1f1f1\""));
+			Assert.Contains("<div class=\"test\" style=\"background-color: #f1f1f1\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -455,7 +455,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.StartsWith("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -466,7 +466,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.StartsWith($"{docType}<html>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -477,7 +477,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.StartsWith($"{docType}<html>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -488,7 +488,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.StartsWith($"{docType}<html>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -499,7 +499,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html>"));
+			Assert.StartsWith($"{docType}<html>", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -510,7 +510,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -521,7 +521,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -532,7 +532,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -543,7 +543,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+			Assert.StartsWith($"{docType}<html xmlns=\"http://www.w3.org/1999/xhtml\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -553,7 +553,7 @@ namespace PreMailer.Net.Tests
 
 			var premailedOutput = PreMailer.MoveCssInline(input, false);
 
-			Assert.True(premailedOutput.Html.StartsWith("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">"));
+			Assert.StartsWith("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -578,7 +578,7 @@ p
 
 			var premailedOutput = PreMailer.MoveCssInline(input, true, null, null);
 
-			Assert.True(premailedOutput.Html.Contains("style=\"mso-style-priority: 99;margin: 0cm\""));
+			Assert.Contains("style=\"mso-style-priority: 99;margin: 0cm\"", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -594,7 +594,7 @@ p
 					stream.Position = 0;
 					var premailedOutput = PreMailer.MoveCssInline(stream);
 
-					Assert.True(premailedOutput.Html.Contains("<div style=\"width: 100%\">Target</div>"));
+					Assert.Contains("<div style=\"width: 100%\">Target</div>", premailedOutput.Html);
 				}
 			}
 		}
