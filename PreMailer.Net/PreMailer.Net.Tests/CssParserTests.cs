@@ -24,7 +24,7 @@ namespace PreMailer.Net.Tests
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
 
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 			Assert.True(parser.Styles.ContainsKey("div"));
 		}
 
@@ -36,7 +36,7 @@ namespace PreMailer.Net.Tests
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
 
-			Assert.Equal(0, parser.Styles.Count);
+			Assert.Empty(parser.Styles);
 		}
 
 		[Fact]
@@ -64,7 +64,7 @@ namespace PreMailer.Net.Tests
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
 
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
@@ -76,7 +76,7 @@ namespace PreMailer.Net.Tests
 			var stylesheet = "@import url(http://google.com/stylesheet); div { width : 600px; }";
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
@@ -89,7 +89,7 @@ namespace PreMailer.Net.Tests
 			var stylesheet = "@import 'stylesheet.css'; div { width : 600px; }";
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
@@ -101,7 +101,7 @@ namespace PreMailer.Net.Tests
 			var stylesheet = "@import url(http://google.com/stylesheet);div{width:600px;}";
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
@@ -113,7 +113,7 @@ namespace PreMailer.Net.Tests
 			var stylesheet = "@import url(http://google.com/stylesheet); @import url(http://jquery.com/stylesheet1); @import url(http://amazon.com/stylesheet2); div { width : 600px; }";
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
@@ -125,7 +125,7 @@ namespace PreMailer.Net.Tests
 			var stylesheet = "@import url(http://google.com/stylesheet) mobile; div { width : 600px; }";
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
@@ -137,7 +137,7 @@ namespace PreMailer.Net.Tests
 			var stylesheet = "@import url(http://google.com/stylesheet) mobile; @import url(http://google.com/stylesheet) mobile; @import url(http://google.com/stylesheet) mobile; div { width : 600px; }";
 			var parser = new CssParser();
 			parser.AddStyleSheet(stylesheet);
-			Assert.Equal(1, parser.Styles.Count);
+			Assert.Single(parser.Styles);
 
 			Assert.True(parser.Styles.ContainsKey("div"));
 			Assert.Equal("600px", parser.Styles["div"].Attributes["width"].Value);
