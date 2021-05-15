@@ -42,6 +42,16 @@ namespace PreMailer.Net.Tests
 		}
 
 		[Fact]
+		public void ImportantRule_EmitsImportantAttributeOnlyWhenSpecified()
+		{
+			var attribute = CssAttribute.FromRule("color: red !important");
+
+			Assert.Equal("color: red", attribute.ToString());
+			Assert.Equal("color: red", attribute.ToString(emitImportant: false));
+			Assert.Equal("color: red !important", attribute.ToString(emitImportant: true));
+		}
+
+		[Fact]
 		public void ImportantRule_ReturnsValidCssWithoutWhitespaces()
 		{
 			var attribute = CssAttribute.FromRule("color:red!important");

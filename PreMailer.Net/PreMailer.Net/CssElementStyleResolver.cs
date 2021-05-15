@@ -15,7 +15,7 @@ namespace PreMailer.Net
 			AddSpecialPremailerAttributes(attributeCssList, styleClass);
 
 			if (styleClass.Attributes.Count > 0)
-				attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = styleClass.ToString(removeImportant: true) });
+				attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = styleClass.ToString() });
 
 			attributeCssList.AddRange(CssStyleEquivalence.FindEquivalent(domElement, styleClass));
 
