@@ -12,6 +12,7 @@
     <PackageProjectUrl>https://github.com/milkshakesoftware/PreMailer.Net</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>
         Migrate tests to Xunit by @martinnormark in https://github.com/milkshakesoftware/PreMailer.Net/pull/207
         Publish new tag to NU Get by @martinnormark in https://github.com/milkshakesoftware/PreMailer.Net/pull/208
@@ -31,6 +32,7 @@
 
   <ItemGroup>
     <None Include="..\..\icon.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
