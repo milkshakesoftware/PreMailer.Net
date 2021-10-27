@@ -73,6 +73,7 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
@@ -88,6 +89,7 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
@@ -105,6 +107,7 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
@@ -122,6 +125,7 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
@@ -136,6 +140,7 @@ namespace PreMailer.Net
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+		/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
