@@ -74,9 +74,9 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
+		public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
-			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
+			return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries);
 		}
 
 		/// <summary>
@@ -89,9 +89,9 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
+		public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
-			return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
+			return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries);
 		}
 
 		/// <summary>
@@ -106,9 +106,9 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
+		public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
-			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
+			return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries);
 		}
 
 		/// <summary>
@@ -123,9 +123,9 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
+		public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
-			return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter);
+			return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries);
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace PreMailer.Net
 		/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
 		/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null)
+		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
@@ -155,7 +155,7 @@ namespace PreMailer.Net
 
 			if (_removeStyleElements)
 			{
-				RemoveStyleElements(cssSourceNodes);
+				RemoveStyleElements(cssSourceNodes, preserveMediaQueries);
 				RemoveStyleElements(cssLinkNodes);
 			}
 
@@ -317,11 +317,26 @@ namespace PreMailer.Net
 		}
 
 
-		private void RemoveStyleElements(IEnumerable<IElement> cssSourceNodes)
+		private void RemoveStyleElements(IEnumerable<IElement> cssSourceNodes, bool preserveMediaQueries = false)
 		{
 			foreach (var node in cssSourceNodes)
 			{
-				node.Remove();
+				if (preserveMediaQueries)
+				{
+					var unsupportedMediaQueries = CssParser.GetUnsupportedMediaQueries(node.InnerHtml);
+					if (unsupportedMediaQueries.Any())
+					{
+						node.InnerHtml = $"\n{string.Join("\n", unsupportedMediaQueries)}\n";
+					}
+					else
+					{
+						node.Remove();
+					}
+				}
+				else
+				{
+					node.Remove();
+				}
 			}
 		}
 

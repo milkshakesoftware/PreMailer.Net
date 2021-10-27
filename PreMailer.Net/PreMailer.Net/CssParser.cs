@@ -125,5 +125,16 @@ namespace PreMailer.Net
 		{
 			return MediaQueryRegex.Replace(s, m => SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
 		}
+
+		public static IEnumerable<string> GetUnsupportedMediaQueries(string s)
+		{
+			foreach (Match match in MediaQueryRegex.Matches(s))
+			{
+				if (!SupportedMediaQueriesRegex.IsMatch(match.Value))
+				{
+					yield return match.Value;
+				}
+			}
+		}
 	}
 }
