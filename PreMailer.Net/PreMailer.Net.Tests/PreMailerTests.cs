@@ -138,6 +138,26 @@ namespace PreMailer.Net.Tests
 		}
 
 		[Fact]
+		public void MoveCssInline_PreserveMediaQueries_RemovesStyleElementsWithoutMediaQueries()
+		{
+			string input = "<html><head><style>div { width: 42px; }</style></head><body><div>test</div></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, removeStyleElements: true, preserveMediaQueries: true);
+
+			Assert.DoesNotContain("<style>", premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_PreserveMediaQueries_PreservesStyleElementsWithMediaQueries()
+		{
+			string input = "<html><head><style>div { width: 42px; }  @media (max-width: 250px) { div { width: 20px; } }</style></head><body><div>test</div></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, removeStyleElements: true, preserveMediaQueries: true);
+
+			Assert.Contains("<style>@media (max-width: 250px) { div { width: 20px; } }</style>", premailedOutput.Html);
+		}
+
+		[Fact]
 		public void MoveCssInline_MultipleSelectors_HonorsIndividualSpecificity()
 		{
 			string input = "<html><head><style type=\"text/css\">p,li,tr.pub-heading td,tr.pub-footer td,tr.footer-heading td { font-size: 12px; line-height: 16px; } td.disclaimer p {font-size: 11px;} </style></head><body><table><tr class=\"pub-heading\"><td class=\"disclaimer\"><p></p></td></tr></body></html>";
