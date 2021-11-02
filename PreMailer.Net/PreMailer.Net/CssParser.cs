@@ -128,6 +128,10 @@ namespace PreMailer.Net
 
 		public static IEnumerable<string> GetUnsupportedMediaQueries(string s)
 		{
+			if (string.IsNullOrWhiteSpace(s))
+			{
+				yield break;
+			}
 			foreach (Match match in MediaQueryRegex.Matches(s))
 			{
 				if (!SupportedMediaQueriesRegex.IsMatch(match.Value))
