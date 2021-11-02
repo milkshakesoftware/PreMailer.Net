@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <Version>2.3.0</Version>
+    <Version>2.4.0</Version>
     <Authors>Martin H. Normark</Authors>
     <Description>
         PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
@@ -14,12 +14,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>
-        Migrate tests to Xunit by @martinnormark in https://github.com/milkshakesoftware/PreMailer.Net/pull/207
-        Publish new tag to NU Get by @martinnormark in https://github.com/milkshakesoftware/PreMailer.Net/pull/208
-        Fix: Keep css attributes in logical order (#53) by @r-Larch in https://github.com/milkshakesoftware/PreMailer.Net/pull/253
-        Append analytics query string before anchor tag by @bjnoel in https://github.com/milkshakesoftware/PreMailer.Net/pull/255
-        Fix: Generate inline styles without !important (#149) by @r-Larch in https://github.com/milkshakesoftware/PreMailer.Net/pull/260
-        Fix: Build warning xUnit2009: Do not use .. by @r-Larch in https://github.com/milkshakesoftware/PreMailer.Net/pull/261
+        Preserve unsupported media queries in head element by @sleeplessghost https://github.com/milkshakesoftware/PreMailer.Net/pull/275
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
     <SignAssembly>true</SignAssembly>
