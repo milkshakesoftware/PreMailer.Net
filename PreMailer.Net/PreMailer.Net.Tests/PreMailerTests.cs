@@ -618,5 +618,16 @@ p
 				}
 			}
 		}
+
+		[Fact]
+		public void MoveCssInline_HasHtmlEncodedChar_MaintainsEncodedChar()
+		{
+			string input = "<html><head><style type=\"text/css\">img { }</style></head>" +
+							"<body><span>&lt;</span></body></html>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.Contains("&lt;", premailedOutput.Html);
+		}
 	}
 }
