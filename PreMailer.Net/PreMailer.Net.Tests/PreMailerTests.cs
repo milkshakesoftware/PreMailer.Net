@@ -3,6 +3,7 @@ using Moq;
 using PreMailer.Net.Downloaders;
 using System;
 using System.IO;
+using System.Web;
 
 namespace PreMailer.Net.Tests
 {
@@ -620,14 +621,13 @@ p
 		}
 
 		[Fact]
-		public void MoveCssInline_HasHtmlEncodedChar_MaintainsEncodedChar()
+		public void MoveCssInline_GivenHtmlEncodedCharacters_RemainsEncoded()
 		{
-			string input = "<html><head><style type=\"text/css\">img { }</style></head>" +
-							"<body><span>&lt;</span></body></html>";
-
+			string htmlEncoded = "&lt;&amp;&gt;&nbsp;";
+			string input = $"<html><head></head><body><div>{htmlEncoded}</div></body></html>";
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
-			Assert.Contains("&lt;", premailedOutput.Html);
+			Assert.Contains(htmlEncoded, premailedOutput.Html);
 		}
 	}
 }
