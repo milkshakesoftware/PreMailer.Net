@@ -649,5 +649,15 @@ p
 
 			Assert.Contains(htmlEncoded, premailedOutput.Html);
 		}
+
+		[Fact]
+		public void MoveCssInline_GivenXmlNameSpaces_RemainsInOutput()
+		{
+			string htmlTag = "html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"";
+			string input = $"<{htmlTag}><head></head><body><div><p>Test</p></div></body></html>";
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.Contains(htmlTag, premailedOutput.Html);
+		}
 	}
 }
