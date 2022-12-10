@@ -659,5 +659,15 @@ p
 
 			Assert.Contains(htmlTag, premailedOutput.Html);
 		}
+
+		[Fact]
+		public void MoveCssInline_GivenCssWithQuotes_ReplacesWithSingleQuotation()
+		{
+			string cssContent = "p { font-family: \"Roboto\", sans-serif; }";
+			string input = $"<html><head></head><body><div><p>Test</p></div></body></html>";
+			var premailedOutput = PreMailer.MoveCssInline(input, css: cssContent);
+
+			Assert.Contains("font-family: 'Roboto', sans-serif", premailedOutput.Html);
+		}
 	}
 }

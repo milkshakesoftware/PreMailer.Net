@@ -21,8 +21,7 @@ namespace PreMailer.Net
 
 			foreach (var attributeToCss in styles)
 			{
-				PrepareAttribute(domElement, attributeToCss);
-				//domElement.SetAttribute(attributeToCss.AttributeName, attributeToCss.CssValue);
+				SetAttribute(domElement, attributeToCss);
 			}
 
 			var styleAttr = domElement.Attributes["style"];
@@ -34,7 +33,7 @@ namespace PreMailer.Net
 			return domElement;
 		}
 
-		private static void PrepareAttribute(IElement domElement, AttributeToCss attributeToCss)
+		private static void SetAttribute(IElement domElement, AttributeToCss attributeToCss)
 		{
 			string name = attributeToCss.AttributeName;
 			string value = attributeToCss.CssValue;
@@ -46,6 +45,12 @@ namespace PreMailer.Net
 				&& value.EndsWith("px"))
 			{
 				value = value.Replace("px", string.Empty);
+			}
+
+			// Quotation marks in CSS is common, but when applied to the style attribute we will use single quotes instead.
+			if (value.Contains("\""))
+			{
+				value = value.Replace("\"", "'");
 			}
 
 			domElement.SetAttribute(name, value);
