@@ -289,7 +289,7 @@ namespace PreMailer.Net.Tests
 		}
 
 		[Fact]
-		public void MoveCssInline_StripsComments()
+		public void MoveCssInline_StripsComments_FromHtml()
 		{
 			string input = "<html><head></head><body><!--This should be removed--></body></html>";
 			string expected = "<html><head></head><body></body></html>";
@@ -297,6 +297,26 @@ namespace PreMailer.Net.Tests
 			var premailedOutput = PreMailer.MoveCssInline(input, removeComments: true);
 
 			Assert.True(expected == premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_StripsComments_FromCss()
+		{
+			string input = @"<html>
+    <head>
+        <style type=""text/css"">
+            /* this comment will be removed */
+            .foo { color:blue }
+        </style>
+    </head>
+
+    <body><div class=""foo"">test</div></body>
+</html>
+";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, removeComments: true);
+
+			Assert.DoesNotContain("/* this comment will be removed */", premailedOutput.Html);
 		}
 
 		[Fact]

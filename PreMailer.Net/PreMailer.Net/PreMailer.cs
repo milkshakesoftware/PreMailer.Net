@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PreMailer.Net
 {
@@ -176,12 +177,9 @@ namespace PreMailer.Net
 
 			if (removeComments)
 			{
-				var comments = _document.Descendents<IComment>().ToList();
+				RemoveHtmlComments();
 
-				foreach (var comment in comments)
-				{
-					comment.Remove();
-				}
+				RemoveCssComments(cssSourceNodes);
 			}
 
 			IMarkupFormatter markupFormatter = customFormatter ?? GetMarkupFormatterForDocType();
@@ -248,6 +246,15 @@ namespace PreMailer.Net
 		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
 			return cssSources.Select(styleSource => styleSource.GetCss()).ToList();
+		}
+
+		private void RemoveCssComments(IEnumerable<IElement> cssSourceNodes)
+		{
+			foreach (var element in cssSourceNodes)
+			{
+				var regex = new Regex(@"/\*[\s\S]*?\*/");
+				element.InnerHtml = regex.Replace(element.InnerHtml, string.Empty);
+			}
 		}
 
 		/// <summary>
@@ -499,6 +506,16 @@ namespace PreMailer.Net
 			}
 
 			return specificity;
+		}
+
+		private void RemoveHtmlComments()
+		{
+			var comments = _document.Descendents<IComment>().ToList();
+
+			foreach (var comment in comments)
+			{
+				comment.Remove();
+			}
 		}
 
 		/// <summary>
