@@ -6,7 +6,7 @@ namespace PreMailer.Net.Sources
 	{
 		private readonly IElement _node;
 
-        public DocumentStyleTagCssSource(IElement node)
+		public DocumentStyleTagCssSource(IElement node)
 		{
 			_node = node;
 		}
