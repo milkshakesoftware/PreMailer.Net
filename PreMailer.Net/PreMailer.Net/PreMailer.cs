@@ -1,4 +1,5 @@
 using AngleSharp;
+using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html;
 using AngleSharp.Html.Dom;
@@ -386,22 +387,25 @@ namespace PreMailer.Net
 		{
 			var result = new Dictionary<IElement, List<StyleClass>>();
 
-			foreach (var style in stylesToApply)
-			{
-				try
-				{
-					var elementsForSelector = _document.QuerySelectorAll(style.Value.Name);
+			var selectorParser = _document.Context.GetService<AngleSharp.Css.Parser.ICssSelectorParser>();
 
-					foreach (var el in elementsForSelector)
+			// Parse selectors
+			var styles = stylesToApply.Select(x => new
+			{
+				Style = x.Value,
+				Selector = selectorParser.ParseSelector(x.Value.Name)
+			}).Where(x => x.Selector != null).ToList();
+
+			foreach (var el in _document.DescendentsAndSelf<IElement>())
+			{
+				foreach (var style in styles)
+				{
+					if (style.Selector.Match(el))
 					{
 						var existing = result.ContainsKey(el) ? result[el] : new List<StyleClass>();
-						existing.Add(style.Value);
+						existing.Add(style.Style);
 						result[el] = existing;
 					}
-				}
-				catch (DomException ex)
-				{
-					_warnings.Add($"Error finding element with selector: '{style.Value.Name}: {ex.Message}");
 				}
 			}
 
