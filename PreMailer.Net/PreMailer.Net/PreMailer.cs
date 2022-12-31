@@ -328,7 +328,7 @@ namespace PreMailer.Net
 			{
 				if (preserveMediaQueries)
 				{
-					var unsupportedMediaQueries = CssParser.GetUnsupportedMediaQueries(node.InnerHtml);
+					var unsupportedMediaQueries = CssParser.GetUnsupportedMediaQueries(node.FindChild<IText>()?.Data);
 					if (unsupportedMediaQueries.Any())
 					{
 						node.InnerHtml = $"{string.Join("\n", unsupportedMediaQueries)}";
