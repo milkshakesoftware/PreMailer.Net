@@ -27,6 +27,19 @@ public class Realistic
 		PreMailer.Net.PreMailer.MoveCssInline(RawHtml);
 	}
 
+	[Benchmark]
+	public void MoveCssInline_AllFlags()
+	{
+		PreMailer.Net.PreMailer.MoveCssInline(
+			RawHtml,
+			removeStyleElements: true,
+			ignoreElements: ".container table:not(:first-child)",
+			css: "table td { color: #123 } table.body-wrap { width: 10%;}",
+			stripIdAndClassAttributes: true,
+			removeComments: true,
+			preserveMediaQueries: true);
+	}
+
 	private static readonly string RawHtml = @"
 <html xmlns=""http://www.w3.org/1999/xhtml"">
 <head>
