@@ -36,10 +36,10 @@ namespace PreMailer.Net {
 		/// <param name="canOverwrite">if set to <c>true</c> [can overwrite].</param>
 		public void Merge(StyleClass styleClass, bool canOverwrite) {
 			foreach (var item in styleClass.Attributes) {
-				if (!Attributes.TryGetValue(item.Key, out var existing) ||
-				    canOverwrite && (!existing.Important || item.Value.Important))
+				if (!Attributes.TryGetValue(item.Style, out var existing) ||
+				    canOverwrite && (!existing.Important || item.Important))
 				{
-					Attributes.Merge(item.Value);
+					Attributes.Merge(item);
 				}
 			}
 		}
@@ -55,7 +55,7 @@ namespace PreMailer.Net {
 		/// <param name="emitImportant">When set to <c>true</c>, resulting CSS emits the !important flag.</param>
 		/// <returns> css styles with or without !important </returns>
 		public string ToString(bool emitImportant) {
-			return string.Join(";", Attributes.Values.Select(_ => _.ToString(emitImportant)));
+			return string.Join(";", Attributes.Select(_ => _.ToString(emitImportant)));
 		}
 	}
 }
