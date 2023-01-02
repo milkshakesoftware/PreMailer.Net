@@ -26,18 +26,18 @@ namespace PreMailer.Net
 		{
 			while (true)
 			{
-				var premailerRuleMatch = styleClass.Attributes.FirstOrDefault(a => a.Key.StartsWith(premailerAttributePrefix));
+				var premailerRuleMatch = styleClass.Attributes.FirstOrDefault(a => a.Style.StartsWith(premailerAttributePrefix));
 
-				var key = premailerRuleMatch.Key;
-				var cssAttribute = premailerRuleMatch.Value;
-
-				if (key == null)
+				if (premailerRuleMatch == null)
 					break;
+
+				var key = premailerRuleMatch.Style;
+				var cssAttribute = premailerRuleMatch.Value;
 
 				attributeCssList.Add(new AttributeToCss
 				{
 					AttributeName = key.Replace(premailerAttributePrefix, ""),
-					CssValue = cssAttribute.Value
+					CssValue = cssAttribute
 				});
 
 				styleClass.Attributes.Remove(key);

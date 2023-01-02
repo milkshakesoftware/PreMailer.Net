@@ -4,6 +4,7 @@ using AngleSharp.Html;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using AngleSharp.Xhtml;
+using PreMailer.Net.Extensions;
 using PreMailer.Net.Sources;
 using System;
 using System.Collections.Generic;
@@ -335,7 +336,8 @@ namespace PreMailer.Net
 			{
 				if (preserveMediaQueries)
 				{
-					var unsupportedMediaQueries = CssParser.GetUnsupportedMediaQueries(node.InnerHtml);
+					var css = node.GetFirstTextNodeData();
+					var unsupportedMediaQueries = CssParser.GetUnsupportedMediaQueries(css);
 					if (unsupportedMediaQueries.Any())
 					{
 						node.InnerHtml = $"{string.Join("\n", unsupportedMediaQueries)}";

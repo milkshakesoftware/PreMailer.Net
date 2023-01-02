@@ -188,8 +188,8 @@ namespace PreMailer.Net.Tests
 
 			var attributes = parser.Styles.First().Value.Attributes.ToArray();
 
-			Assert.True(attributes[0] is {Key: "background", Value: {Value: "red"}});
-			Assert.True(attributes[1] is {Key: "background-color", Value: {Value: "green"}});
+			Assert.True(attributes[0] is {Style: "background", Value: "red"});
+			Assert.True(attributes[1] is {Style: "background-color", Value: "green" });
 		}
 
         [Fact]
