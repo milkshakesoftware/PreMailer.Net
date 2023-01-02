@@ -3,6 +3,7 @@ using Moq;
 using PreMailer.Net.Downloaders;
 using System;
 using System.IO;
+using System.Web;
 
 namespace PreMailer.Net.Tests
 {
@@ -288,7 +289,7 @@ namespace PreMailer.Net.Tests
 		}
 
 		[Fact]
-		public void MoveCssInline_StripsComments()
+		public void MoveCssInline_StripsComments_FromHtml()
 		{
 			string input = "<html><head></head><body><!--This should be removed--></body></html>";
 			string expected = "<html><head></head><body></body></html>";
@@ -296,6 +297,26 @@ namespace PreMailer.Net.Tests
 			var premailedOutput = PreMailer.MoveCssInline(input, removeComments: true);
 
 			Assert.True(expected == premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_StripsComments_FromCss()
+		{
+			string input = @"<html>
+    <head>
+        <style type=""text/css"">
+            /* this comment will be removed */
+            .foo { color:blue }
+        </style>
+    </head>
+
+    <body><div class=""foo"">test</div></body>
+</html>
+";
+
+			var premailedOutput = PreMailer.MoveCssInline(input, removeComments: true);
+
+			Assert.DoesNotContain("/* this comment will be removed */", premailedOutput.Html);
 		}
 
 		[Fact]
@@ -617,6 +638,36 @@ p
 					Assert.Contains("<div style=\"width: 100%\">Target</div>", premailedOutput.Html);
 				}
 			}
+		}
+
+		[Fact]
+		public void MoveCssInline_GivenHtmlEncodedCharacters_RemainsEncoded()
+		{
+			string htmlEncoded = "&lt;&amp;&gt;&nbsp;";
+			string input = $"<html><head></head><body><div>{htmlEncoded}</div></body></html>";
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.Contains(htmlEncoded, premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_GivenXmlNameSpaces_RemainsInOutput()
+		{
+			string htmlTag = "html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"";
+			string input = $"<{htmlTag}><head></head><body><div><p>Test</p></div></body></html>";
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.Contains(htmlTag, premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_GivenCssWithQuotes_ReplacesWithSingleQuotation()
+		{
+			string cssContent = "p { font-family: \"Roboto\", sans-serif; }";
+			string input = $"<html><head></head><body><div><p>Test</p></div></body></html>";
+			var premailedOutput = PreMailer.MoveCssInline(input, css: cssContent);
+
+			Assert.Contains("font-family: 'Roboto', sans-serif", premailedOutput.Html);
 		}
 	}
 }

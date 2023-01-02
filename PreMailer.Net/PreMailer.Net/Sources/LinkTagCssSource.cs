@@ -33,16 +33,17 @@ namespace PreMailer.Net.Sources
 
 			if (IsSupported(_downloadUri.Scheme))
 			{
-                try
-                {
+				try
+				{
 					Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
 
-										return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
-                } catch (WebException)
-                {
-                    throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
-                }
-            }
+					return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
+				}
+				catch (WebException)
+				{
+					throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
+				}
+			}
 			return string.Empty;
 		}
 
