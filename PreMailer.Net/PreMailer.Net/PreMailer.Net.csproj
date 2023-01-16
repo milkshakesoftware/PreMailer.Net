@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.0.0" />
+    <PackageReference Include="AngleSharp" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
