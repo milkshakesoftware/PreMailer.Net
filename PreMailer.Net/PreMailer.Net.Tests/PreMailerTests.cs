@@ -643,7 +643,7 @@ p
 		[Fact]
 		public void MoveCssInline_GivenHtmlEncodedCharacters_RemainsEncoded()
 		{
-			string htmlEncoded = "&lt;&amp;&gt;&nbsp;";
+			string htmlEncoded = "&lt;&amp;&gt;&nbsp;&copy;";
 			string input = $"<html><head></head><body><div>{htmlEncoded}</div></body></html>";
 			var premailedOutput = PreMailer.MoveCssInline(input);
 
