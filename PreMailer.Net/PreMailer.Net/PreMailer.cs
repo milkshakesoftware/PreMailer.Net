@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace PreMailer.Net
@@ -21,6 +22,7 @@ namespace PreMailer.Net
 		private readonly IHtmlDocument _document;
 		private bool _removeStyleElements;
 		private bool _stripIdAndClassAttributes;
+		private bool _convertLinkedCssWebExceptionsToWarnings;
 		private string _ignoreElements;
 		private string _css;
 		private readonly Uri _baseUri;
@@ -182,6 +184,7 @@ namespace PreMailer.Net
 			_stripIdAndClassAttributes = options.StripIdAndClassAttributes;
 			_ignoreElements = options.IgnoreElements;
 			_css = options.Css;
+			_convertLinkedCssWebExceptionsToWarnings = options.ConvertLinkedCssWebExceptionsToWarnings;
 
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
@@ -278,7 +281,20 @@ namespace PreMailer.Net
 		/// </summary>
 		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
-			return cssSources.Select(styleSource => styleSource.GetCss()).ToList();
+			return cssSources.Select(styleSource =>
+			{
+				if (!_convertLinkedCssWebExceptionsToWarnings)
+					return styleSource.GetCss();
+				try
+				{
+					return styleSource.GetCss();
+				}
+				catch (WebException ex)
+				{
+					_warnings.Add(ex.ToString());
+					return null;
+				}
+			}).Where(s => s != null).ToList();
 		}
 
 		private void RemoveCssComments(IEnumerable<IElement> cssSourceNodes)

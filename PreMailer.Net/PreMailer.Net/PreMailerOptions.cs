@@ -12,4 +12,5 @@ public class PreMailerOptions
 	public bool RemoveComments { get; set; }
 	public IMarkupFormatter? CustomFormatter { get; set; } = null;
 	public bool PreserveMediaQueries { get; set; }
+	public bool ConvertLinkedCssWebExceptionsToWarnings { get; set; }
 }

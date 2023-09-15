@@ -39,9 +39,9 @@ namespace PreMailer.Net.Sources
 
 					return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
 				}
-				catch (WebException)
+				catch (WebException ex)
 				{
-					throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
+					throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}", ex);
 				}
 			}
 			return string.Empty;
