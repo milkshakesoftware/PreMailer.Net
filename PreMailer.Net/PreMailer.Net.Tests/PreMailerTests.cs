@@ -669,5 +669,30 @@ p
 
 			Assert.Contains("font-family: 'Roboto', sans-serif", premailedOutput.Html);
 		}
+
+		
+		[Fact]
+		public void MoveCssInline_GivenStylesWithImportant_ShouldOverride()
+		{
+			string input = """
+				<html>
+				<head>
+					<style>
+						.test1 {
+							color: blue !important;
+						}
+						.test {
+							color: red;
+						}
+					</style>
+				</head>
+				<body>
+					<div class="test1 test"></div>
+				</body>
+				</html>
+			""";
+			var premailedOutput = PreMailer.MoveCssInline(input);
+			Assert.Contains("""style="color: blue"></div>""", premailedOutput.Html);
+		}
 	}
 }
