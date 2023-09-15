@@ -71,6 +71,17 @@ namespace PreMailer.Net
 		/// In-lines the CSS within the HTML given.
 		/// </summary>
 		/// <param name="html">The HTML input.</param>
+		/// <param name="options">Options that control how CSS is inlined</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public static InlineResult MoveCssInline(string html, PreMailerOptions options)
+		{
+			return new PreMailer(html).MoveCssInline(options);
+		}
+
+		/// <summary>
+		/// In-lines the CSS within the HTML given.
+		/// </summary>
+		/// <param name="html">The HTML input.</param>
 		/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 		/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
 		/// <param name="css">A string containing a style-sheet for inlining.</param>
@@ -147,11 +158,30 @@ namespace PreMailer.Net
 		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 		public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false)
 		{
+			return MoveCssInline(new PreMailerOptions
+			{
+				RemoveStyleElements = removeStyleElements,
+				IgnoreElements = ignoreElements,
+				Css = css,
+				StripIdAndClassAttributes = stripIdAndClassAttributes,
+				RemoveComments = removeComments,
+				CustomFormatter = customFormatter,
+				PreserveMediaQueries = preserveMediaQueries
+			});
+		}
+
+		/// <summary>
+		/// In-lines the CSS for the current HTML
+		/// </summary>
+		/// <param name="options">Options that control how CSS is inlined</param>
+		/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+		public InlineResult MoveCssInline(PreMailerOptions options)
+		{
 			// Store the variables used for inlining the CSS
-			_removeStyleElements = removeStyleElements;
-			_stripIdAndClassAttributes = stripIdAndClassAttributes;
-			_ignoreElements = ignoreElements;
-			_css = css;
+			_removeStyleElements = options.RemoveStyleElements;
+			_stripIdAndClassAttributes = options.StripIdAndClassAttributes;
+			_ignoreElements = options.IgnoreElements;
+			_css = options.Css;
 
 			// Gather all of the CSS that we can work with.
 			var cssSourceNodes = CssSourceNodes();
@@ -159,11 +189,12 @@ namespace PreMailer.Net
 			var cssSources = new List<ICssSource>(ConvertToStyleSources(cssSourceNodes));
 			cssSources.AddRange(ConvertToStyleSources(cssLinkNodes));
 
+			
 			var cssBlocks = GetCssBlocks(cssSources);
 
 			if (_removeStyleElements)
 			{
-				RemoveStyleElements(cssSourceNodes, preserveMediaQueries);
+				RemoveStyleElements(cssSourceNodes, options.PreserveMediaQueries);
 				RemoveStyleElements(cssLinkNodes);
 			}
 
@@ -177,14 +208,14 @@ namespace PreMailer.Net
 			if (_stripIdAndClassAttributes)
 				StripElementAttributes("id", "class");
 
-			if (removeComments)
+			if (options.RemoveComments)
 			{
 				RemoveHtmlComments();
 
 				RemoveCssComments(cssSourceNodes);
 			}
 
-			IMarkupFormatter markupFormatter = customFormatter ?? GetMarkupFormatterForDocType();
+			IMarkupFormatter markupFormatter = options.CustomFormatter ?? GetMarkupFormatterForDocType();
 
 			using (var sw = new StringWriter())
 			{
