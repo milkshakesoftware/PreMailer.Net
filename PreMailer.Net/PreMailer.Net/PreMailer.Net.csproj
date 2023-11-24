@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 	<LangVersion>latest</LangVersion>
-    <Version>2.4.0</Version>
+    <Version>2.5.0</Version>
     <Authors>Martin H. Normark</Authors>
     <Description>
         PreMailer.Net is a C# utility for moving CSS to inline style attributes, to gain maximum E-mail client compatibility.
@@ -15,7 +15,30 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>
-        Preserve unsupported media queries in head element by @sleeplessghost https://github.com/milkshakesoftware/PreMailer.Net/pull/275
+      What's Changed
+
+      * Bump AngleSharp from 0.16.1 to 1.0.7. Only the IMarkupFormatter from AngleSharp is exposed as public api and that interface has not changed in that version jump so this should not cause any breakages for users.
+      * Dependency Bumps for the Tests and Benchmark projects.
+      * Fix race condition when running unit tests by @jasekiw in https://github.com/milkshakesoftware/PreMailer.Net/pull/374
+      * Normalize all file line endings by @jasekiw in https://github.com/milkshakesoftware/PreMailer.Net/pull/365
+      * Update benchmark project framework by @jasekiw in https://github.com/milkshakesoftware/PreMailer.Net/pull/351
+      * Use correct framework by @kasperk81 https://github.com/milkshakesoftware/PreMailer.Net/pull/334
+      * Update CI triggers to main branch  by @martinnormark https://github.com/milkshakesoftware/PreMailer.Net/pull/332
+      * Bug triage by @martinnormark https://github.com/milkshakesoftware/PreMailer.Net/pull/328
+      * More efficient selector matching of all elements by @patrikwlund https://github.com/milkshakesoftware/PreMailer.Net/pull/326
+      * Read text node instead of InnerHtml for CSS by @patrikwlund https://github.com/milkshakesoftware/PreMailer.Net/pull/325
+      * Include a benchmark that sets all MoveCssInline() flags by @patrikwlund https://github.com/milkshakesoftware/PreMailer.Net/pull/324
+      * Realistic benchmark  by @patrikwlund https://github.com/milkshakesoftware/PreMailer.Net/pull/323
+      * Decent optimizations for CssAttributeCollection by @patrikwlund https://github.com/milkshakesoftware/PreMailer.Net/pull/322
+
+
+      New Contributors
+
+      * @patrikwlund made their first contribution in https://github.com/milkshakesoftware/PreMailer.Net/pull/323
+      * @kasperk81 made their first contribution in https://github.com/milkshakesoftware/PreMailer.Net/pull/334
+      * @jasekiw made their first contribution in https://github.com/milkshakesoftware/PreMailer.Net/pull/351
+      
+      Full Changelog: https://github.com/milkshakesoftware/PreMailer.Net/compare/v2.4.0...v2.5.0
     </PackageReleaseNotes>
     <PackageTags>email css newsletter html</PackageTags>
     <SignAssembly>true</SignAssembly>
