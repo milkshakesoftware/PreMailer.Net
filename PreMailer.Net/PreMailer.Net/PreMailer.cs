@@ -247,7 +247,19 @@ namespace PreMailer.Net
 		/// </summary>
 		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
-			return cssSources.Select(styleSource => styleSource.GetCss()).ToList();
+			return cssSources.Select(GetCssBlock).ToList();
+		}
+		private string GetCssBlock(ICssSource cssSource)
+		{
+			try
+			{
+				return cssSource.GetCss();
+			}
+			catch (Exception ex)
+			{
+				_warnings.Add(ex.Message);
+				return string.Empty;
+			}
 		}
 
 		private void RemoveCssComments(IEnumerable<IElement> cssSourceNodes)
