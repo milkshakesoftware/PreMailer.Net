@@ -405,7 +405,7 @@ namespace PreMailer.Net
 				Selector = selectorParser.ParseSelector(x.Value.Name)
 			}).Where(x => x.Selector != null).ToList();
 
-			foreach (var el in _document.DescendentsAndSelf<IElement>())
+			foreach (var el in _document.Body.DescendentsAndSelf<IElement>())
 			{
 				foreach (var style in styles)
 				{
