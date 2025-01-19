@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using PreMailer.Net.Downloaders;
 
@@ -10,6 +14,9 @@ namespace PreMailer.Net.Sources
 	{
 		private readonly Uri _downloadUri;
 		private string _cssContents;
+
+		private static Regex _importRegex = new Regex("@import.*?[\"'](?<href>[^\"']+)[\"'].*?;", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+		private List<string> _cssImports;
 
 		public LinkTagCssSource(IElement node, Uri baseUri)
 		{
@@ -33,18 +40,29 @@ namespace PreMailer.Net.Sources
 
 			if (IsSupported(_downloadUri.Scheme))
 			{
-				try
-				{
-					Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
-
-					return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
-				}
-				catch (WebException)
-				{
-					throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
-				}
+				return _cssContents ?? DownloadContents();
 			}
 			return string.Empty;
+		}
+
+		private string DownloadContents()
+		{
+			try
+			{
+				Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
+
+				_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
+			}
+			catch (WebException ex)
+			{
+				Console.WriteLine($"Download failed with: {ex}");
+				throw new WebException($"PreMailer.Net is unable to download the requested URL: {_downloadUri}", ex);
+			}
+
+			// Fetch possible import rules
+			_cssContents = ImportRuleCssSource.FetchImportRules(_downloadUri, _cssContents);
+
+			return _cssContents;
 		}
 
 		private static bool IsSupported(string scheme)
