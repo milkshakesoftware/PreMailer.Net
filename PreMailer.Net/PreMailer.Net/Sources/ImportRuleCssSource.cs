@@ -71,7 +71,7 @@ namespace PreMailer.Net.Sources
 				throw new WebException($"PreMailer.Net is unable to download the requested URL: {_downloadUri}", ex);
 			}
 
-			if (_level < 2) // Stop processing imports at level 2
+			if (_level < 2 && cssContents != null) // Stop processing imports at level 2
 			{
 				FetchImportRules(_downloadUri, cssContents, _level + 1, _contentBuilder, _importList);
 			}
@@ -94,6 +94,11 @@ namespace PreMailer.Net.Sources
 		/// <returns></returns>
 		public static string FetchImportRules(Uri downloadUri, string contents)
 		{
+			if (contents == null)
+			{
+				return string.Empty;
+			}
+
 			var contentBuilder = new StringBuilder();
 			var importList = new List<Uri>();
 
@@ -123,6 +128,7 @@ namespace PreMailer.Net.Sources
 		/// <param name="importList"></param>
 		private static void FetchImportRules(Uri downloadUri, string contents, int level, StringBuilder contentBuilder, List<Uri> importList)
 		{
+
 			string indent = level > 0 ? new string('\t', level) : string.Empty;
 			int cnt = 0;
 
