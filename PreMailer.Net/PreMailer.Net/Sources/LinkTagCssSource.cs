@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using PreMailer.Net.Downloaders;
 
@@ -14,9 +13,6 @@ namespace PreMailer.Net.Sources
 	{
 		private readonly Uri _downloadUri;
 		private string _cssContents;
-
-		private static Regex _importRegex = new Regex("@import.*?[\"'](?<href>[^\"']+)[\"'].*?;", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-		private List<string> _cssImports;
 
 		public LinkTagCssSource(IElement node, Uri baseUri)
 		{
