@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
 using AngleSharp.Dom;
 using PreMailer.Net.Downloaders;
 
@@ -13,9 +11,15 @@ namespace PreMailer.Net.Sources
 	{
 		private readonly Uri _downloadUri;
 		private List<string> _cssContents;
-
-		public LinkTagCssSource(IElement node, Uri baseUri)
+		private ImportRuleCssSource _importRuleCssSource;
+		public LinkTagCssSource(IElement node, Uri baseUri) : this(node, baseUri, new ImportRuleCssSource())
 		{
+		}
+
+		public LinkTagCssSource(IElement node, Uri baseUri, ImportRuleCssSource importRuleCssSource)
+		{
+			_importRuleCssSource = importRuleCssSource;
+
 			// There must be an href
 			var href = node.Attributes.First(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase)).Value;
 
@@ -59,11 +63,13 @@ namespace PreMailer.Net.Sources
 			}
 
 			// Fetch possible import rules
-			var imports = ImportRuleCssSource.FetchImportRules(_downloadUri, content);
+			var imports = _importRuleCssSource.GetCss(_downloadUri, content);
+
 			if (imports != null)
 			{
 				_cssContents.AddRange(imports);
 			}
+
 			_cssContents.Add(content);
 
 			return _cssContents;
