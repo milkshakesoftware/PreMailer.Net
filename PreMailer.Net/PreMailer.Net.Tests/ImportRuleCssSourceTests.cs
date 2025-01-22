@@ -20,7 +20,7 @@ namespace PreMailer.Net.Tests
 		public void FetchImportRules()
 		{
 			var baseUri = new Uri("https://a.com");
-			var urls = new List<string>() { "variables.css", "/fonts.css", "https://fonts.google.com/css/test-font" };
+			var urls = new List<string>() { "variables.css?v234", "/fonts.css", "https://fonts.google.com/css/test-font" };
 
 			var css = CreateCss(urls);
 			var contents = ImportRuleCssSource.FetchImportRules(baseUri, css);

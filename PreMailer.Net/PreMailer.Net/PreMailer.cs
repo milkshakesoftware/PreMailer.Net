@@ -245,9 +245,14 @@ namespace PreMailer.Net
 		/// Returns the blocks of CSS within the documents supported CSS sources.<para/>
 		/// Blocks are returned in the order they are declared within the document.
 		/// </summary>
-		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
+		private List<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
-			return cssSources.Select(styleSource => styleSource.GetCss()).ToList();
+			var cssBlocks = new List<string>();
+			foreach (var cssSource in cssSources)
+			{
+				cssBlocks.AddRange(cssSource.GetCss());
+			}
+			return cssBlocks; // cssSources.Select(styleSource => styleSource.GetCss()).ToList();
 		}
 
 		private void RemoveCssComments(IEnumerable<IElement> cssSourceNodes)

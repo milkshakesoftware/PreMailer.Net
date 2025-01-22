@@ -16,12 +16,11 @@ namespace PreMailer.Net.Sources
 	{
 		private readonly Uri _downloadUri;
 		private readonly int _level;
-		private readonly StringBuilder _contentBuilder;
-		private readonly List<Uri> _importList;
+		private Dictionary<Uri, string> _importList;
 
 		private static Regex _importRegex = new Regex("@import.*?[\"'](?<href>[^\"']+)[\"'].*?;", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
-		public ImportRuleCssSource(string importUri, Uri baseUri, int level, StringBuilder contentBuilder, List<Uri> importList)
+		public ImportRuleCssSource(string importUri, Uri baseUri, int level, Dictionary<Uri, string> importList)
 		{
 
 			if (Uri.IsWellFormedUriString(importUri, UriKind.Relative) && baseUri != null)
@@ -35,35 +34,38 @@ namespace PreMailer.Net.Sources
 			}
 
 			_level = level;
-			_contentBuilder = contentBuilder;
 			_importList = importList;
 		}
 
-		public string GetCss()
+		public IEnumerable<string> GetCss()
 		{
 			Console.WriteLine($"{new string('\t', _level + 1)}GetCss scheme: {_downloadUri.Scheme}");
 
-			if (IsSupported(_downloadUri.Scheme) && !_importList.Contains(_downloadUri))
+			if (IsSupported(_downloadUri.Scheme) && !_importList.ContainsKey(_downloadUri))
 			{
-				_importList.Add(_downloadUri);
 				DownloadContents();
 			}
-			else if (_importList.Contains(_downloadUri))
+			else if (_importList.ContainsKey(_downloadUri))
 			{
 				Console.WriteLine($"{new string('\t', _level + 1)}Already got import from '{_downloadUri}'");
 			}
-			return string.Empty;
+
+			// Everything is added to the _importList which is passed in with the constructor.
+			// So, we don't have to return anything here.
+
+			return default;
 		}
 
 		private void DownloadContents()
 		{
-			string cssContents;
+			string contents;
+			var indent = new string('\t', _level + 1);
 
 			try
 			{
-				Console.WriteLine($"{new string('\t', _level + 1)}Will download import from '{_downloadUri}'");
+				Console.WriteLine($"{indent}Will download import from '{_downloadUri}'");
 
-				cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
+				contents = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
 			}
 			catch (WebException ex)
 			{
@@ -71,11 +73,21 @@ namespace PreMailer.Net.Sources
 				throw new WebException($"PreMailer.Net is unable to download the requested URL: {_downloadUri}", ex);
 			}
 
-			if (_level < 2 && cssContents != null) // Stop processing imports at level 2
+			if (_level < 2 && contents != null) // Stop processing imports at level 2
 			{
-				FetchImportRules(_downloadUri, cssContents, _level + 1, _contentBuilder, _importList);
+				FetchImportRules(_downloadUri, contents, _level + 1, ref _importList);
 			}
-			_contentBuilder.AppendLine(cssContents);
+			
+			// Prevent a recursive import of the same url
+			if (!_importList.ContainsKey( _downloadUri))
+			{
+				_importList.Add(_downloadUri, contents);
+			}
+			else
+			{
+				Console.WriteLine($"{indent}An import added {_downloadUri} in the meantime!");
+			}
+
 		}
 
 		private static bool IsSupported(string scheme)
@@ -92,30 +104,21 @@ namespace PreMailer.Net.Sources
 		/// <param name="downloadUri"></param>
 		/// <param name="contents"></param>
 		/// <returns></returns>
-		public static string FetchImportRules(Uri downloadUri, string contents)
+		public static IList<string> FetchImportRules(Uri downloadUri, string contents)
 		{
-			if (contents == null)
+			if (contents == null) // Is the case with testing
 			{
-				return string.Empty;
+				return null;
 			}
 
-			var contentBuilder = new StringBuilder();
-			var importList = new List<Uri>();
+
+			var importList = new Dictionary<Uri, string>();
 
 			// First fetch the content of any import rule
-			FetchImportRules(downloadUri, contents, 0, contentBuilder, importList);
+			FetchImportRules(downloadUri, contents, 0, ref importList);
 
-			// If there is no import rule found, then just return the contents 
-			if (importList.Count == 0)
-			{
-				return contents;
-			}
-			else
-			{
-				// Now we append the content from the LinkTagCssSource to the builder
-				contentBuilder.AppendLine(contents);
-				return contentBuilder.ToString();
-			}
+			return importList.Values.ToList();
+
 		}
 
 		/// <summary>
@@ -126,16 +129,14 @@ namespace PreMailer.Net.Sources
 		/// <param name="level"></param>
 		/// <param name="contentBuilder"></param>
 		/// <param name="importList"></param>
-		private static void FetchImportRules(Uri downloadUri, string contents, int level, StringBuilder contentBuilder, List<Uri> importList)
+		private static void FetchImportRules(Uri downloadUri, string contents, int level, ref Dictionary<Uri, string> importList)
 		{
-
 			string indent = level > 0 ? new string('\t', level) : string.Empty;
 			int cnt = 0;
 
 			var matches = GetMatches(contents);
 			if (matches.Count > 0)
 			{
-
 				var baseUri = GetBaseUri(downloadUri);
 
 				Console.WriteLine($"{indent}Found {matches.Count} import declarations");
@@ -146,10 +147,11 @@ namespace PreMailer.Net.Sources
 
 					Console.WriteLine($"{indent}{++cnt}: {url}");
 
-					var importRuleSource = new ImportRuleCssSource(url, baseUri, level, contentBuilder, importList);
+					var importRuleSource = new ImportRuleCssSource(url, baseUri, level, importList);
 					importRuleSource.GetCss();
 				}
 			}
+
 		}
 
 		/// <summary>

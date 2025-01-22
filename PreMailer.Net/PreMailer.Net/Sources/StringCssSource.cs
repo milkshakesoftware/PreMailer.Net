@@ -1,4 +1,4 @@
-﻿// No usings needed
+﻿using System.Collections.Generic;
 
 namespace PreMailer.Net.Sources
 {
@@ -11,9 +11,9 @@ namespace PreMailer.Net.Sources
 			this._css = css;
 		}
 
-		public string GetCss()
+		public IEnumerable<string> GetCss()
 		{
-			return _css;
+			return [_css];
 		}
 	}
 }

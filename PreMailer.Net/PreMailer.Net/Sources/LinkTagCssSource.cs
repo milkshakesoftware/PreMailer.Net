@@ -12,7 +12,7 @@ namespace PreMailer.Net.Sources
 	public class LinkTagCssSource : ICssSource
 	{
 		private readonly Uri _downloadUri;
-		private string _cssContents;
+		private List<string> _cssContents;
 
 		public LinkTagCssSource(IElement node, Uri baseUri)
 		{
@@ -30,7 +30,7 @@ namespace PreMailer.Net.Sources
 			}
 		}
 
-		public string GetCss()
+		public IEnumerable<string> GetCss()
 		{
 			Console.WriteLine($"GetCss scheme: {_downloadUri.Scheme}");
 
@@ -38,16 +38,19 @@ namespace PreMailer.Net.Sources
 			{
 				return _cssContents ?? DownloadContents();
 			}
-			return string.Empty;
+			return default;
 		}
 
-		private string DownloadContents()
+		private List<string> DownloadContents()
 		{
+			string content;
+			_cssContents ??= new();
+
 			try
 			{
 				Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
 
-				_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
+				content = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
 			}
 			catch (WebException ex)
 			{
@@ -56,7 +59,12 @@ namespace PreMailer.Net.Sources
 			}
 
 			// Fetch possible import rules
-			_cssContents = ImportRuleCssSource.FetchImportRules(_downloadUri, _cssContents);
+			var imports = ImportRuleCssSource.FetchImportRules(_downloadUri, content);
+			if (imports != null)
+			{
+				_cssContents.AddRange(imports);
+			}
+			_cssContents.Add(content);
 
 			return _cssContents;
 		}
