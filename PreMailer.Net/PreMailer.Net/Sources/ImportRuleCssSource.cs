@@ -38,11 +38,14 @@ namespace PreMailer.Net.Sources
 					url = new Uri(href);
 				}
 
-				var content = DownloadContents(url);
+				if (!_importList.ContainsKey(url))
+				{
+					var content = DownloadContents(url);
 
-				_importList.Add(url, content);
+					_importList.Add(url, content);
 
-				GetCss(url, content, level + 1);
+					GetCss(url, content, level + 1);
+				}
 			}
 
 			return _importList.Values;
