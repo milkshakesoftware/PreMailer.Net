@@ -36,8 +36,6 @@ namespace PreMailer.Net.Sources
 
 		public IEnumerable<string> GetCss()
 		{
-			Console.WriteLine($"GetCss scheme: {_downloadUri.Scheme}");
-
 			if (IsSupported(_downloadUri.Scheme))
 			{
 				return _cssContents ?? DownloadContents();
@@ -52,13 +50,10 @@ namespace PreMailer.Net.Sources
 
 			try
 			{
-				Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
-
 				content = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
 			}
 			catch (WebException ex)
 			{
-				Console.WriteLine($"Download failed with: {ex}");
 				throw new WebException($"PreMailer.Net is unable to download the requested URL: {_downloadUri}", ex);
 			}
 
