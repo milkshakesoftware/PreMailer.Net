@@ -99,7 +99,6 @@ namespace PreMailer.Net.Tests
 			var level0Css = "@import \"level1.css\";";
 			var level1Css = "@import \"level2.css\";";
 			var level2Css = "@import \"level3.css\";";
-			var level3Css = "h1 { color: red; }";
 
 			_webDownloader
 				.Setup(w => w.DownloadString(It.Is<Uri>(u => u.ToString() == "https://a.com/level1.css")))

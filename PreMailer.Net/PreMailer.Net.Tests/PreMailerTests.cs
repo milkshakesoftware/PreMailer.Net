@@ -104,7 +104,7 @@ namespace PreMailer.Net.Tests
 			}
 			catch (Exception ex)
 			{
-				Assert.True(false, ex.Message);
+				Assert.Fail(ex.Message);
 			}
 		}
 
