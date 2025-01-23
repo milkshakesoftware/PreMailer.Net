@@ -289,6 +289,36 @@ namespace PreMailer.Net
 			return result;
 		}
 
+		private IEnumerable<IElement> CssSourceNodesAll()
+		{
+			IEnumerable<IElement> elements = _document.QuerySelectorAll("style,link");
+
+			if (!String.IsNullOrEmpty(_ignoreElements))
+			{
+				elements = elements.Not(_ignoreElements);
+			}
+
+			elements = elements.Where(elem =>
+			{
+				if (elem.NodeName == "STYLE")
+				{
+					var mediaAttribute = elem.GetAttribute("media");
+
+					return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
+				}
+				else
+				{
+					return elem.Attributes
+						.Any(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
+								 (a.Value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
+								 (elem.Attributes.Any(r => r.Name.Equals("rel", StringComparison.OrdinalIgnoreCase) &&
+														r.Value.Equals("stylesheet", StringComparison.OrdinalIgnoreCase)))));
+				}
+			});
+
+			return elements;
+		}
+
 		/// <summary>
 		/// Returns a collection of CQ 'style' nodes that can be used to source CSS content.<para/>
 		/// </summary>

@@ -470,6 +470,30 @@ namespace PreMailer.Net.Tests
 			Assert.Contains("<div class=\"test\" style=\"width: 150px\">", premailedOutput.Html);
 		}
 
+		/// <summary>
+		/// This test currently fails because PreMailer first selects the style nodes and then the link nodes.
+		/// This causes the stylesheet to overrule the class in the style block.
+		/// 
+		/// The newer CssSourceNodesAll selects the style and link nodes in the order they appear in the document.
+		/// This test method then succeeds.
+		/// 
+		/// I (whorchner) disabled the function for now.
+		/// </summary>
+		/*[Fact]
+		public void ContainsLinkCssElement_DownloadsCss_InlinesContentCheckOrder()
+		{
+			var mockDownloader = new Mock<IWebDownloader>();
+			mockDownloader.Setup(d => d.DownloadString(It.IsAny<Uri>())).Returns(".test { width: 150px; }");
+			WebDownloader.SharedDownloader = mockDownloader.Object;
+
+			string input = "<html><head><link href=\"http://a.com/b.css\"></link><style type=\"text/css\">.test { width: 100px; }</style></head><body><div class=\"test\">test</div></body></html>";
+
+			PreMailer sut = new PreMailer(input, new Uri("http://a.com"));
+			var premailedOutput = sut.MoveCssInline();
+
+			Assert.Contains("<div class=\"test\" style=\"width: 100px\">", premailedOutput.Html);
+		}*/
+
 		[Fact]
 		public void ContainsKeyframeCSS_InlinesCSSWithOutError()
 		{
