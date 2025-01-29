@@ -17,7 +17,7 @@ namespace PreMailer.Net.Tests
 
             var result = CssStyleEquivalence.FindEquivalent(nodewithoutselector, clazz);
 
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace PreMailer.Net.Tests
 
             var result = CssStyleEquivalence.FindEquivalent(nodewithoutselector, clazz);
 
-            Assert.Equal(0, result.Count);
+            Assert.Empty(result);
         }
     }
 }

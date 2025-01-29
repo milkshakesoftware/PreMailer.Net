@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Collections.Generic;
+using AngleSharp.Dom;
 using PreMailer.Net.Extensions;
 
 namespace PreMailer.Net.Sources
@@ -12,9 +13,9 @@ namespace PreMailer.Net.Sources
 			_node = node;
 		}
 
-		public string GetCss()
+		public IEnumerable<string> GetCss()
 		{
-			return _node.GetFirstTextNodeData() ?? "";
+			return [_node.GetFirstTextNodeData() ?? ""];
 		}
 	}
 }

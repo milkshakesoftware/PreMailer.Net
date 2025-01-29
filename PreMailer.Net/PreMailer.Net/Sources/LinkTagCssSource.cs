@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using AngleSharp.Dom;
@@ -9,10 +10,16 @@ namespace PreMailer.Net.Sources
 	public class LinkTagCssSource : ICssSource
 	{
 		private readonly Uri _downloadUri;
-		private string _cssContents;
-
-		public LinkTagCssSource(IElement node, Uri baseUri)
+		private List<string> _cssContents;
+		private ImportRuleCssSource _importRuleCssSource;
+		public LinkTagCssSource(IElement node, Uri baseUri) : this(node, baseUri, new ImportRuleCssSource())
 		{
+		}
+
+		public LinkTagCssSource(IElement node, Uri baseUri, ImportRuleCssSource importRuleCssSource)
+		{
+			_importRuleCssSource = importRuleCssSource;
+
 			// There must be an href
 			var href = node.Attributes.First(a => a.Name.Equals("href", StringComparison.OrdinalIgnoreCase)).Value;
 
@@ -27,24 +34,40 @@ namespace PreMailer.Net.Sources
 			}
 		}
 
-		public string GetCss()
+		public IEnumerable<string> GetCss()
 		{
-			Console.WriteLine($"GetCss scheme: {_downloadUri.Scheme}");
-
 			if (IsSupported(_downloadUri.Scheme))
 			{
-				try
-				{
-					Console.WriteLine($"Will download from '{_downloadUri}' using {WebDownloader.SharedDownloader.GetType()}");
-
-					return _cssContents ?? (_cssContents = WebDownloader.SharedDownloader.DownloadString(_downloadUri));
-				}
-				catch (WebException)
-				{
-					throw new WebException($"PreMailer.Net is unable to fetch the requested URL: {_downloadUri}");
-				}
+				return _cssContents ?? DownloadContents();
 			}
-			return string.Empty;
+			return default;
+		}
+
+		private List<string> DownloadContents()
+		{
+			string content;
+			_cssContents ??= new();
+
+			try
+			{
+				content = WebDownloader.SharedDownloader.DownloadString(_downloadUri);
+			}
+			catch (WebException ex)
+			{
+				throw new WebException($"PreMailer.Net is unable to download the requested URL: {_downloadUri}", ex);
+			}
+
+			// Fetch possible import rules
+			var imports = _importRuleCssSource.GetCss(_downloadUri, content);
+
+			if (imports != null)
+			{
+				_cssContents.AddRange(imports);
+			}
+
+			_cssContents.Add(content);
+
+			return _cssContents;
 		}
 
 		private static bool IsSupported(string scheme)

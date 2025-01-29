@@ -247,7 +247,7 @@ namespace PreMailer.Net
 		/// </summary>
 		private IEnumerable<string> GetCssBlocks(IEnumerable<ICssSource> cssSources)
 		{
-			return cssSources.Select(styleSource => styleSource.GetCss()).ToList();
+			return cssSources.SelectMany(styleSource => styleSource.GetCss()).ToList();
 		}
 
 		private void RemoveCssComments(IEnumerable<IElement> cssSourceNodes)
@@ -405,7 +405,7 @@ namespace PreMailer.Net
 				Selector = selectorParser.ParseSelector(x.Value.Name)
 			}).Where(x => x.Selector != null).ToList();
 
-			foreach (var el in _document.DescendentsAndSelf<IElement>())
+			foreach (var el in _document.DescendantsAndSelf<IElement>())
 			{
 				foreach (var style in styles)
 				{
@@ -516,7 +516,7 @@ namespace PreMailer.Net
 
 		private void RemoveHtmlComments()
 		{
-			var comments = _document.Descendents<IComment>().ToList();
+			var comments = _document.Descendants<IComment>().ToList();
 
 			foreach (var comment in comments)
 			{
