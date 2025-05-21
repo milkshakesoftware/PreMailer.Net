@@ -698,5 +698,17 @@ p
 			Assert.Contains(htmlEncoded, premailedOutput.Html);
 			Assert.DoesNotContain("©", premailedOutput.Html);
 		}
+
+		[Fact]
+		public void MoveCssInline_EmptyTagsArePreserved()
+		{
+			string input = "<html><head></head><body><u></u><p>This text should not be underlined.</p></body></html>";
+			
+			var premailedOutput = PreMailer.MoveCssInline(input);
+			
+			Assert.Contains("<u></u>", premailedOutput.Html);
+			Assert.DoesNotContain("<u />", premailedOutput.Html);
+			Assert.DoesNotContain("<u/>", premailedOutput.Html);
+		}
 	}
 }

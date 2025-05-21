@@ -515,7 +515,7 @@ namespace PreMailer.Net
 				return XhtmlMarkupFormatter.Instance;
 			}
 
-			return HtmlMarkupFormatter.Instance;
+			return EmailHtmlMarkupFormatter.Instance;
 		}
 
 		private int GetSelectorSpecificity(Dictionary<string, int> cache, string selector)
