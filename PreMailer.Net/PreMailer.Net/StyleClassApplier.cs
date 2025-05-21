@@ -15,23 +15,23 @@ namespace PreMailer.Net
 			return elementDictionary;
 		}
 
-		private static IElement ApplyStyles(IElement domElement, StyleClass clazz)
+	private static IElement ApplyStyles(IElement domElement, StyleClass clazz)
+	{
+		var styles = CssElementStyleResolver.GetAllStyles(domElement, clazz);
+
+		foreach (var attributeToCss in styles)
 		{
-			var styles = CssElementStyleResolver.GetAllStyles(domElement, clazz);
-
-			foreach (var attributeToCss in styles)
-			{
-				SetAttribute(domElement, attributeToCss);
-			}
-
-			var styleAttr = domElement.Attributes["style"];
-			if (styleAttr == null || string.IsNullOrEmpty(styleAttr.Value))
-			{
-				domElement.RemoveAttribute("style");
-			}
-
-			return domElement;
+			SetAttribute(domElement, attributeToCss);
 		}
+
+		var styleAttr = domElement.Attributes["style"];
+		if (styleAttr == null || string.IsNullOrEmpty(styleAttr.Value))
+		{
+			domElement.RemoveAttribute("style");
+		}
+
+		return domElement;
+	}
 
 		private static void SetAttribute(IElement domElement, AttributeToCss attributeToCss)
 		{
