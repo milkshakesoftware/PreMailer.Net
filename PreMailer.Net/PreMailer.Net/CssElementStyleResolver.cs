@@ -15,17 +15,17 @@ namespace PreMailer.Net
 		
 		AddSpecialPremailerAttributes(attributeCssList, styleClass);
 		
+		var mergedStyleClass = new StyleClass();
+		
+		if (styleClass.Attributes.Count > 0)
+		{
+			mergedStyleClass.Merge(styleClass, true);
+		}
+		
 		if (originalStyleAttr != null)
 		{
 			var parser = new CssParser();
 			var originalStyleClass = parser.ParseStyleClass("inline", originalStyleAttr.Value);
-			
-			var mergedStyleClass = new StyleClass();
-			
-			if (styleClass.Attributes.Count > 0)
-			{
-				mergedStyleClass.Merge(styleClass, true);
-			}
 			
 			foreach (var attr in originalStyleClass.Attributes)
 			{
@@ -38,15 +38,11 @@ namespace PreMailer.Net
 					mergedStyleClass.Attributes.Merge(attr);
 				}
 			}
-			
-			if (mergedStyleClass.Attributes.Count > 0)
-			{
-				attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = mergedStyleClass.ToString(emitImportant: true) });
-			}
 		}
-		else if (styleClass.Attributes.Count > 0)
+		
+		if (mergedStyleClass.Attributes.Count > 0)
 		{
-			attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = styleClass.ToString(emitImportant: true) });
+			attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = mergedStyleClass.ToString(emitImportant: true) });
 		}
 		
 		attributeCssList.AddRange(CssStyleEquivalence.FindEquivalent(domElement, styleClass));
