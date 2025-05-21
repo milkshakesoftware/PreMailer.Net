@@ -19,16 +19,21 @@ result.Warnings 	// string[] of any warnings that occurred during processing.
 string htmlSource = File.ReadAllText(@"C:\Workspace\testmail.html");
 
 var pm = new PreMailer(htmlSource);
-pm.AddAnalyticsTags(source, medium, campaign, content, domain = null); // Optional to add analytics tags
+// Optional to add analytics tags
+pm.AddAnalyticsTags(source, medium, campaign, content, domain = null);
 
-var result = pm.MoveCssInline(...);
+var result = pm.MoveCssInline(
+    removeStyleElements: false,
+    ignoreElements: "#ignore",
+    preserveMediaQueries: true
+);
 
-result.Html 		// Resultant HTML, with CSS in-lined.
-result.Warnings 	// string[] of any warnings that occurred during processing.
+result.Html       // Resultant HTML, with CSS in-lined.
+result.Warnings   // List<string> of any warnings that occurred during processing.
 ```
 
 ### Options
-The following options can be passed to the `PreMailer.MoveCssInline` method to configure it's behaviour:
+The following options can be passed to the `PreMailer.MoveCssInline` method to configure its behavior:
 
 - `baseUri(Uri = null)` - Base URL to apply to `link` elements with `href` values ending with `.css`.
 - `removeStyleElements(bool = false)` - Removes elements that were used to source CSS (currently, only `style` is supported).
@@ -36,6 +41,9 @@ The following options can be passed to the `PreMailer.MoveCssInline` method to c
 - `css(string = null)` - A string containing a style-sheet for inlining.
 - `stripIdAndClassAttributes(bool = false)` - True to strip ID and class attributes.
 - `removeComments(bool = false)` - True to remove comments, false to leave them intact.
+- `customFormatter(IMarkupFormatter = null)` - Custom formatter to use for the HTML output.
+- `preserveMediaQueries(bool = false)` - If true and removeStyleElements is true, it will preserve media queries in the style node while removing other CSS, instead of removing the entire style node.
+- `preserveEntities(bool = false)` - If true, HTML entities like &copy; will be preserved instead of being converted to characters.
 
 ### External style sheets
 Sometimes it's handy to reference external style sheets with a `<link href="..." />` element. PreMailer will download and use external style sheets as long as the value of `href` ends with `.css`.
@@ -55,6 +63,12 @@ To ignore a `style` block, you need to specify an ignore selector when calling t
 
 ```csharp
 var result = PreMailer.MoveCssInline(input, false, ignoreElements: "#ignore");
+```
+
+Alternatively, you can use the `preserveMediaQueries` parameter to keep your media queries while removing other styles:
+
+```csharp
+var result = PreMailer.MoveCssInline(input, removeStyleElements: true, preserveMediaQueries: true);
 ```
 
 And your mobile specific `style` block should have an ID of `ignore`:
@@ -80,18 +94,38 @@ will make a `table` element render as
 ```html
 <table cellspacing="5" width="500">
 ```
+### Analytics Tags
+The `AddAnalyticsTags` method can be used to add Google Analytics tracking parameters to links in your HTML:
+
+```csharp
+var pm = new PreMailer(htmlSource);
+pm.AddAnalyticsTags(
+    source: "newsletter",       // utm_source parameter
+    medium: "email",            // utm_medium parameter
+    campaign: "summer_sale",    // utm_campaign parameter
+    content: "logo_link",       // utm_content parameter
+    domain: "example.com"       // Optional: only add tags to links matching this domain
+);
+```
+
+This will append `?utm_source=newsletter&utm_medium=email&utm_campaign=summer_sale&utm_content=logo_link` to all links, or to links matching the specified domain if provided.
+
+
 
 ### Custom DOM Processing
+The `Document` property provides access to the underlying `IHtmlDocument` object, allowing you to perform custom DOM manipulation before inlining CSS:
+
 ```csharp
 using(var pm = new PreMailer(html)){
-
   var document = pm.Document;
 
-  // use AngleSharp to process document before moving css inline ...
-
+  // Use AngleSharp to process document before moving css inline...
+  
   var result = pm.MoveCssInline();
 }
 ```
+
+This is useful for advanced scenarios where you need to modify the HTML structure before applying CSS.
 
 ### Notes
 
