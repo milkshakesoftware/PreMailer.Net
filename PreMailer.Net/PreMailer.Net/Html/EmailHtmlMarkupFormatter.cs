@@ -1,12 +1,11 @@
-using AngleSharp.Html;
 using AngleSharp.Dom;
+using AngleSharp.Html;
 using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
 namespace PreMailer.Net.Html
 {
-    public class PreserveEntitiesHtmlMarkupFormatter : HtmlMarkupFormatter
+    public class EmailHtmlMarkupFormatter : HtmlMarkupFormatter
     {
         private static readonly Dictionary<string, string> EntityReplacements = new Dictionary<string, string>
         {
@@ -23,7 +22,16 @@ namespace PreMailer.Net.Html
             { "¾", "&frac34;" }
         };
         
-        public static new readonly PreserveEntitiesHtmlMarkupFormatter Instance = new PreserveEntitiesHtmlMarkupFormatter();
+        public static new readonly EmailHtmlMarkupFormatter Instance = new EmailHtmlMarkupFormatter();
+
+        public override string CloseTag(IElement element, Boolean selfClosing)
+        {
+            var prefix = element.Prefix;
+            var name = element.LocalName;
+            var tag = !String.IsNullOrEmpty(prefix) ? String.Concat(prefix, ":", name) : name;
+            
+            return String.Concat("</", tag, ">");
+        }
 
         public override string Text(ICharacterData text)
         {
