@@ -12,37 +12,45 @@ namespace PreMailer.Net
 	{
 		var attributeCssList = new List<AttributeToCss>();
 		var originalStyleAttr = domElement.Attributes["style"];
-		var hasImportantInOriginalStyle = originalStyleAttr != null && originalStyleAttr.Value.Contains("!important");
-
+		
 		AddSpecialPremailerAttributes(attributeCssList, styleClass);
-
-		if (styleClass.Attributes.Count > 0)
-			attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = styleClass.ToString(emitImportant: true) });
-
-		attributeCssList.AddRange(CssStyleEquivalence.FindEquivalent(domElement, styleClass));
-
-		if (hasImportantInOriginalStyle)
+		
+		if (originalStyleAttr != null)
 		{
-			var styleAttr = attributeCssList.FirstOrDefault(a => a.AttributeName == "style");
-			if (styleAttr != null && !styleAttr.CssValue.Contains("!important"))
+			var parser = new CssParser();
+			var originalStyleClass = parser.ParseStyleClass("inline", originalStyleAttr.Value);
+			
+			var mergedStyleClass = new StyleClass();
+			
+			if (styleClass.Attributes.Count > 0)
 			{
-				var parser = new CssParser();
-				var originalStyleClass = parser.ParseStyleClass("inline", originalStyleAttr.Value);
-				
-				var currentStyleClass = parser.ParseStyleClass("inline", styleAttr.CssValue);
-				
-				foreach (var attr in originalStyleClass.Attributes)
+				mergedStyleClass.Merge(styleClass, true);
+			}
+			
+			foreach (var attr in originalStyleClass.Attributes)
+			{
+				if (attr.Important)
 				{
-					if (attr.Important && !currentStyleClass.Attributes.ContainsKey(attr.Style))
-					{
-						currentStyleClass.Attributes.Merge(attr);
-					}
+					mergedStyleClass.Attributes.Merge(attr);
 				}
-				
-				styleAttr.CssValue = currentStyleClass.ToString(emitImportant: true);
+				else if (!mergedStyleClass.Attributes.TryGetValue(attr.Style, out var existing) || !existing.Important)
+				{
+					mergedStyleClass.Attributes.Merge(attr);
+				}
+			}
+			
+			if (mergedStyleClass.Attributes.Count > 0)
+			{
+				attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = mergedStyleClass.ToString(emitImportant: true) });
 			}
 		}
-
+		else if (styleClass.Attributes.Count > 0)
+		{
+			attributeCssList.Add(new AttributeToCss { AttributeName = "style", CssValue = styleClass.ToString(emitImportant: true) });
+		}
+		
+		attributeCssList.AddRange(CssStyleEquivalence.FindEquivalent(domElement, styleClass));
+		
 		return attributeCssList;
 	}
 
