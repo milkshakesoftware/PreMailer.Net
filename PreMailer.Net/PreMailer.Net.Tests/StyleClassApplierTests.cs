@@ -58,7 +58,24 @@ namespace PreMailer.Net.Tests
 
 			var result = StyleClassApplier.ApplyAllStyles(elementDictionary);
 
-			Assert.Equal("<div style=\"color: #000\"></div>", result.ElementAt(0).Key.OuterHtml);
+			Assert.Equal("<div style=\"color: #000 !important\"></div>", result.ElementAt(0).Key.OuterHtml);
+		}
+
+		[Fact]
+		public void ApplyInlineStylesWithImportant()
+		{
+			var document = new HtmlParser().ParseDocument("<div style=\"font-weight: bold !important;\"></div>");
+
+			var clazz = new StyleClass();
+			clazz.Attributes["color"] = CssAttribute.FromRule("color: #000");
+
+			var elementDictionary = new Dictionary<IElement, StyleClass> {
+				{document.Body.FirstElementChild, clazz}
+			};
+
+			var result = StyleClassApplier.ApplyAllStyles(elementDictionary);
+
+			Assert.Equal("<div style=\"color: #000;font-weight: bold !important\"></div>", result.ElementAt(0).Key.OuterHtml);
 		}
     }
 }

@@ -15,23 +15,48 @@ namespace PreMailer.Net
 			return elementDictionary;
 		}
 
-		private static IElement ApplyStyles(IElement domElement, StyleClass clazz)
+	private static IElement ApplyStyles(IElement domElement, StyleClass clazz)
+	{
+		var originalStyleAttr = domElement.Attributes["style"];
+		var hasImportantInOriginalStyle = originalStyleAttr != null && originalStyleAttr.Value.Contains("!important");
+		
+		var styles = CssElementStyleResolver.GetAllStyles(domElement, clazz);
+
+		foreach (var attributeToCss in styles)
 		{
-			var styles = CssElementStyleResolver.GetAllStyles(domElement, clazz);
-
-			foreach (var attributeToCss in styles)
-			{
-				SetAttribute(domElement, attributeToCss);
-			}
-
-			var styleAttr = domElement.Attributes["style"];
-			if (styleAttr == null || string.IsNullOrEmpty(styleAttr.Value))
-			{
-				domElement.RemoveAttribute("style");
-			}
-
-			return domElement;
+			SetAttribute(domElement, attributeToCss);
 		}
+
+		if (hasImportantInOriginalStyle)
+		{
+			var currentStyleAttr = domElement.Attributes["style"];
+			if (currentStyleAttr != null && !currentStyleAttr.Value.Contains("!important"))
+			{
+				var parser = new CssParser();
+				var originalStyleClass = parser.ParseStyleClass("inline", originalStyleAttr.Value);
+				
+				var currentStyleClass = parser.ParseStyleClass("inline", currentStyleAttr.Value);
+				
+				foreach (var attr in originalStyleClass.Attributes)
+				{
+					if (attr.Important && !currentStyleClass.Attributes.ContainsKey(attr.Style))
+					{
+						currentStyleClass.Attributes.Merge(attr);
+					}
+				}
+				
+				domElement.SetAttribute("style", currentStyleClass.ToString(emitImportant: true));
+			}
+		}
+
+		var styleAttr = domElement.Attributes["style"];
+		if (styleAttr == null || string.IsNullOrEmpty(styleAttr.Value))
+		{
+			domElement.RemoveAttribute("style");
+		}
+
+		return domElement;
+	}
 
 		private static void SetAttribute(IElement domElement, AttributeToCss attributeToCss)
 		{
