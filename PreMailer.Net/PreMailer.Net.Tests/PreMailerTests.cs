@@ -693,7 +693,7 @@ p
 			string htmlEncoded = "&copy;";
 			string input = $"<html><head></head><body><div>{htmlEncoded}</div></body></html>";
 			
-			var premailedOutput = PreMailer.MoveCssInline(input, preserveEntities: true);
+			var premailedOutput = PreMailer.MoveCssInline(input, useEmailFormatter: true);
 
 			Assert.Contains(htmlEncoded, premailedOutput.Html);
 			Assert.DoesNotContain("©", premailedOutput.Html);
@@ -704,7 +704,7 @@ p
 		{
 			string input = "<html><head></head><body><u></u><p>This text should not be underlined.</p></body></html>";
 			
-			var premailedOutput = PreMailer.MoveCssInline(input);
+			var premailedOutput = PreMailer.MoveCssInline(input, useEmailFormatter: true);
 			
 			Assert.Contains("<u></u>", premailedOutput.Html);
 			Assert.DoesNotContain("<u />", premailedOutput.Html);

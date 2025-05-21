@@ -43,7 +43,7 @@ The following options can be passed to the `PreMailer.MoveCssInline` method to c
 - `removeComments(bool = false)` - True to remove comments, false to leave them intact.
 - `customFormatter(IMarkupFormatter = null)` - Custom formatter to use for the HTML output.
 - `preserveMediaQueries(bool = false)` - If true and removeStyleElements is true, it will preserve media queries in the style node while removing other CSS, instead of removing the entire style node.
-- `preserveEntities(bool = false)` - If true, HTML entities like &copy; will be preserved instead of being converted to characters.
+- `useEmailFormatter(bool = false)` - If true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved.
 
 ### External style sheets
 Sometimes it's handy to reference external style sheets with a `<link href="..." />` element. PreMailer will download and use external style sheets as long as the value of `href` ends with `.css`.

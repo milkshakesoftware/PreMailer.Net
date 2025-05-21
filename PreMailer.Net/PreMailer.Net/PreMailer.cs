@@ -79,11 +79,11 @@ namespace PreMailer.Net
 	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 	/// <param name="customFormatter">Custom formatter to use</param>
 	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
-	/// <param name="preserveEntities">If set to true, HTML entities like &copy; will be preserved instead of being converted to characters</param>
+	/// <param name="useEmailFormatter">If set to true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved</param>
 	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-	public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool preserveEntities = false)
+	public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 	{
-		return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, preserveEntities);
+		return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, useEmailFormatter);
 	}
 
 	/// <summary>
@@ -97,11 +97,11 @@ namespace PreMailer.Net
 	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 	/// <param name="customFormatter">Custom formatter to use</param>
 	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
-	/// <param name="preserveEntities">If set to true, HTML entities like &copy; will be preserved instead of being converted to characters</param>
+	/// <param name="useEmailFormatter">If set to true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved</param>
 	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-	public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool preserveEntities = false)
+	public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 	{
-		return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, preserveEntities);
+		return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, useEmailFormatter);
 	}
 
 	/// <summary>
@@ -117,11 +117,11 @@ namespace PreMailer.Net
 	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 	/// <param name="customFormatter">Custom formatter to use</param>
 	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
-	/// <param name="preserveEntities">If set to true, HTML entities like &copy; will be preserved instead of being converted to characters</param>
+	/// <param name="useEmailFormatter">If set to true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved</param>
 	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-	public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool preserveEntities = false)
+	public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 	{
-		return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, preserveEntities);
+		return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, useEmailFormatter);
 	}
 
 	/// <summary>
@@ -137,11 +137,11 @@ namespace PreMailer.Net
 	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 	/// <param name="customFormatter">Custom formatter to use</param>
 	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
-	/// <param name="preserveEntities">If set to true, HTML entities like &copy; will be preserved instead of being converted to characters</param>
+	/// <param name="useEmailFormatter">If set to true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved</param>
 	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-	public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool preserveEntities = false)
+	public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 	{
-		return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, preserveEntities);
+		return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, useEmailFormatter);
 	}
 
 	/// <summary>
@@ -154,9 +154,9 @@ namespace PreMailer.Net
 	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 	/// <param name="customFormatter">Custom formatter to use</param>
 	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
-	/// <param name="preserveEntities">If set to true, HTML entities like &copy; will be preserved instead of being converted to characters</param>
+	/// <param name="useEmailFormatter">If set to true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved</param>
 	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
-	public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool preserveEntities = false)
+	public InlineResult MoveCssInline(bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 		{
 			// Store the variables used for inlining the CSS
 			_removeStyleElements = removeStyleElements;
@@ -199,9 +199,14 @@ namespace PreMailer.Net
 			
 			if (markupFormatter == null)
 			{
-				markupFormatter = preserveEntities ? 
-					PreserveEntitiesHtmlMarkupFormatter.Instance : 
-					GetMarkupFormatterForDocType();
+				if (useEmailFormatter)
+				{
+					markupFormatter = EmailHtmlMarkupFormatter.Instance;
+				}
+				else
+				{
+					markupFormatter = GetMarkupFormatterForDocType();
+				}
 			}
 
 			using (var sw = new StringWriter())
@@ -508,15 +513,15 @@ namespace PreMailer.Net
 			}
 		}
 
-		private IMarkupFormatter GetMarkupFormatterForDocType()
+	private IMarkupFormatter GetMarkupFormatterForDocType()
+	{
+		if (_document != null && _document.Doctype != null && _document.Doctype.PublicIdentifier != null && _document.Doctype.PublicIdentifier.Contains("XHTML"))
 		{
-			if (_document != null && _document.Doctype != null && _document.Doctype.PublicIdentifier != null && _document.Doctype.PublicIdentifier.Contains("XHTML"))
-			{
-				return XhtmlMarkupFormatter.Instance;
-			}
-
-			return EmailHtmlMarkupFormatter.Instance;
+			return XhtmlMarkupFormatter.Instance;
 		}
+
+		return HtmlMarkupFormatter.Instance;
+	}
 
 		private int GetSelectorSpecificity(Dictionary<string, int> cache, string selector)
 		{
