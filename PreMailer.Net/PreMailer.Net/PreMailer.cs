@@ -440,8 +440,7 @@ namespace PreMailer.Net
 					}
 					else // Ensure that existing inline styles always win.
 					{
-						var inlineStyle = _cssParser.ParseStyleClass("inline", styleAttr.Value);
-						sortedStyles.Add(inlineStyle);
+						sortedStyles.Add(_cssParser.ParseStyleClass("inline", styleAttr.Value));
 					}
 
 					result[style.Key] = sortedStyles;

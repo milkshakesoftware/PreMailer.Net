@@ -37,7 +37,7 @@ namespace PreMailer.Net {
 		public void Merge(StyleClass styleClass, bool canOverwrite) {
 			foreach (var item in styleClass.Attributes) {
 				if (!Attributes.TryGetValue(item.Style, out var existing) ||
-				    (canOverwrite && (!existing.Important || item.Important))) // Overwrite if existing is not important or if new is important
+				    canOverwrite && (!existing.Important || item.Important))
 				{
 					Attributes.Merge(item);
 				}
