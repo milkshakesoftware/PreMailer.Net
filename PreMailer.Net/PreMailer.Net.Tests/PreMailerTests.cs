@@ -189,6 +189,23 @@ namespace PreMailer.Net.Tests
 		}
 
 		[Fact]
+		public void MoveCssInline_ImportantFlag_PreservesImportantInInlineStylesForDifferentProperties()
+		{
+			string input = @"<style> 
+.test {
+ color:red;
+ }
+ </style>
+<body>
+<p class=""test"" style=""font-weight: bold !important;"">test</p>
+</body>";
+
+			var premailedOutput = PreMailer.MoveCssInline(input);
+
+			Assert.Contains("font-weight: bold !important", premailedOutput.Html);
+		}
+
+		[Fact]
 		public void MoveCssInline_AbsoluteBackgroundUrl_ShouldNotBeCleanedAsComment()
 		{
 			string input = "<style>div { background: url('http://my.web.site.com/Content/email/content.png') repeat-y }</style><div></div>";
