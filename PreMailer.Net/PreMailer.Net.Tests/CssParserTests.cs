@@ -217,5 +217,35 @@ namespace PreMailer.Net.Tests
             Assert.NotNull(parser.Styles["a"].Attributes["font-family"]);
             Assert.Equal(3, parser.Styles["a"].Attributes.Count);
         }
+
+        [Fact]
+        public void AddStylesheet_ContainsPremailerSrcWithProtocolAgnosticUrl_ShouldParseCorrectly()
+        {
+            var stylesheet = "img.logo { -premailer-src: \"//example.com/logo.png\"; width: 100px; height: 80px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["img.logo"]);
+            Assert.NotNull(parser.Styles["img.logo"].Attributes["-premailer-src"]);
+            Assert.Equal("\"//example.com/logo.png\"", parser.Styles["img.logo"].Attributes["-premailer-src"].Value);
+            Assert.Equal(3, parser.Styles["img.logo"].Attributes.Count);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsMultiplePremailerAttributes_ShouldParseCorrectly()
+        {
+            var stylesheet = "img.logo { -premailer-src: \"https://example.com/logo.png\"; -premailer-height: 80px; -premailer-width: 100px; width: 100px; height: 80px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["img.logo"]);
+            Assert.NotNull(parser.Styles["img.logo"].Attributes["-premailer-src"]);
+            Assert.Equal("\"https://example.com/logo.png\"", parser.Styles["img.logo"].Attributes["-premailer-src"].Value);
+            Assert.Equal("80px", parser.Styles["img.logo"].Attributes["-premailer-height"].Value);
+            Assert.Equal("100px", parser.Styles["img.logo"].Attributes["-premailer-width"].Value);
+            Assert.Equal(5, parser.Styles["img.logo"].Attributes.Count);
+        }
     }
 }
