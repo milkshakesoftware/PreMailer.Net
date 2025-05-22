@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -94,7 +95,7 @@ namespace PreMailer.Net
 
 			//string[] atrs = style.Split(';');
 			//string[] atrs = CleanUp(style).Split(';');
-			string[] atrs = FillStyleClassRegex.Split(CleanUp(style));
+			string[] atrs = _fillStyleClassRegex.Split(CleanUp(style));
 
 			foreach (string a in atrs)
 			{
@@ -104,18 +105,18 @@ namespace PreMailer.Net
 			}
 		}
 
-		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|""[^""]*""|'[^']*')*$)", RegexOptions.Multiline | RegexOptions.Compiled);
-		private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)(?<!:)(?<!'[^']*?//)(?<!""[^""]*?//)//.*)", RegexOptions.Compiled);
-		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex _fillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|""[^""]*""|'[^']*')*$)", RegexOptions.Multiline | RegexOptions.Compiled);
+		private static readonly Regex _cssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)(?<!:)(?<!'[^']*?//)(?<!""[^""]*?//)//.*)", RegexOptions.Compiled);
+		private static readonly Regex _unsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		private static string CleanUp(string s)
 		{
+			string protocolAgnosticMarker = "___PROTOCOL_AGNOSTIC_URL_" + Guid.NewGuid().ToString("N") + "___";
+			string httpProtocolMarker = "___HTTP_PROTOCOL_" + Guid.NewGuid().ToString("N") + "___";
+			string dataUrlMarker = "___DATA_URL_DOUBLE_SLASH_" + Guid.NewGuid().ToString("N") + "___";
 			
-			string protocolAgnosticMarker = "___PROTOCOL_AGNOSTIC_URL___";
-			string httpProtocolMarker = "___HTTP_PROTOCOL___";
-			string dataUrlMarker = "___DATA_URL_DOUBLE_SLASH___";
 			
-			string temp = Regex.Replace(s, "(['\"])([^'\"]*?)//([^'\"]*?)\\1", m => 
+			string temp = Regex.Replace(s, "(['\"])([^'\"\\\\]*(?:\\\\.[^'\"\\\\]*)*?)//([^'\"]*?)\\1", m => 
 				m.Groups[1].Value + m.Groups[2].Value + protocolAgnosticMarker + m.Groups[3].Value + m.Groups[1].Value);
 			
 			temp = Regex.Replace(temp, @"url\s*\(\s*(['""]?)//([^)]*?)\\1\s*\)", m => 
@@ -124,14 +125,14 @@ namespace PreMailer.Net
 			temp = Regex.Replace(temp, @"url\s*\(\s*//([^)]*?)\s*\)", m => 
 				"url(" + protocolAgnosticMarker + m.Groups[1].Value + ")");
 			
-			temp = Regex.Replace(temp, "(['\"])([^'\"]*?)http://([^'\"]*?)\\1", m => 
+			temp = Regex.Replace(temp, "(['\"])([^'\"\\\\]*(?:\\\\.[^'\"\\\\]*)*?)http://([^'\"]*?)\\1", m => 
 				m.Groups[1].Value + m.Groups[2].Value + "http:" + httpProtocolMarker + m.Groups[3].Value + m.Groups[1].Value);
 			
 			temp = Regex.Replace(temp, "(data:[^;]+;base64,[^)\"']*?)//([^)\"']*)", m => 
 				m.Groups[1].Value + dataUrlMarker + m.Groups[2].Value);
 			
-			temp = CssCommentRegex.Replace(temp, "");
-			temp = UnsupportedAtRuleRegex.Replace(temp, "");
+			temp = _cssCommentRegex.Replace(temp, "");
+			temp = _unsupportedAtRuleRegex.Replace(temp, "");
 			temp = CleanupMediaQueries(temp);
 			temp = temp.Replace("\r", "").Replace("\n", "");
             temp = temp.Replace("<!--", "").Replace("-->", "");
@@ -143,12 +144,12 @@ namespace PreMailer.Net
 			return temp;
 		}
 
-		public static Regex SupportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		private static Regex MediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}", RegexOptions.Compiled);
+		public static readonly Regex _supportedMediaQueriesRegex = new Regex(@"^(?:\s*(?:only\s+)?(?:screen|projection|all),\s*)*(?:(?:only\s+)?(?:screen|projection|all))$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private static readonly Regex _mediaQueryRegex = new Regex(@"@media\s*(?<query>[^{]*){(?<styles>(?>[^{}]+|{(?<DEPTH>)|}(?<-DEPTH>))*(?(DEPTH)(?!)))}", RegexOptions.Compiled);
 
 		private static string CleanupMediaQueries(string s)
 		{
-			return MediaQueryRegex.Replace(s, m => SupportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
+			return _mediaQueryRegex.Replace(s, m => _supportedMediaQueriesRegex.IsMatch(m.Groups["query"].Value.Trim()) ? m.Groups["styles"].Value.Trim() : string.Empty);
 		}
 
 		public static IEnumerable<string> GetUnsupportedMediaQueries(string s)
@@ -157,9 +158,9 @@ namespace PreMailer.Net
 			{
 				yield break;
 			}
-			foreach (Match match in MediaQueryRegex.Matches(s))
+			foreach (Match match in _mediaQueryRegex.Matches(s))
 			{
-				if (!SupportedMediaQueriesRegex.IsMatch(match.Value))
+				if (!_supportedMediaQueriesRegex.IsMatch(match.Value))
 				{
 					yield return match.Value;
 				}

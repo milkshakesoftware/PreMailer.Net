@@ -328,7 +328,7 @@ namespace PreMailer.Net
 			{
 				var mediaAttribute = elem.GetAttribute("media");
 
-				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser.SupportedMediaQueriesRegex.IsMatch(mediaAttribute);
+				return string.IsNullOrWhiteSpace(mediaAttribute) || CssParser._supportedMediaQueriesRegex.IsMatch(mediaAttribute);
 			});
 
 			return elements;
