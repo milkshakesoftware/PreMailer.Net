@@ -105,13 +105,30 @@ namespace PreMailer.Net
 		}
 
 		private static Regex FillStyleClassRegex = new Regex(@"(;)(?=(?:[^""']|""[^""]*""|'[^']*')*$)", RegexOptions.Multiline | RegexOptions.Compiled);
-		private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)(?<!:)//.*)", RegexOptions.Compiled);
+		private static Regex CssCommentRegex = new Regex(@"(?:/\*(.|[\r\n])*?\*/)|(?:(?<!url\s*\([^)]*)(?<!:)(?<!'[^']*?//)(?<!""[^""]*?//)//.*)", RegexOptions.Compiled);
 		private static Regex UnsupportedAtRuleRegex = new Regex(@"(?:@charset [^;]*;)|(?:@(page|font-face)[^{]*{[^}]*})|@import.+?;", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		private static string CleanUp(string s)
 		{
-			string marker = "___PROTOCOL_AGNOSTIC_URL___";
-			string temp = Regex.Replace(s, ":\\s*\"//([^\"]+)\"", m => ":" + "\"" + marker + m.Groups[1].Value + "\"");
+			
+			string protocolAgnosticMarker = "___PROTOCOL_AGNOSTIC_URL___";
+			string httpProtocolMarker = "___HTTP_PROTOCOL___";
+			string dataUrlMarker = "___DATA_URL_DOUBLE_SLASH___";
+			
+			string temp = Regex.Replace(s, "(['\"])([^'\"]*?)//([^'\"]*?)\\1", m => 
+				m.Groups[1].Value + m.Groups[2].Value + protocolAgnosticMarker + m.Groups[3].Value + m.Groups[1].Value);
+			
+			temp = Regex.Replace(temp, @"url\s*\(\s*(['""]?)//([^)]*?)\\1\s*\)", m => 
+				"url(" + m.Groups[1].Value + protocolAgnosticMarker + m.Groups[2].Value + m.Groups[1].Value + ")");
+			
+			temp = Regex.Replace(temp, @"url\s*\(\s*//([^)]*?)\s*\)", m => 
+				"url(" + protocolAgnosticMarker + m.Groups[1].Value + ")");
+			
+			temp = Regex.Replace(temp, "(['\"])([^'\"]*?)http://([^'\"]*?)\\1", m => 
+				m.Groups[1].Value + m.Groups[2].Value + "http:" + httpProtocolMarker + m.Groups[3].Value + m.Groups[1].Value);
+			
+			temp = Regex.Replace(temp, "(data:[^;]+;base64,[^)\"']*?)//([^)\"']*)", m => 
+				m.Groups[1].Value + dataUrlMarker + m.Groups[2].Value);
 			
 			temp = CssCommentRegex.Replace(temp, "");
 			temp = UnsupportedAtRuleRegex.Replace(temp, "");
@@ -119,7 +136,10 @@ namespace PreMailer.Net
 			temp = temp.Replace("\r", "").Replace("\n", "");
             temp = temp.Replace("<!--", "").Replace("-->", "");
 			
-			temp = temp.Replace(marker, "//");
+			temp = temp.Replace(protocolAgnosticMarker, "//");
+			temp = temp.Replace(httpProtocolMarker, "//");
+			temp = temp.Replace(dataUrlMarker, "//");
+			
 			return temp;
 		}
 
