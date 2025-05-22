@@ -217,5 +217,139 @@ namespace PreMailer.Net.Tests
             Assert.NotNull(parser.Styles["a"].Attributes["font-family"]);
             Assert.Equal(3, parser.Styles["a"].Attributes.Count);
         }
+
+        [Fact]
+        public void AddStylesheet_ContainsPremailerSrcWithProtocolAgnosticUrl_ShouldParseCorrectly()
+        {
+            var stylesheet = "img.logo { -premailer-src: \"//example.com/logo.png\"; width: 100px; height: 80px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["img.logo"]);
+            Assert.NotNull(parser.Styles["img.logo"].Attributes["-premailer-src"]);
+            Assert.Equal("\"//example.com/logo.png\"", parser.Styles["img.logo"].Attributes["-premailer-src"].Value);
+            Assert.Equal(3, parser.Styles["img.logo"].Attributes.Count);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsMultiplePremailerAttributes_ShouldParseCorrectly()
+        {
+            var stylesheet = "img.logo { -premailer-src: \"https://example.com/logo.png\"; -premailer-height: 80px; -premailer-width: 100px; width: 100px; height: 80px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["img.logo"]);
+            Assert.NotNull(parser.Styles["img.logo"].Attributes["-premailer-src"]);
+            Assert.Equal("\"https://example.com/logo.png\"", parser.Styles["img.logo"].Attributes["-premailer-src"].Value);
+            Assert.Equal("80px", parser.Styles["img.logo"].Attributes["-premailer-height"].Value);
+            Assert.Equal("100px", parser.Styles["img.logo"].Attributes["-premailer-width"].Value);
+            Assert.Equal(5, parser.Styles["img.logo"].Attributes.Count);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsProtocolAgnosticUrlInBackgroundImage_ShouldParseCorrectly()
+        {
+            var stylesheet = "div.banner { background-image: url(\"//cdn.example.com/img.png\"); width: 100px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div.banner"]);
+            Assert.NotNull(parser.Styles["div.banner"].Attributes["background-image"]);
+            Assert.Equal("url(\"//cdn.example.com/img.png\")", parser.Styles["div.banner"].Attributes["background-image"].Value);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsProtocolAgnosticUrlInUnquotedUrl_ShouldParseCorrectly()
+        {
+            var stylesheet = "div.banner { background: url(//cdn.example.com/img.png); }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div.banner"]);
+            Assert.NotNull(parser.Styles["div.banner"].Attributes["background"]);
+            Assert.Equal("url(//cdn.example.com/img.png)", parser.Styles["div.banner"].Attributes["background"].Value);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsDoubleSlashInQuotedString_ShouldParseCorrectly()
+        {
+            var stylesheet = "div.text { content: \"// This is not a comment\"; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div.text"]);
+            Assert.NotNull(parser.Styles["div.text"].Attributes["content"]);
+            Assert.Equal("\"// This is not a comment\"", parser.Styles["div.text"].Attributes["content"].Value);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsDoubleSlashInDataUrl_ShouldParseCorrectly()
+        {
+            var stylesheet = "div.image { background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...//...\"); }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div.image"]);
+            Assert.NotNull(parser.Styles["div.image"].Attributes["background-image"]);
+            Assert.Contains("//", parser.Styles["div.image"].Attributes["background-image"].Value);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsEscapedDoubleSlash_ShouldParseCorrectly()
+        {
+            var stylesheet = "div.text { content: \"abc\\/\\/def\"; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div.text"]);
+            Assert.NotNull(parser.Styles["div.text"].Attributes["content"]);
+            Assert.Equal("\"abc\\/\\/def\"", parser.Styles["div.text"].Attributes["content"].Value);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsCommentAfterValue_ShouldStripComment()
+        {
+            var stylesheet = "div { width: 100px; // This is a comment\nheight: 200px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div"]);
+            Assert.Equal("100px", parser.Styles["div"].Attributes["width"].Value);
+            Assert.Equal("200px", parser.Styles["div"].Attributes["height"].Value);
+            Assert.Equal(2, parser.Styles["div"].Attributes.Count);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsCommentAfterSelector_ShouldStripComment()
+        {
+            var stylesheet = "div // This is a comment\n{ width: 100px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div"]);
+            Assert.Equal("100px", parser.Styles["div"].Attributes["width"].Value);
+        }
+
+        [Fact]
+        public void AddStylesheet_ContainsColonInStringBeforeComment_ShouldStripOnlyComment()
+        {
+            var stylesheet = "div { content: \"http://test.com\"; // comment\nwidth: 100px; }";
+            var parser = new CssParser();
+
+            parser.AddStyleSheet(stylesheet);
+
+            Assert.NotNull(parser.Styles["div"]);
+            Assert.Equal("\"http://test.com\"", parser.Styles["div"].Attributes["content"].Value);
+            Assert.Equal("100px", parser.Styles["div"].Attributes["width"].Value);
+        }
     }
 }
