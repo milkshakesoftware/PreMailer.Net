@@ -47,10 +47,15 @@ namespace PreMailer.Net
 				value = value.Replace("px", string.Empty);
 			}
 
-			// Quotation marks in CSS is common, but when applied to the style attribute we will use single quotes instead.
 			if (value.Contains("\""))
 			{
-				value = value.Replace("\"", "'");
+				if (value.Contains("data:") && value.Contains(";base64,"))
+				{
+				}
+				else
+				{
+					value = value.Replace("\"", "'");
+				}
 			}
 
 			domElement.SetAttribute(name, value);

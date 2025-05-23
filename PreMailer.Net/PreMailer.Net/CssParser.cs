@@ -128,8 +128,8 @@ namespace PreMailer.Net
 			temp = Regex.Replace(temp, "(['\"])([^'\"\\\\]*(?:\\\\.[^'\"\\\\]*)*?)http://([^'\"]*?)\\1", m => 
 				m.Groups[1].Value + m.Groups[2].Value + "http:" + httpProtocolMarker + m.Groups[3].Value + m.Groups[1].Value);
 			
-			temp = Regex.Replace(temp, "(data:[^;]+;base64,[^)\"']*?)//([^)\"']*)", m => 
-				m.Groups[1].Value + dataUrlMarker + m.Groups[2].Value);
+			temp = Regex.Replace(temp, "(data:[^;]+;base64,)([^)\"']*?)//([^)\"']*)", m => 
+				m.Groups[1].Value + m.Groups[2].Value + dataUrlMarker + m.Groups[3].Value);
 			
 			temp = _cssCommentRegex.Replace(temp, "");
 			temp = _unsupportedAtRuleRegex.Replace(temp, "");
@@ -140,6 +140,9 @@ namespace PreMailer.Net
 			temp = temp.Replace(protocolAgnosticMarker, "//");
 			temp = temp.Replace(httpProtocolMarker, "//");
 			temp = temp.Replace(dataUrlMarker, "//");
+			
+			temp = Regex.Replace(temp, @"url\s*\(\s*(['""]?)data:([^;]+);base64,([^)'""]*)(['""]?)\s*\)", m => 
+				"url(" + m.Groups[1].Value + "data:" + m.Groups[2].Value + ";base64," + m.Groups[3].Value + m.Groups[4].Value + ")");
 			
 			return temp;
 		}
