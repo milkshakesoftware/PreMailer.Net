@@ -47,15 +47,9 @@ namespace PreMailer.Net
 				value = value.Replace("px", string.Empty);
 			}
 
-			if (value.Contains("\""))
+			if (value.Contains("\"") && !(value.Contains("data:") && value.Contains(";base64,")))
 			{
-				if (value.Contains("data:") && value.Contains(";base64,"))
-				{
-				}
-				else
-				{
-					value = value.Replace("\"", "'");
-				}
+				value = value.Replace("\"", "'");
 			}
 
 			domElement.SetAttribute(name, value);
