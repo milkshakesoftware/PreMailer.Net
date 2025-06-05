@@ -2,37 +2,35 @@ name: .NET Core build
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   release:
     types: [published]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4.2.2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4.3.1
-      with:
-        dotnet-version: 3.1.101
-    - name: Install dependencies
-      working-directory: ./PreMailer.Net
-      run: dotnet restore
-    - name: Build
-      working-directory: ./PreMailer.Net
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      working-directory: ./PreMailer.Net
-      run: dotnet test --no-restore --verbosity normal --collect "Code coverage"
+      - uses: actions/checkout@v4.2.2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4.3.1
+        with:
+          dotnet-version: 3.1.101
+      - name: Install dependencies
+        working-directory: ./PreMailer.Net
+        run: dotnet restore
+      - name: Build
+        working-directory: ./PreMailer.Net
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        working-directory: ./PreMailer.Net
+        run: dotnet test --no-restore --verbosity normal --collect "Code coverage"
 
-    # Publish
-    - name: publish on version change
-      if: ${{ github.event_name == 'release' }}
-      uses: rohith/publish-nuget@v2.5.5
-      with:
-        PROJECT_FILE_PATH: PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj
-        NUGET_KEY: ${{secrets.NUGET_APIKEY}}
+      - name: Package
+        if: ${{ github.event_name == 'release' }}
+        run: dotnet pack -c Release -o . PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj
+      - name: Publish
+        if: ${{ github.event_name == 'release' }}
+        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
