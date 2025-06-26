@@ -36,12 +36,17 @@ jobs:
           VERSION=${TAG_NAME#v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Write release notes to file
+        if: ${{ github.event_name == 'release' }}
+        run: echo "${{ github.event.release.body }}" > release-notes.txt
+
       - name: Package
         if: ${{ github.event_name == 'release' }}
         run: |
+          RELEASE_NOTES=$(cat release-notes.txt)
           dotnet pack -c Release -o . PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj \
             -p:Version="${{ steps.version.outputs.version }}" \
-            -p:PackageReleaseNotes="${{ github.event.release.body }}"
+            -p:PackageReleaseNotes="$RELEASE_NOTES"
             
       - name: Publish
         if: ${{ github.event_name == 'release' }}
