@@ -28,9 +28,21 @@ jobs:
         working-directory: ./PreMailer.Net
         run: dotnet test --no-restore --verbosity normal --collect "Code coverage"
 
+      - name: Extract version from tag
+        if: ${{ github.event_name == 'release' }}
+        id: version
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          VERSION=${TAG_NAME#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Package
         if: ${{ github.event_name == 'release' }}
-        run: dotnet pack -c Release -o . PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj
+        run: |
+          dotnet pack -c Release -o . PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj \
+            -p:Version="${{ steps.version.outputs.version }}" \
+            -p:PackageReleaseNotes="${{ github.event.release.body }}"
+            
       - name: Publish
         if: ${{ github.event_name == 'release' }}
         run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
