@@ -14,16 +14,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4.3.1
         with:
           dotnet-version: 3.1.101
+
       - name: Install dependencies
         working-directory: ./PreMailer.Net
         run: dotnet restore
+
       - name: Build
         working-directory: ./PreMailer.Net
         run: dotnet build --configuration Release --no-restore
+
       - name: Test
         working-directory: ./PreMailer.Net
         run: dotnet test --no-restore --verbosity normal --collect "Code coverage"
@@ -32,22 +36,23 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         id: version
         run: |
-          TAG_NAME="${{ github.event.release.tag_name }}"
-          VERSION=${TAG_NAME#v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          $tag = "${{ github.event.release.tag_name }}"
+          $version = $tag -replace '^v', ''
+          echo "version=$version" >> $env:GITHUB_OUTPUT
 
       - name: Write release notes to file
         if: ${{ github.event_name == 'release' }}
-        run: echo "${{ github.event.release.body }}" > release-notes.txt
+        run: |
+          "${{ github.event.release.body }}" | Out-File -FilePath release-notes.txt -Encoding utf8
 
       - name: Package
         if: ${{ github.event_name == 'release' }}
         run: |
-          RELEASE_NOTES=$(cat release-notes.txt)
-          dotnet pack -c Release -o . PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj \
-            -p:Version="${{ steps.version.outputs.version }}" \
-            -p:PackageReleaseNotes="$RELEASE_NOTES"
-            
+          $releaseNotes = Get-Content release-notes.txt -Raw
+          dotnet pack -c Release -o . PreMailer.Net/PreMailer.Net/PreMailer.Net.csproj `
+            -p:Version="${{ steps.version.outputs.version }}" `
+            -p:PackageReleaseNotes="$releaseNotes"
+
       - name: Publish
         if: ${{ github.event_name == 'release' }}
         run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
