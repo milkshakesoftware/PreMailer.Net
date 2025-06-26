@@ -83,7 +83,6 @@ namespace PreMailer.Net.Sources
 		{
 			var baseUrl = new UriBuilder(downloadUri)
 			{
-				Port = -1 /* Excludes the port number */,
 				Query = string.Empty
 			};
 
