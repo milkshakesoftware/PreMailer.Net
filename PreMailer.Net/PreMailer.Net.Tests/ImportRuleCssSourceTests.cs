@@ -203,6 +203,24 @@ namespace PreMailer.Net.Tests
 			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.ToString() == "https://a.com/circular2.css")), Times.Once);
 		}
 
+		[Fact]
+		public void ItShould_PreservePortNumber_WhenResolvingRelativeImports()
+		{
+			var baseUri = new Uri("https://localhost:8080/styles/main.css");
+			var css = "@import \"variables.css\";";
+			var variablesCss = "body { color: red; }";
+
+			_webDownloader
+				.Setup(w => w.DownloadString(It.Is<Uri>(u => u.ToString() == "https://localhost:8080/styles/variables.css")))
+				.Returns(variablesCss);
+
+			var sut = new ImportRuleCssSource();
+
+			var result = sut.GetCss(baseUri, css).ToList();
+
+			_webDownloader.Verify(w => w.DownloadString(It.Is<Uri>(u => u.ToString() == "https://localhost:8080/styles/variables.css")), Times.Once);
+		}
+
 		private string CreateCss(IEnumerable<string> imports)
 		{
 			var builder = new StringBuilder();
