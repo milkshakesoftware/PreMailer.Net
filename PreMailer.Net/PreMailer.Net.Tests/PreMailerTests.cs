@@ -710,5 +710,74 @@ p
 			Assert.DoesNotContain("<u />", premailedOutput.Html);
 			Assert.DoesNotContain("<u/>", premailedOutput.Html);
 		}
+
+		[Fact]
+		public void MoveCssInline_BackwardCompatibility_StaticMethod_WithoutUseEmailFormatter()
+		{
+			// Test that the old method signature (without useEmailFormatter) still works
+			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+
+			// This should call the backward-compatible overload
+			var premailedOutput = PreMailer.MoveCssInline(input, false, null, null, false, false, null, false);
+
+			Assert.Contains("<div class=\"test\" style=\"height: 100px;width: 100px", premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_BackwardCompatibility_InstanceMethod_WithoutUseEmailFormatter()
+		{
+			// Test that the old instance method signature (without useEmailFormatter) still works
+			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+
+			var premailer = new PreMailer(input);
+			// This should call the backward-compatible instance method overload
+			var premailedOutput = premailer.MoveCssInline(false, null, null, false, false, null, false);
+
+			Assert.Contains("<div class=\"test\" style=\"height: 100px;width: 100px", premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_BackwardCompatibility_StreamMethod_WithoutUseEmailFormatter()
+		{
+			// Test that the old Stream method signature (without useEmailFormatter) still works
+			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+			
+			using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input)))
+			{
+				// This should call the backward-compatible Stream overload
+				var premailedOutput = PreMailer.MoveCssInline(stream, false, null, null, false, false, null, false);
+
+				Assert.Contains("<div class=\"test\" style=\"height: 100px;width: 100px", premailedOutput.Html);
+			}
+		}
+
+		[Fact]
+		public void MoveCssInline_BackwardCompatibility_UriMethod_WithoutUseEmailFormatter()
+		{
+			// Test that the old Uri + string method signature (without useEmailFormatter) still works
+			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+			var baseUri = new Uri("http://example.com/");
+
+			// This should call the backward-compatible Uri overload
+			var premailedOutput = PreMailer.MoveCssInline(baseUri, input, false, null, null, false, false, null, false);
+
+			Assert.Contains("<div class=\"test\" style=\"height: 100px;width: 100px", premailedOutput.Html);
+		}
+
+		[Fact]
+		public void MoveCssInline_BackwardCompatibility_UriStreamMethod_WithoutUseEmailFormatter()
+		{
+			// Test that the old Uri + stream method signature (without useEmailFormatter) still works
+			string input = "<html><head><style type=\"text/css\">.test { height: 100px; }</style></head><body><div class=\"test\" style=\"width: 100px;\">test</div></body></html>";
+			var baseUri = new Uri("http://example.com/");
+			
+			using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input)))
+			{
+				// This should call the backward-compatible Uri + Stream overload
+				var premailedOutput = PreMailer.MoveCssInline(baseUri, stream, false, null, null, false, false, null, false);
+
+				Assert.Contains("<div class=\"test\" style=\"height: 100px;width: 100px", premailedOutput.Html);
+			}
+		}
 	}
 }
