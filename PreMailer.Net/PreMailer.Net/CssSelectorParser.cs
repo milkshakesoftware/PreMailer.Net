@@ -159,7 +159,7 @@ namespace PreMailer.Net
 					"valid",
 					"visited"
 				}
-				.Reverse().ToArray(); // NOTE: Reversal is important to ensure 'first-line' is processed before 'first'.
+				.AsEnumerable().Reverse().ToArray(); // NOTE: Reversal is important to ensure 'first-line' is processed before 'first'.
 			}
 		}
 

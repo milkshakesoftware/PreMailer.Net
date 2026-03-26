@@ -134,6 +134,13 @@ This is useful for advanced scenarios where you need to modify the HTML structur
 ## Installation
 **NuGet**: [PreMailer.Net](http://nuget.org/List/Packages/PreMailer.Net)
 
+## GitHub Actions locally
+Run locally using **act**:
+
+```bash
+act push --container-architecture=linux/arm64 --platform ubuntu-slim=node:lts-bullseye
+```
+
 ## Contributors
 
 * [martinnormark](https://github.com/martinnormark)
