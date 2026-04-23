@@ -79,11 +79,45 @@ namespace PreMailer.Net
 	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
 	/// <param name="customFormatter">Custom formatter to use</param>
 	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
+	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+	public static InlineResult MoveCssInline(string html, bool removeStyleElements, string ignoreElements, string css, bool stripIdAndClassAttributes, bool removeComments, IMarkupFormatter customFormatter, bool preserveMediaQueries)
+	{
+		return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, false);
+	}
+
+	/// <summary>
+	/// In-lines the CSS within the HTML given.
+	/// </summary>
+	/// <param name="html">The HTML input.</param>
+	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+	/// <param name="css">A string containing a style-sheet for inlining.</param>
+	/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+	/// <param name="customFormatter">Custom formatter to use</param>
+	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
 	/// <param name="useEmailFormatter">If set to true, empty HTML tags will be preserved as full tags instead of being converted to self-closing tags, and HTML entities like &copy; will be preserved</param>
 	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
 	public static InlineResult MoveCssInline(string html, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 	{
 		return new PreMailer(html).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, useEmailFormatter);
+	}
+
+	/// <summary>
+	/// In-lines the CSS within the HTML given.
+	/// </summary>
+	/// <param name="stream">The Stream input.</param>
+	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+	/// <param name="css">A string containing a style-sheet for inlining.</param>
+	/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+	/// <param name="customFormatter">Custom formatter to use</param>
+	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
+	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+	public static InlineResult MoveCssInline(Stream stream, bool removeStyleElements, string ignoreElements, string css, bool stripIdAndClassAttributes, bool removeComments, IMarkupFormatter customFormatter, bool preserveMediaQueries)
+	{
+		return new PreMailer(stream).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, false);
 	}
 
 	/// <summary>
@@ -107,8 +141,25 @@ namespace PreMailer.Net
 	/// <summary>
 	/// In-lines the CSS within the HTML given.
 	/// </summary>
-	/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-	/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
+	/// <param name="html">The HTML input.</param>
+	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+	/// <param name="css">A string containing a style-sheet for inlining.</param>
+	/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+	/// <param name="customFormatter">Custom formatter to use</param>
+	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
+	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+	public static InlineResult MoveCssInline(Uri baseUri, string html, bool removeStyleElements, string ignoreElements, string css, bool stripIdAndClassAttributes, bool removeComments, IMarkupFormatter customFormatter, bool preserveMediaQueries)
+	{
+		return new PreMailer(html, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, false);
+	}
+
+	/// <summary>
+	/// In-lines the CSS within the HTML given.
+	/// </summary>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
 	/// <param name="html">The HTML input.</param>
 	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
@@ -127,8 +178,25 @@ namespace PreMailer.Net
 	/// <summary>
 	/// In-lines the CSS within the HTML given.
 	/// </summary>
-	/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-	/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
+	/// <param name="stream">The HTML input.</param>
+	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+	/// <param name="css">A string containing a style-sheet for inlining.</param>
+	/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+	/// <param name="customFormatter">Custom formatter to use</param>
+	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
+	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+	public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements, string ignoreElements, string css, bool stripIdAndClassAttributes, bool removeComments, IMarkupFormatter customFormatter, bool preserveMediaQueries)
+	{
+		return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, false);
+	}
+
+	/// <summary>
+	/// In-lines the CSS within the HTML given.
+	/// </summary>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
 	/// <param name="stream">The HTML input.</param>
 	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
@@ -142,6 +210,22 @@ namespace PreMailer.Net
 	public static InlineResult MoveCssInline(Uri baseUri, Stream stream, bool removeStyleElements = false, string ignoreElements = null, string css = null, bool stripIdAndClassAttributes = false, bool removeComments = false, IMarkupFormatter customFormatter = null, bool preserveMediaQueries = false, bool useEmailFormatter = false)
 	{
 		return new PreMailer(stream, baseUri).MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, useEmailFormatter);
+	}
+
+	/// <summary>
+	/// In-lines the CSS for the current HTML
+	/// </summary>
+	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
+	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
+	/// <param name="css">A string containing a style-sheet for inlining.</param>
+	/// <param name="stripIdAndClassAttributes">True to strip ID and class attributes</param>
+	/// <param name="removeComments">True to remove comments, false to leave them intact</param>
+	/// <param name="customFormatter">Custom formatter to use</param>
+	/// <param name="preserveMediaQueries">If set to true and removeStyleElements is true, it will instead preserve unsupported media queries in the style node and remove the other css, instead of removing the whole style node</param>
+	/// <returns>Returns the html input, with styles moved to inline attributes.</returns>
+	public InlineResult MoveCssInline(bool removeStyleElements, string ignoreElements, string css, bool stripIdAndClassAttributes, bool removeComments, IMarkupFormatter customFormatter, bool preserveMediaQueries)
+	{
+		return MoveCssInline(removeStyleElements, ignoreElements, css, stripIdAndClassAttributes, removeComments, customFormatter, preserveMediaQueries, false);
 	}
 
 	/// <summary>
