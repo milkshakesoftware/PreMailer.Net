@@ -141,8 +141,7 @@ namespace PreMailer.Net
 	/// <summary>
 	/// In-lines the CSS within the HTML given.
 	/// </summary>
-	/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-	/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
 	/// <param name="html">The HTML input.</param>
 	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
@@ -160,8 +159,7 @@ namespace PreMailer.Net
 	/// <summary>
 	/// In-lines the CSS within the HTML given.
 	/// </summary>
-	/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-	/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
 	/// <param name="html">The HTML input.</param>
 	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
@@ -180,8 +178,7 @@ namespace PreMailer.Net
 	/// <summary>
 	/// In-lines the CSS within the HTML given.
 	/// </summary>
-	/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-	/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
 	/// <param name="stream">The HTML input.</param>
 	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
@@ -199,8 +196,7 @@ namespace PreMailer.Net
 	/// <summary>
 	/// In-lines the CSS within the HTML given.
 	/// </summary>
-	/// /// <param name="baseUri">The base url that will be used to resolve any relative urls</param>
-	/// <param name="baseUri">The Url that all relative urls will be off of.</param>
+	/// <param name="baseUri">The base url that will be used to resolve any relative urls.</param>
 	/// <param name="stream">The HTML input.</param>
 	/// <param name="removeStyleElements">If set to <c>true</c> the style elements are removed.</param>
 	/// <param name="ignoreElements">CSS selector for STYLE elements to ignore (e.g. mobile-specific styles etc.)</param>
