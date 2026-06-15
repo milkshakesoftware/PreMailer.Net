@@ -55,4 +55,4 @@ jobs:
 
       - name: Publish
         if: ${{ github.event_name == 'release' }}
-        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json
