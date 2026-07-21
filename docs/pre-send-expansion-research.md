@@ -130,6 +130,30 @@ The library stays MIT; value-added services sit above it. Ordered by effort:
 - **Mjml.Net** could grow the same checks; our moat is being framework-agnostic (any HTML in, not just MJML) and sitting in the existing Razor-heavy .NET install base.
 - **caniemail data drift**: ship snapshots with the package, version them, and allow runtime refresh — never hard-depend on the live endpoint.
 
+## 8. Adjacent turf: the deliverability tooling landscape
+
+Deliverability tooling mostly lives outside the HTML body (DNS, IP reputation, sending behavior), but it is the other half of "everything before send." Teams assemble it from these categories:
+
+| Category | What it does | Representative tools |
+|---|---|---|
+| Authentication setup & monitoring | SPF/DKIM/DMARC/BIMI record management, DMARC aggregate-report analysis, MTA-STS/TLS-RPT | dmarcian, PowerDMARC (from $8/mo), EasyDMARC, Valimail, Red Sift OnDMARC, Postmark's free DMARC digest, MXToolbox |
+| Reputation & postmaster feedback | Mailbox-provider-side spam rate, domain/IP reputation, spam-trap hits | Google Postmaster Tools, Microsoft SNDS/JMRP, Yahoo Sender Hub, Validity Sender Score, Barracuda lookup (all free); blocklist monitors (MXToolbox Delivery Center, HetrixTools) |
+| Inbox placement / seed testing | Send to seed lists, report Inbox vs Spam vs Promotions per provider | GlockApps (from $85/mo), Everest by Validity, Mailgun Optimize, SendForensics, Inbox Monster |
+| Pre-send content testing | Spam scoring, HTML compat, auth verification on a test message | mail-tester, Postmark SpamCheck API (free), Litmus/EoA, Mailtrap HTML Check, Unspam (see §2) |
+| List hygiene & verification | Remove invalid/risky addresses before send; bounce rate is the most controllable reputation factor | ZeroBounce, NeverBounce, Kickbox, Emailable, Verifalia, Bouncer |
+| Warmup | Gradual volume ramping; "interaction network" warmup services | InboxAlly, TrulyInbox, Warmy, MailReach, Lemwarm; cold-outreach suites (Instantly, Smartlead, Mailshake). Caveat: interaction-network warmup violates Gmail/Outlook ToS and providers actively suppress it — gray-zone, cold-email-centric |
+| Sending infrastructure | The MTA/API doing the send | ESPs (SES, Postmark, SendGrid, Mailgun, Resend); self-hosted (Postal, Stalwart, Haraka, Mailcow, Maddy; OpenShip's bundled mail server); app layer (Listmonk, Keila, Mautic, Sendy); the common hybrid is self-hosted app + SES relay |
+| Bounce/complaint processing | FBL registration, complaint webhooks, suppression lists, bounce classification | Built into ESPs; entirely DIY for self-hosters — the hidden cost in "self-host for $0" pitches |
+
+**The self-host debate (OpenShip, July 2026)** is a useful market signal: an open-source platform claiming 80k emails/week for $0 on a $5 VPS vs $80–100 at Postmark/SendGrid/Resend/Mailgun drew heavy pushback on IP reputation, and the vendor's counter was that deliverability = SPF + DKIM + DMARC + rDNS + clean IPs + consistent behavior + domain reputation. Both sides are partly right — authentication and clean behavior get small senders surprisingly far; at bulk scale the ESP fee mostly buys amortized reputation operations (FBLs, blocklist remediation, warmed pools, suppression handling). The takeaway for us is the audience it reveals: **a growing cohort of cost-sensitive teams sending from raw SES or self-hosted MTAs with none of the ESP guardrails.** They are exactly the users a library-based pre-flight serves.
+
+**Implications for the roadmap:**
+
+- **DNS-side preflight belongs in the Analyze() network tier.** SPF/DKIM/DMARC/PTR/MTA-STS lookups are trivial in .NET (DnsClient.NET); a `CheckAuthentication(domain)` companion to the body-side compliance report closes the loop we explicitly scoped out in §4.3 — cheap to build, high perceived value for the self-host/SES cohort.
+- **DMARC aggregate-report (RUA XML) parsing has no good .NET story** — a parser + summarizer package (or hosted digest à la Postmark's free tool) is an open niche consistent with "post-send feeds the next send."
+- **Send-side guardrails for MailKit/SES users** — List-Unsubscribe/RFC 8058 header helpers, bounce classification, suppression-list management — extend the same "the ESP won't do it for you" gap FluentEmail left open (§4.5).
+- Warmup networks and seed-list placement testing are out of scope: ToS-adverse or infrastructure-heavy, and both are someone else's moat.
+
 ## Appendix: source highlights
 
 - Market: Litmus pricing/API (docs.litmus.com/instant), Email on Acid → Mailgun Inspect transition, Mailtrap HTML Check, Parcel checkers, mail-tester JSON API, GlockApps API 2.0, Postmark SpamCheck (spamcheck.postmarkapp.com/doc), caniemail dataset (github.com/hteumeuleu/caniemail, MIT).
