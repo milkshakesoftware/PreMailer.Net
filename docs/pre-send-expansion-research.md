@@ -154,6 +154,22 @@ Deliverability tooling mostly lives outside the HTML body (DNS, IP reputation, s
 - **Send-side guardrails for MailKit/SES users** — List-Unsubscribe/RFC 8058 header helpers, bounce classification, suppression-list management — extend the same "the ESP won't do it for you" gap FluentEmail left open (§4.5).
 - Warmup networks and seed-list placement testing are out of scope: ToS-adverse or infrastructure-heavy, and both are someone else's moat.
 
+## 9. Lessons from the agent-era replatforming argument (Shopify, 2026)
+
+Shopify's 2026 theme-architecture post (JSON templates → readable Liquid, typed `{% doc %}` contracts, Theme Check rules, `.agents`/`AGENTS.md` guidance, Tailwind) argues that agents flip the old trade-off between GUI-era serialized configuration and code legibility: models speak HTML natively, so expressive code beats a constrained settings vocabulary as the interface. Tested against email from first principles:
+
+**What does NOT transfer.** Shopify's enabling condition is runtime ownership — it can add primitives (partials, standard events) and migrate the language because it renders the storefront. Email's runtime is ~40 frozen, mutually inconsistent clients nobody can upgrade (AMP for Email is the cautionary tale: even Google could not platform-ify a runtime it doesn't own). So "make page structure readable code again" cannot happen *in the artifact* — sent email HTML will remain table soup forever. Readability can only live in an authoring layer that compiles down. That argues **against** building our own authoring DSL/component framework (the "blocks" analog): it's a platform bet without a platform, the JS field (MJML, react-email, Maizzle) is crowded, and maintainer capacity is our binding constraint (§7). Same skepticism applies to Tailwind-for-.NET-email as a first move. Instead: stay the universal *compile-and-verify tail* that accepts any authoring layer's output (raw HTML, Razor, Mjml.Net, react-email).
+
+**What DOES transfer — and sharpens §4.3.**
+
+1. *Verification becomes the scarce value as generation gets cheap.* Shopify's own stat — 1 in 5 merchants already edit themes via AI — has a direct email analog: agents now write email HTML, and they confidently emit CSS that email clients don't support (the exact "hallucinated API" problem Theme Check addresses). Agent-generated email needs pre-flight *more* than human-written email. `Analyze()` is our Theme Check; the post is independent confirmation that the linter, not the inliner, is the strategically central artifact.
+2. *A great developer experience is a great agent experience — so build the feedback for machines too.* Analyze() diagnostics should be machine-consumable from day one: stable rule codes, severities, JSON/SARIF output, fix suggestions, deterministic autofixes. That makes CI annotations and agent self-correction loops the same feature.
+3. *Ship agent guidance as a product surface.* An **MCP server exposing inline/analyze/plaintext as tools**, plus a distributable email-HTML skill (`AGENTS.md`-style constraints doc: clipping, client support, MSO rules), puts PreMailer.Net inside every agentic email-authoring loop regardless of editor or language — near-zero build cost, first-mover territory (no email tool does agent feedback yet).
+4. *Typed contracts land differently in .NET.* Razor already gives C# typing; the contract email lacks is *client-runtime support*, which is data (caniemail), not types — encode it as lint rules with examples, not a new type system.
+5. *The "93% fewer lines" starter has a cheap analog*: a minimal, agent-legible bulletproof email boilerplate (correct head/meta/MSO scaffolding) shipped with the package — the readable starting point agents and humans both compose from.
+
+**Verdict:** not a new expansion direction, but a meaningful *reweighting* of the existing map — it upgrades Analyze() + agent-facing distribution (MCP, skill, SARIF, starter) from nice-to-have to the centerpiece, and it is a reasoned argument against the tempting authoring-framework bet.
+
 ## Appendix: source highlights
 
 - Market: Litmus pricing/API (docs.litmus.com/instant), Email on Acid → Mailgun Inspect transition, Mailtrap HTML Check, Parcel checkers, mail-tester JSON API, GlockApps API 2.0, Postmark SpamCheck (spamcheck.postmarkapp.com/doc), caniemail dataset (github.com/hteumeuleu/caniemail, MIT).
