@@ -1,17 +1,30 @@
 ﻿using AngleSharp;
 using AngleSharp.Html.Parser;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 
 public static class Program
 {
 	public static void Main()
 	{
-		BenchmarkRunner.Run<Realistic>();
+		// Some local environments may run into issues with Windows Defender or 
+		// SentinelOne (and others) when running a benchmark. This ensures we
+		// keep our toolchain within our process and stops the above apps from blocking
+		// our benchmark process, but can slow the execution time.
+		var avSafeConfig = DefaultConfig.Instance
+			.AddJob(
+				Job.ShortRun
+					.WithToolchain(InProcessNoEmitToolchain.Instance)
+					.WithIterationCount(100)
+			);
+
+		BenchmarkRunner.Run<Realistic>(avSafeConfig);
 	}
 }
 
-[SimpleJob(invocationCount: 100, iterationCount: 100)]
 [MemoryDiagnoser]
 public class Realistic
 {
@@ -47,7 +60,7 @@ public class Realistic
 
 <meta http-equiv=""Content-Type"" content=""text/html; charset=UTF-8"" />
 <title>PreMailer Benchmark</title>
-	
+
 </head>
  
 <body bgcolor=""#123"">
